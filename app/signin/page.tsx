@@ -43,11 +43,15 @@ export default function SignInPage() {
   return (
     <main className="min-h-screen bg-[#f6f6f3] px-5 py-8 text-[#111111] sm:px-10 sm:py-10">
       <section className="mx-auto w-full max-w-lg">
-        <Link href="/" className="mb-20 inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.12em] text-[#111111]/60 hover:text-[#3159ff]">
-          <ArrowLeft aria-hidden="true" /> Back to JuanT
-        </Link>
         <p className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-[#3159ff]">JuanT workspace</p>
-        <h1 className="mt-5 text-5xl font-semibold leading-[0.9] tracking-[-0.08em]">Welcome<br />back.</h1>
+        <div className="mt-5 flex items-start justify-between gap-6">
+          <h1 className="text-5xl font-semibold leading-[0.9] tracking-[-0.08em]">Welcome<br />back.</h1>
+          <Link href="/" className="group mt-1 inline-flex shrink-0 items-center gap-2 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-[#111111]/60 transition-colors hover:text-[#3159ff] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#3159ff] focus-visible:ring-offset-4 focus-visible:ring-offset-[#f6f6f3]">
+            <ArrowLeft aria-hidden="true" className="size-3.5 transition-transform group-hover:-translate-x-0.5" />
+            <span className="hidden sm:inline">Back to JuanT</span>
+            <span className="sm:hidden">Back</span>
+          </Link>
+        </div>
         <p className="mt-5 max-w-sm text-sm leading-relaxed text-[#111111]/60">Choose a demo role to explore the JuanT experience.</p>
 
         <div className="mt-8 grid grid-cols-2 border border-[#111111]/20" role="tablist" aria-label="Demo account type">
