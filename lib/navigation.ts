@@ -8,13 +8,22 @@ import {
   FileText,
   FolderOpen,
   GraduationCap,
+  HandCoins,
+  Handshake,
   HelpCircle,
   Inbox,
+  Landmark,
   LayoutDashboard,
+  LogOut,
   MessageCircle,
   Network,
+  Receipt,
   Settings,
   ShieldCheck,
+  Sun,
+  Target,
+  Timer,
+  UserPlus,
   UserRound,
   Users,
   Wallet,
@@ -58,15 +67,60 @@ export const employeeNavigation: NavGroup[] = [
   },
 ]
 
-const hrItem = (label: string, icon: LucideIcon, badge?: string): NavItem => ({ label, href: '#', icon, badge })
+const hrBase = '/dashboard/hr'
+const hrItem = (label: string, slug: string, icon: LucideIcon, badge?: string): NavItem => ({ label, href: `${hrBase}/${slug}`, icon, badge })
 
 export const hrNavigation: NavGroup[] = [
-  { heading: 'Workspace', items: [{ label: 'Dashboard', href: '/dashboard/hr', icon: LayoutDashboard }, hrItem('Approval Center', CheckCircle2, '8')] },
-  { heading: 'People Management', items: [hrItem('Employee Management', Users), hrItem('Organization Structure', Network), hrItem('Employee 201 Files', FileText), hrItem('Documents & Forms', FileText)] },
-  { heading: 'Talent Acquisition', items: [hrItem('Recruitment', Users), hrItem('Onboarding', GraduationCap)] },
-  { heading: 'Time & Attendance', items: [hrItem('Attendance Management', Clock3), hrItem('Schedules & Shifts', CalendarDays), hrItem('Leave Management', ShieldCheck), hrItem('Overtime & Holiday Work', Clock3)] },
-  { heading: 'Compensation', items: [hrItem('Payroll', FileText), hrItem('Loans & Reimbursements', FileText), hrItem('Government Contributions & Tax', FileText)] },
-  { heading: 'Employee Development', items: [hrItem('Performance & KPIs', BarChart3), hrItem('Learning & Development', GraduationCap), hrItem('Engagement & Feedback', MessageCircle)] },
-  { heading: 'Employee Lifecycle', items: [hrItem('Offboarding & Clearance', FileText), hrItem('Final Pay', FileText)] },
-  { heading: 'Insights & System', items: [hrItem('Reports & Analytics', BarChart3), hrItem('Ask Juan AI', MessageCircle), hrItem('HR Settings', Settings)] },
+  {
+    heading: 'Workspace',
+    items: [
+      { label: 'Dashboard', href: hrBase, icon: LayoutDashboard },
+      hrItem('Time In', 'attendance', Timer),
+      hrItem('Approval Center', 'approvals', CheckCircle2, '8'),
+    ],
+  },
+  {
+    heading: 'People Management',
+    items: [
+      hrItem('Employee Management', 'employees', Users),
+      hrItem('Organization Structure', 'organization', Network),
+      hrItem('Employee 201 Files', '201-files', FolderOpen),
+      hrItem('Documents & Forms', 'forms', FileText),
+    ],
+  },
+  { heading: 'Talent Acquisition', items: [hrItem('Recruitment', 'recruitment', UserPlus), hrItem('Onboarding', 'onboarding', Handshake)] },
+  {
+    heading: 'Time & Attendance',
+    items: [
+      hrItem('Attendance Management', 'attendance-management', Clock3),
+      hrItem('Schedules & Shifts', 'shifts', CalendarDays),
+      hrItem('Leave Management', 'leave-management', ShieldCheck),
+      hrItem('Overtime & Holiday Work', 'overtime', Sun),
+    ],
+  },
+  {
+    heading: 'Compensation',
+    items: [
+      hrItem('Payroll', 'payroll-runs', Wallet),
+      hrItem('Loans & Reimbursements', 'loans', HandCoins),
+      hrItem('Government Contributions & Tax', 'contributions', Landmark),
+    ],
+  },
+  {
+    heading: 'Employee Development',
+    items: [
+      hrItem('Performance & KPIs', 'kpis', Target),
+      hrItem('Learning & Development', 'learning', GraduationCap),
+      hrItem('Engagement & Feedback', 'engagement', MessageCircle),
+    ],
+  },
+  { heading: 'Employee Lifecycle', items: [hrItem('Offboarding & Clearance', 'offboarding', LogOut), hrItem('Final Pay', 'final-pay', Receipt)] },
+  {
+    heading: 'Insights & System',
+    items: [
+      hrItem('Reports & Analytics', 'reports', BarChart3),
+      hrItem('Ask Juan AI', 'ask-juan', Bot),
+      hrItem('HR Settings', 'hr-settings', Settings),
+    ],
+  },
 ]

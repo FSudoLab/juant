@@ -55,10 +55,14 @@ export function StatusBadge({ children, tone = 'neutral' }: { children: ReactNod
   return <span className={`inline-flex items-center border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.1em] ${tones[tone]}`}>{children}</span>
 }
 
+const blueStatuses = ['Approved', 'On time', 'Completed', 'Resolved', 'Active', 'Complete', 'Published', 'Hired', 'Released', 'Remitted', 'Paid', 'Cleared', 'Ready', 'Enabled', 'Excused', 'Acknowledged']
+const amberStatuses = ['Late', 'Undertime', 'Declined', 'Rejected', 'Absent', 'Incomplete', 'Inactive', 'Overdue']
+const darkStatuses = ['Pending', 'Open', 'For review', 'For approval', 'In progress', 'In review', 'Processing', 'Interview', 'Offer', 'Ongoing', 'Computing', 'Probation', 'New', 'Screening']
+
 export function statusTone(status: string): BadgeTone {
-  if (['Approved', 'On time', 'Completed', 'Resolved'].includes(status)) return 'blue'
-  if (['Late', 'Undertime', 'Declined'].includes(status)) return 'amber'
-  if (status === 'Pending' || status === 'Open') return 'dark'
+  if (blueStatuses.includes(status)) return 'blue'
+  if (amberStatuses.includes(status)) return 'amber'
+  if (darkStatuses.includes(status)) return 'dark'
   return 'neutral'
 }
 

@@ -14,17 +14,43 @@ const knowledge: { keywords: string[]; answer: string }[] = [
   { keywords: ['overtime', 'ot'], answer: 'Overtime must be filed within 2 days. Your Oct 9 overtime request is pending with Maria Santos.' },
 ]
 
-const suggestions = ['How many leave days do I have?', 'When is my next pay day?', 'How was my attendance this week?', 'Where is my COE?']
+const hrKnowledge: { keywords: string[]; answer: string }[] = [
+  { keywords: ['approval', 'pending', 'request'], answer: 'You have 8 pending approvals: 4 leave, 3 overtime, and 1 manual time-in. The oldest is Alex Cruz’s vacation leave filed Oct 8.' },
+  { keywords: ['attendance', 'late', 'absent', 'today'], answer: '42 of 48 employees checked in today. 3 are late, 1 is absent (Carlo Dizon), and 2 are on approved leave.' },
+  { keywords: ['payroll', 'pay', 'cutoff'], answer: 'The Oct 1–15 payroll run is still in Draft. Net pay is ₱1.54M for 48 employees, releasing Oct 15. Approve pending overtime before processing.' },
+  { keywords: ['sss', 'philhealth', 'pag-ibig', 'pagibig', 'bir', 'tax', 'contribution'], answer: 'PhilHealth and Pag-IBIG remittances for September are due Oct 15. SSS is due Oct 31. BIR 1601-C was remitted on Oct 10.' },
+  { keywords: ['headcount', 'turnover', 'employees'], answer: 'Headcount is 48 (+6 since May). YTD turnover is 6.2%, and Engineering is the largest team with 18 people.' },
+  { keywords: ['hiring', 'recruit', 'candidate', 'onboard'], answer: '32 active candidates across 6 open roles. Jasmine Ong has a pending offer and starts onboarding Oct 20 if accepted.' },
+]
 
-function answerFor(question: string) {
-  const lower = question.toLowerCase()
-  const match = knowledge.find((entry) => entry.keywords.some((keyword) => lower.includes(keyword)))
-  return match?.answer ?? 'I can help with leave, payroll, attendance, schedules, overtime, and documents. For anything else, reach out through Help & HR Support.'
+const variants = {
+  employee: {
+    knowledge,
+    greeting: 'Hi Alex, I’m Juan. Ask me about your leave, pay, attendance, or documents.',
+    suggestions: ['How many leave days do I have?', 'When is my next pay day?', 'How was my attendance this week?', 'Where is my COE?'],
+    fallback: 'I can help with leave, payroll, attendance, schedules, overtime, and documents. For anything else, reach out through Help & HR Support.',
+    placeholder: 'Ask about leave, pay, attendance…',
+  },
+  hr: {
+    knowledge: hrKnowledge,
+    greeting: 'Hi Maria, I’m Juan. Ask me about approvals, attendance, payroll, contributions, or headcount.',
+    suggestions: ['What approvals are pending?', 'Who is late today?', 'Is payroll ready for Oct 15?', 'When are contributions due?'],
+    fallback: 'I can help with approvals, attendance, payroll, government contributions, recruitment, and headcount.',
+    placeholder: 'Ask about approvals, payroll, headcount…',
+  },
 }
 
-export function AskJuanChat() {
-  const [messages, setMessages] = useState<Message[]>([{ role: 'juan', text: 'Hi Alex, I’m Juan. Ask me about your leave, pay, attendance, or documents.' }])
+export function AskJuanChat({ variant = 'employee' }: { variant?: keyof typeof variants }) {
+  const config = variants[variant]
+  const { suggestions } = config
+  const [messages, setMessages] = useState<Message[]>([{ role: 'juan', text: config.greeting }])
   const [input, setInput] = useState('')
+
+  const answerFor = (question: string) => {
+    const lower = question.toLowerCase()
+    const match = config.knowledge.find((entry) => entry.keywords.some((keyword) => lower.includes(keyword)))
+    return match?.answer ?? config.fallback
+  }
 
   const ask = (question: string) => {
     const trimmed = question.trim()
@@ -77,7 +103,7 @@ export function AskJuanChat() {
           value={input}
           onChange={(event) => setInput(event.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ask about leave, pay, attendance…"
+          placeholder={config.placeholder}
           className="min-h-11 flex-1 resize-none border border-[#111111]/15 bg-white px-4 py-3 text-sm outline-none focus:border-[#3159ff]"
         />
         <button type="submit" className="flex size-11 items-center justify-center bg-[#3159ff] text-white hover:bg-[#2447d6]">

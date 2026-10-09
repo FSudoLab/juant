@@ -2,10 +2,10 @@ import { PageIntro } from '@/components/dashboard/primitives'
 import { AttendanceRecords } from '@/components/employee/attendance-records'
 import { TimeClock } from '@/components/employee/time-clock'
 import { attendanceMonths, manualRequests } from '@/lib/attendance-records'
-import { requireEmployee } from '@/lib/roles'
+import { requireAnyRole } from '@/lib/roles'
 
 export default async function TimeInPage({ params }: { params: Promise<{ role: string }> }) {
-  await requireEmployee(params)
+  await requireAnyRole(params)
 
   return (
     <>
