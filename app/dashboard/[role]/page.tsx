@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { ArrowUpRight, CalendarDays, CheckCircle2, Clock3, Users } from 'lucide-react'
-import { AttendanceToggle } from '@/components/employee/attendance-toggle'
+import { DashboardInsightsChart } from '@/components/employee/dashboard-insights-chart'
 import { resolveRole } from '@/lib/roles'
 
 const dashboardData = {
@@ -44,7 +44,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ role
           </div>
         ))}
       </section>
-      {role === 'employee' && <AttendanceToggle />}
+      {role === 'employee' && <DashboardInsightsChart />}
       <section className="grid gap-px border border-[#111111]/15 bg-[#111111]/15 sm:grid-cols-2" aria-label="Workspace actions">
         {data.cards.map(({ icon: Icon, title, detail, action, href }) => (
           <article key={title} className="flex min-h-56 flex-col justify-between bg-[#f6f6f3] p-6 sm:p-8">
