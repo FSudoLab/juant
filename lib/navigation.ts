@@ -32,7 +32,7 @@ export const employeeNavigation: NavGroup[] = [
     heading: 'Workspace',
     items: [
       { label: 'Dashboard', href: employeeBase, icon: LayoutDashboard },
-      { label: 'My Attendance', href: `${employeeBase}/attendance`, icon: Clock3 },
+      { label: 'Time In', href: `${employeeBase}/attendance`, icon: Clock3 },
       { label: 'My Schedule', href: `${employeeBase}/schedule`, icon: CalendarDays },
       { label: 'Leave Management', href: `${employeeBase}/leave`, icon: ShieldCheck },
       { label: 'My Requests', href: `${employeeBase}/requests`, icon: Inbox },

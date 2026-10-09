@@ -8,7 +8,7 @@ type Message = { role: 'user' | 'juan'; text: string }
 const knowledge: { keywords: string[]; answer: string }[] = [
   { keywords: ['leave', 'vacation', 'sick'], answer: 'You have 14 vacation, 8 sick, and 3 emergency leave days left. File a leave from Leave Management at least 3 working days ahead.' },
   { keywords: ['pay', 'salary', 'payslip', 'payroll'], answer: 'Your next pay date is Oct 15 for the Oct 1–15 cutoff. Your latest payslip is available under Payroll & Payslips.' },
-  { keywords: ['attendance', 'late', 'time in', 'time-in', 'clock'], answer: 'This week you logged 5 days with 1 late arrival and 1 approved undertime. See every day in My Attendance.' },
+  { keywords: ['attendance', 'late', 'time in', 'time-in', 'clock'], answer: 'This week you logged 5 days with 1 late arrival and 1 approved undertime. See every day in Time In.' },
   { keywords: ['schedule', 'shift', 'holiday'], answer: 'Your shift is 08:30–17:30, hybrid (3 onsite, 2 remote). The next holidays are Nov 1 and Nov 2.' },
   { keywords: ['coe', 'certificate', 'document'], answer: 'Your Certificate of Employment was uploaded on Oct 2. You can download it from My Documents.' },
   { keywords: ['overtime', 'ot'], answer: 'Overtime must be filed within 2 days. Your Oct 9 overtime request is pending with Maria Santos.' },
