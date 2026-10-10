@@ -7,7 +7,6 @@ import {
   Clock3,
   FileText,
   FolderOpen,
-  GraduationCap,
   HandCoins,
   Handshake,
   HelpCircle,
@@ -45,7 +44,7 @@ export const hrAccessItems: { key: HrAccessKey; label: string }[] = [
   { key: 'offboarding', label: 'Offboarding & Clearance' },
   { key: 'organization', label: 'Organization Structure' },
   { key: '201-files', label: 'Employee 201 Files' },
-  { key: 'forms', label: 'Documents & Forms' },
+  { key: 'forms', label: 'Company Documents' },
   { key: 'payroll-runs', label: 'Payroll' },
   { key: 'loans', label: 'Loans & Reimbursements' },
   { key: 'contributions', label: 'Government Contributions & Tax' },
@@ -116,7 +115,7 @@ export const hrNavigation: NavGroup[] = [
     items: [
       hrItem('Organization Structure', 'organization', Network),
       hrItem('Employee 201 Files', '201-files', FolderOpen),
-      hrItem('Documents & Forms', 'forms', FileText),
+      hrItem('Company Documents', 'forms', FileText),
     ],
   },
   {
@@ -132,7 +131,6 @@ export const hrNavigation: NavGroup[] = [
     heading: 'Employee Development',
     items: [
       hrItem('Performance & KPIs', 'kpis', Target),
-      hrItem('Learning & Development', 'learning', GraduationCap),
       hrItem('Engagement & Feedback', 'engagement', MessageCircle),
     ],
   },

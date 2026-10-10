@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { PageIntro, Panel, StatGrid } from '@/components/dashboard/primitives'
 import { ApprovalCenter } from '@/components/hr/approval-center'
+import { EmployeeFilesView } from '@/components/hr/employee-files-view'
 import { HrModuleChart } from '@/components/hr/hr-module-chart'
 import { HrModuleView } from '@/components/hr/hr-module-view'
 import { EmployeeInformationEditor } from '@/components/manager/employee-information-editor'
@@ -101,6 +102,15 @@ export default async function HrSectionPage({ params }: { params: Params }) {
   }
   const hrModule = role === 'hr' || role === 'manager' ? getHrModule(section) : undefined
   if (!hrModule) notFound()
+
+  if (section === '201-files') {
+    return (
+      <>
+        <PageIntro eyebrow={`${hrModule.group} / ${hrModule.label}`} title={hrModule.title} description={hrModule.description} />
+        <EmployeeFilesView />
+      </>
+    )
+  }
 
   return (
     <>

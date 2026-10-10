@@ -208,8 +208,8 @@ export const hrModules: HrModule[] = [
   {
     slug: 'forms',
     group: 'People Management',
-    label: 'Documents & Forms',
-    title: 'Documents & forms',
+    label: 'Company Documents',
+    title: 'Company documents',
     description: 'Company forms, templates, and policies employees can access.',
     stats: [
       { label: 'Published', value: '24' },
@@ -669,49 +669,6 @@ export const hrModules: HrModule[] = [
       { label: 'Start review', to: 'In review', when: ['Not started'], variant: 'primary' },
       { label: 'Complete', to: 'Completed', when: ['In review'], variant: 'primary' },
     ],
-  },
-  {
-    slug: 'learning',
-    group: 'Employee Development',
-    label: 'Learning & Development',
-    title: 'Learning & development',
-    description: 'Training programs, enrollments, and completion across the company.',
-    stats: [
-      { label: 'Programs', value: '08' },
-      { label: 'Enrolled', value: '64' },
-      { label: 'Completion rate', value: '78%' },
-      { label: 'Training hours', value: '312h', hint: 'This quarter' },
-    ],
-    table: {
-      title: 'Programs',
-      description: 'Current and upcoming trainings',
-      columns: [
-        { key: 'program', label: 'Program' },
-        { key: 'category', label: 'Category' },
-        { key: 'enrolled', label: 'Enrolled' },
-        { key: 'schedule', label: 'Schedule' },
-      ],
-      rows: [
-        { id: 'ld1', program: 'Data Privacy Act Refresher', category: 'Compliance', enrolled: '48', schedule: 'Oct 1 – 31', status: 'Ongoing' },
-        { id: 'ld2', program: 'Leading High-Trust Teams', category: 'Leadership', enrolled: '9', schedule: 'Oct 21', status: 'Scheduled' },
-        { id: 'ld3', program: 'Workplace Safety', category: 'Compliance', enrolled: '48', schedule: 'Sep 2026', status: 'Completed' },
-        { id: 'ld4', program: 'Advanced Excel for Ops', category: 'Technical', enrolled: '7', schedule: 'Nov 5', status: 'Scheduled' },
-      ],
-    },
-    actions: [
-      { label: 'Start', to: 'Ongoing', when: ['Scheduled'], variant: 'primary' },
-      { label: 'Complete', to: 'Completed', when: ['Ongoing'], variant: 'primary' },
-    ],
-    create: {
-      label: 'New program',
-      status: 'Scheduled',
-      fields: [
-        { name: 'program', label: 'Program name' },
-        { name: 'category', label: 'Category', type: 'select', options: ['Compliance', 'Leadership', 'Technical', 'Soft skills'] },
-        { name: 'enrolled', label: 'Enrolled', type: 'number' },
-        { name: 'schedule', label: 'Schedule', type: 'date' },
-      ],
-    },
   },
   {
     slug: 'engagement',
