@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState, type FormEvent } from 'react'
 import { Plus, Search, X } from 'lucide-react'
 import { Panel, StatusBadge, statusTone } from '@/components/dashboard/primitives'
+import { useConfirm } from '@/components/dashboard/confirm-dialog'
 import type { HrModule, HrRow } from '@/lib/hr-modules'
 
 export function HrModuleView({ module }: { module: HrModule }) {
@@ -12,6 +13,7 @@ export function HrModuleView({ module }: { module: HrModule }) {
   const [statusFilter, setStatusFilter] = useState('All')
   const [announcement, setAnnouncement] = useState('')
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const confirm = useConfirm()
 
   const statuses = useMemo(() => ['All', ...Array.from(new Set(rows.map((row) => row.status)))], [rows])
   const counts = useMemo(() => rows.reduce<Record<string, number>>((acc, row) => ({ ...acc, [row.status]: (acc[row.status] ?? 0) + 1 }), {}), [rows])
@@ -25,15 +27,25 @@ export function HrModuleView({ module }: { module: HrModule }) {
 
   const primaryLabel = (row: HrRow) => row[table.columns[0].key]
 
-  const applyAction = (row: HrRow, to: string, label: string) => {
+  const applyAction = async (row: HrRow, to: string, label: string) => {
+    const ok = await confirm({
+      title: `Would you like to ${label.toLowerCase()} ${primaryLabel(row)}?`,
+      description: `The status will change from ${row.status} to ${to}.`,
+      confirmLabel: `Yes, ${label.toLowerCase()}`,
+      tone: ['Declined', 'Rejected', 'Inactive', 'Cancelled'].includes(to) ? 'danger' : 'primary',
+    })
+    if (!ok) return
     setRows((current) => current.map((item) => (item.id === row.id ? { ...item, status: to } : item)))
     setAnnouncement(`${label}: ${primaryLabel(row)} is now ${to}.`)
   }
 
-  const handleCreate = (event: FormEvent<HTMLFormElement>) => {
+  const handleCreate = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!create) return
-    const data = new FormData(event.currentTarget)
+    const form = event.currentTarget
+    const data = new FormData(form)
+    const ok = await confirm({ title: `Would you like to ${create.label.toLowerCase()}?`, description: `“${String(data.get(create.fields[0].name) ?? '').trim()}” will be added as ${create.status}.`, confirmLabel: 'Yes, save' })
+    if (!ok) return
     const row: HrRow = { id: `new-${Date.now()}`, status: create.status }
     for (const column of table.columns) row[column.key] = '—'
     for (const field of create.fields) {
@@ -43,7 +55,7 @@ export function HrModuleView({ module }: { module: HrModule }) {
     setRows((current) => [row, ...current])
     setStatusFilter('All')
     setAnnouncement(`Added ${primaryLabel(row)}.`)
-    event.currentTarget.reset()
+    form.reset()
     dialogRef.current?.close()
   }
 

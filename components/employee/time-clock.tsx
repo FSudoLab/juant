@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Clock3, FilePlus2, LogOut, MapPin } from 'lucide-react'
+import { useConfirm } from '@/components/dashboard/confirm-dialog'
 
 type LocationState =
   | { state: 'locating' }
@@ -27,6 +28,7 @@ export function TimeClock() {
   const [now, setNow] = useState<Date | null>(null)
   const [location, setLocation] = useState<LocationState>({ state: 'locating' })
   const [session, setSession] = useState<Session>({ timeIn: null, timeOut: null })
+  const confirm = useConfirm()
 
   useEffect(() => {
     setNow(new Date())
@@ -54,7 +56,15 @@ export function TimeClock() {
   const isTimedIn = session.timeIn !== null && session.timeOut === null
   const isDone = session.timeOut !== null
 
-  function handleClock() {
+  async function handleClock() {
+    const timingOut = Boolean(session.timeIn)
+    const ok = await confirm({
+      title: timingOut ? 'Would you like to time out now?' : 'Would you like to time in now?',
+      description: timingOut ? 'You can only time out once per day.' : 'Your current time and location will be recorded.',
+      confirmLabel: timingOut ? 'Yes, time out' : 'Yes, time in',
+      tone: timingOut ? 'danger' : 'primary',
+    })
+    if (!ok) return
     const stamp = new Date()
     if (!session.timeIn) setSession({ timeIn: stamp, timeOut: null })
     else if (!session.timeOut) setSession({ ...session, timeOut: stamp })
