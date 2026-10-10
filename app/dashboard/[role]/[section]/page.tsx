@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { PageIntro, Panel, StatGrid } from '@/components/dashboard/primitives'
+import { ApprovalCenter } from '@/components/hr/approval-center'
 import { HrModuleChart } from '@/components/hr/hr-module-chart'
 import { HrModuleView } from '@/components/hr/hr-module-view'
 import { EmployeeInformationEditor } from '@/components/manager/employee-information-editor'
@@ -8,6 +9,13 @@ import { TeamOverview } from '@/components/manager/team-overview'
 import { getHrModule, hrModules } from '@/lib/hr-modules'
 
 type Params = Promise<{ role: string; section: string }>
+
+const hrApprovalTabs = [
+  { id: 'approvals', label: 'All requests' },
+  { id: 'attendance-management', label: 'Attendance' },
+  { id: 'leave-management', label: 'Leave' },
+  { id: 'overtime', label: 'Overtime & holiday work' },
+]
 
 const managerSections = {
   holidays: { title: 'Upcoming holidays', description: 'Review the holiday calendar used by your team and its schedule planning.' },
@@ -76,6 +84,18 @@ export default async function HrSectionPage({ params }: { params: Params }) {
         <Panel title="Workspace controls" description="This workspace view is ready for your team data and permissions.">
           <div className="p-5 text-sm text-[#111111]/60 sm:p-6">Your current access allows you to review and manage this area from the JuanT workspace.</div>
         </Panel>
+      </>
+    )
+  }
+  if (role === 'hr' && section === 'approvals') {
+    const tabs = hrApprovalTabs.flatMap(({ id, label }) => {
+      const module = getHrModule(id)
+      return module ? [{ id, label, module }] : []
+    })
+    return (
+      <>
+        <PageIntro eyebrow="Workspace / Approval Center" title="Approval center" description="Every request waiting on HR, grouped by type. Review attendance, leave, and overtime without leaving the page." />
+        <ApprovalCenter tabs={tabs} />
       </>
     )
   }

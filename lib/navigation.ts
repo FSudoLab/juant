@@ -38,24 +38,20 @@ export type NavGroup = { heading: string; items: NavItem[] }
 export type HrAccessKey = 'approvals' | 'employees' | 'organization' | '201-files' | 'forms' | 'recruitment' | 'onboarding' | 'attendance-management' | 'shifts' | 'leave-management' | 'overtime' | 'payroll-runs' | 'loans' | 'contributions' | 'kpis' | 'engagement' | 'offboarding' | 'final-pay' | 'reports' | 'ask-juan' | 'hr-settings'
 
 export const hrAccessItems: { key: HrAccessKey; label: string }[] = [
-  { key: 'approvals', label: 'Approval Center' },
+  { key: 'approvals', label: 'Approval Center (attendance, leave, overtime)' },
+  { key: 'recruitment', label: 'Recruitment' },
+  { key: 'onboarding', label: 'Onboarding' },
   { key: 'employees', label: 'Employee Management' },
+  { key: 'offboarding', label: 'Offboarding & Clearance' },
   { key: 'organization', label: 'Organization Structure' },
   { key: '201-files', label: 'Employee 201 Files' },
   { key: 'forms', label: 'Documents & Forms' },
-  { key: 'recruitment', label: 'Recruitment' },
-  { key: 'onboarding', label: 'Onboarding' },
-  { key: 'attendance-management', label: 'Attendance Management' },
-  { key: 'shifts', label: 'Schedules & Shifts' },
-  { key: 'leave-management', label: 'Leave Management' },
-  { key: 'overtime', label: 'Overtime & Holiday Work' },
   { key: 'payroll-runs', label: 'Payroll' },
   { key: 'loans', label: 'Loans & Reimbursements' },
   { key: 'contributions', label: 'Government Contributions & Tax' },
+  { key: 'final-pay', label: 'Final Pay' },
   { key: 'kpis', label: 'Performance & KPIs' },
   { key: 'engagement', label: 'Engagement & Feedback' },
-  { key: 'offboarding', label: 'Offboarding & Clearance' },
-  { key: 'final-pay', label: 'Final Pay' },
   { key: 'reports', label: 'Reports & Analytics' },
   { key: 'ask-juan', label: 'Ask Juan AI' },
   { key: 'hr-settings', label: 'HR Settings' },
@@ -107,22 +103,20 @@ export const hrNavigation: NavGroup[] = [
     ],
   },
   {
-    heading: 'People Management',
+    heading: 'Employee Lifecycle',
     items: [
+      hrItem('Recruitment', 'recruitment', UserPlus),
+      hrItem('Onboarding', 'onboarding', Handshake),
       hrItem('Employee Management', 'employees', Users),
+      hrItem('Offboarding & Clearance', 'offboarding', LogOut),
+    ],
+  },
+  {
+    heading: 'Records',
+    items: [
       hrItem('Organization Structure', 'organization', Network),
       hrItem('Employee 201 Files', '201-files', FolderOpen),
       hrItem('Documents & Forms', 'forms', FileText),
-    ],
-  },
-  { heading: 'Talent Acquisition', items: [hrItem('Recruitment', 'recruitment', UserPlus), hrItem('Onboarding', 'onboarding', Handshake)] },
-  {
-    heading: 'Time & Attendance',
-    items: [
-      hrItem('Attendance Management', 'attendance-management', Clock3),
-      hrItem('Schedules & Shifts', 'shifts', CalendarDays),
-      hrItem('Leave Management', 'leave-management', ShieldCheck),
-      hrItem('Overtime & Holiday Work', 'overtime', Sun),
     ],
   },
   {
@@ -131,6 +125,7 @@ export const hrNavigation: NavGroup[] = [
       hrItem('Payroll', 'payroll-runs', Wallet),
       hrItem('Loans & Reimbursements', 'loans', HandCoins),
       hrItem('Government Contributions & Tax', 'contributions', Landmark),
+      hrItem('Final Pay', 'final-pay', Receipt),
     ],
   },
   {
@@ -141,7 +136,6 @@ export const hrNavigation: NavGroup[] = [
       hrItem('Engagement & Feedback', 'engagement', MessageCircle),
     ],
   },
-  { heading: 'Employee Lifecycle', items: [hrItem('Offboarding & Clearance', 'offboarding', LogOut), hrItem('Final Pay', 'final-pay', Receipt)] },
   {
     heading: 'Insights & System',
     items: [
