@@ -41,7 +41,7 @@ export function Sidebar({ role }: { role: Role }) {
           <span className="flex size-9 items-center justify-center bg-[#3159ff] font-mono text-sm font-bold text-white">JT</span>
           <span>
             <strong className="block text-lg tracking-[-0.04em]">JuanT</strong>
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/50">{workspaceLabel}</span>
+            <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/50">{workspaceLabel}</span>
           </span>
         </Link>
         <nav className="scrollbar-hidden flex min-w-0 flex-1 flex-wrap gap-x-8 gap-y-6 overflow-y-auto lg:block" aria-label={`${role} navigation`}>
@@ -50,7 +50,7 @@ export function Sidebar({ role }: { role: Role }) {
             if (visibleItems.length === 0) return null
 
             return <div key={group.heading} className="min-w-[180px] lg:mb-7">
-              <p className="mb-3 font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-white/40">{group.heading}</p>
+              <p className="mb-3 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-white/40">{group.heading}</p>
               <ul className="flex flex-col gap-1">
                 {visibleItems.map(({ label, href, icon: Icon, badge }) => {
                   const isActive = href !== '#' && pathname === href
@@ -59,7 +59,7 @@ export function Sidebar({ role }: { role: Role }) {
                       <Link
                         href={href}
                         aria-current={isActive ? 'page' : undefined}
-                        className={`flex items-center justify-between gap-2 px-3 py-2.5 text-xs font-medium transition-colors hover:bg-white/10 hover:text-white ${isActive ? 'bg-[#3159ff] text-white hover:bg-[#3159ff]' : 'text-white/65'}`}
+                        className={`flex items-center justify-between gap-2 px-3 py-2.5 text-sm font-medium transition-colors hover:bg-white/10 hover:text-white ${isActive ? 'bg-[#3159ff] text-white hover:bg-[#3159ff]' : 'text-white/65'}`}
                       >
                         <span className="flex items-center gap-2.5">
                           <Icon aria-hidden="true" className="size-4" />
@@ -74,7 +74,7 @@ export function Sidebar({ role }: { role: Role }) {
             </div>
           })}
         </nav>
-        <button type="button" onClick={handleLogout} className="mt-6 flex items-center gap-2 border-t border-white/15 pt-5 text-left text-xs font-semibold text-white/60 hover:text-white">
+        <button type="button" onClick={handleLogout} className="mt-6 flex items-center gap-2 border-t border-white/15 pt-5 text-left text-sm font-semibold text-white/60 hover:text-white">
           <LogOut aria-hidden="true" className="size-4" />
           Logout
         </button>
