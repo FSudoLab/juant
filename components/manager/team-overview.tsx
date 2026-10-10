@@ -1,11 +1,26 @@
 'use client'
 
 import { useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react'
-import { CalendarClock, KeyRound, Search, X } from 'lucide-react'
+import { CalendarClock, Copy, KeyRound, Search, X } from 'lucide-react'
 import { Panel, StatGrid, StatusBadge, statusTone } from '@/components/dashboard/primitives'
 import { useConfirm } from '@/components/dashboard/confirm-dialog'
 import { accessItemsFor, readAccess, writeAccess } from '@/lib/access'
-import { formatTime, teamRoster, workweekLabels, type Schedule, type TeamMember, type Workweek } from '@/lib/team-roster'
+import {
+  dayError,
+  dayKeys,
+  dayLabels,
+  dayMinutes,
+  hoursLabel,
+  teamRoster,
+  weekdays,
+  weeklyHours,
+  workingDaysLabel,
+  type DayKey,
+  type DaySchedule,
+  type Schedule,
+  type Shift,
+  type TeamMember,
+} from '@/lib/team-roster'
 
 const ALL = 'All'
 const fieldClass = 'h-10 w-full border border-[#111111]/15 bg-white px-3 text-sm outline-none focus:border-[#3159ff]'
@@ -140,8 +155,9 @@ export function TeamOverview() {
                     <td className="px-4 py-4 text-[#111111]/70">{member.position}</td>
                     <td className="px-4 py-4"><StatusBadge tone={member.role === 'Employee' ? 'neutral' : 'blue'}>{member.role}</StatusBadge></td>
                     <td className="px-4 py-4 text-[#111111]/70">
-                      <span className="block font-medium text-[#111111]">{workweekLabels[member.schedule.workweek]}</span>
-                      <span className="text-xs">{formatTime(member.schedule.start)} – {formatTime(member.schedule.end)}</span>
+                      <span className="block font-medium text-[#111111]">{workingDaysLabel(member.schedule)}</span>
+                      <span className="block text-xs">{hoursLabel(member.schedule)}</span>
+                      <span className="font-mono text-[10px] text-[#111111]/45">{weeklyHours(member.schedule)} hrs/week</span>
                     </td>
                     <td className="px-4 py-4"><StatusBadge tone={statusTone(member.status)}>{member.status}</StatusBadge></td>
                     <td className="px-5 py-4 sm:px-6">
@@ -176,7 +192,7 @@ export function TeamOverview() {
   )
 }
 
-function EditorDialog({ title, subtitle, onClose, onSubmit, children }: { title: string; subtitle: string; onClose: () => void; onSubmit: (event: FormEvent<HTMLFormElement>) => void; children: ReactNode }) {
+function EditorDialog({ title, subtitle, onClose, onSubmit, children, wide = false, submitDisabled = false }: { title: string; subtitle: string; onClose: () => void; onSubmit: (event: FormEvent<HTMLFormElement>) => void; children: ReactNode; wide?: boolean; submitDisabled?: boolean }) {
   const ref = useRef<HTMLDialogElement>(null)
   return (
     <dialog
@@ -186,7 +202,7 @@ function EditorDialog({ title, subtitle, onClose, onSubmit, children }: { title:
       }}
       aria-labelledby="editor-title"
       onClose={onClose}
-      className="m-auto max-h-[90vh] w-[min(94vw,34rem)] border border-[#111111]/15 bg-[#f6f6f3] p-0 text-[#111111] backdrop:bg-[#111111]/50"
+      className={`m-auto max-h-[92vh] ${wide ? 'w-[min(96vw,52rem)]' : 'w-[min(94vw,34rem)]'} border border-[#111111]/15 bg-[#f6f6f3] p-0 text-[#111111] backdrop:bg-[#111111]/50`}
     >
       <form onSubmit={onSubmit}>
         <div className="flex items-start justify-between gap-4 border-b border-[#111111]/15 p-5">
@@ -201,7 +217,7 @@ function EditorDialog({ title, subtitle, onClose, onSubmit, children }: { title:
         {children}
         <div className="flex justify-end gap-2 border-t border-[#111111]/15 p-5">
           <button type="button" onClick={() => ref.current?.close()} className="border border-[#111111]/20 px-4 py-2.5 text-sm font-semibold hover:border-[#111111]">Cancel</button>
-          <button type="submit" className="bg-[#3159ff] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2447d6]">Save changes</button>
+          <button type="submit" disabled={submitDisabled} className="bg-[#3159ff] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2447d6] disabled:cursor-not-allowed disabled:opacity-50">Save changes</button>
         </div>
       </form>
     </dialog>
@@ -211,15 +227,38 @@ function EditorDialog({ title, subtitle, onClose, onSubmit, children }: { title:
 function ScheduleDialog({ member, onClose, onSave }: { member: TeamMember; onClose: () => void; onSave: (member: TeamMember, schedule: Schedule) => void }) {
   const confirm = useConfirm()
   const [schedule, setSchedule] = useState(member.schedule)
-  const invalid = schedule.end <= schedule.start
+  const errors = Object.fromEntries(dayKeys.map((key) => [key, dayError(schedule.days[key])])) as Record<DayKey, string | null>
+  const hasErrors = dayKeys.some((key) => errors[key])
+  const workingCount = dayKeys.filter((key) => schedule.days[key].working).length
+
+  function updateDay(key: DayKey, patch: Partial<DaySchedule>) {
+    setSchedule((current) => ({ ...current, days: { ...current.days, [key]: { ...current.days[key], ...patch } } }))
+  }
+
+  function applyPreset(days: readonly DayKey[]) {
+    setSchedule((current) => ({
+      ...current,
+      days: Object.fromEntries(dayKeys.map((key) => [key, { ...current.days[key], working: days.includes(key) }])) as Schedule['days'],
+    }))
+  }
+
+  function copyToWorkingDays(source: DayKey) {
+    const { shift, split, second } = schedule.days[source]
+    setSchedule((current) => ({
+      ...current,
+      days: Object.fromEntries(
+        dayKeys.map((key) => [key, current.days[key].working ? { ...current.days[key], shift, split, second } : current.days[key]]),
+      ) as Schedule['days'],
+    }))
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    if (invalid) return
+    if (hasErrors) return
     const dialog = event.currentTarget.closest('dialog')
     const ok = await confirm({
       title: `Would you like to save ${member.name}'s schedule?`,
-      description: `${workweekLabels[schedule.workweek]}, ${formatTime(schedule.start)} – ${formatTime(schedule.end)}, ${schedule.breakMinutes}-minute break.`,
+      description: `${workingDaysLabel(schedule)} · ${hoursLabel(schedule)} · ${weeklyHours(schedule)} hours per week.`,
       confirmLabel: 'Yes, save schedule',
     })
     if (!ok) return
@@ -227,32 +266,120 @@ function ScheduleDialog({ member, onClose, onSave }: { member: TeamMember; onClo
     dialog?.close()
   }
 
+  const presets: { label: string; days: readonly DayKey[] }[] = [
+    { label: 'Mon–Fri', days: weekdays },
+    { label: 'Mon–Sat', days: [...weekdays, 'sat'] },
+    { label: 'All week', days: dayKeys },
+  ]
+
   return (
-    <EditorDialog title="Edit schedule" subtitle={`${member.name} · ${member.position}`} onClose={onClose} onSubmit={handleSubmit}>
-      <div className="grid gap-4 p-5 sm:grid-cols-2">
+    <EditorDialog wide title="Edit schedule" subtitle={`${member.name} · ${member.position} · ${weeklyHours(schedule)} hrs/week`} onClose={onClose} onSubmit={handleSubmit} submitDisabled={hasErrors}>
+      <div className="flex flex-col gap-4 border-b border-[#111111]/15 p-5 sm:flex-row sm:items-end sm:justify-between">
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="schedule-workweek" className={labelClass}>Workweek</label>
-          <select id="schedule-workweek" value={schedule.workweek} onChange={(e) => setSchedule({ ...schedule, workweek: e.target.value as Workweek })} className={fieldClass}>
-            {Object.entries(workweekLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-          </select>
+          <span className={labelClass}>Quick set working days</span>
+          <div className="flex flex-wrap gap-2">
+            {presets.map((preset) => (
+              <button key={preset.label} type="button" onClick={() => applyPreset(preset.days)} className="border border-[#111111]/20 px-3 py-1.5 text-xs font-semibold text-[#111111]/70 hover:border-[#3159ff] hover:text-[#3159ff]">
+                {preset.label}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="schedule-break" className={labelClass}>Break</label>
+        <div className="flex flex-col gap-1.5 sm:w-44">
+          <label htmlFor="schedule-break" className={labelClass}>Break (single shift)</label>
           <select id="schedule-break" value={schedule.breakMinutes} onChange={(e) => setSchedule({ ...schedule, breakMinutes: Number(e.target.value) })} className={fieldClass}>
-            {[30, 60, 90].map((minutes) => <option key={minutes} value={minutes}>{minutes} minutes</option>)}
+            {[0, 30, 60, 90].map((minutes) => <option key={minutes} value={minutes}>{minutes === 0 ? 'No break' : `${minutes} minutes`}</option>)}
           </select>
         </div>
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="schedule-start" className={labelClass}>Start time</label>
-          <input id="schedule-start" type="time" required value={schedule.start} onChange={(e) => setSchedule({ ...schedule, start: e.target.value })} className={fieldClass} />
-        </div>
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="schedule-end" className={labelClass}>End time</label>
-          <input id="schedule-end" type="time" required value={schedule.end} onChange={(e) => setSchedule({ ...schedule, end: e.target.value })} aria-invalid={invalid} aria-describedby={invalid ? 'schedule-error' : undefined} className={fieldClass} />
-        </div>
-        {invalid && <p id="schedule-error" className="text-xs font-semibold text-[#c2410c] sm:col-span-2">End time must be later than start time.</p>}
       </div>
+
+      <ul className="max-h-[52vh] divide-y divide-[#111111]/10 overflow-y-auto" aria-label="Daily schedule">
+        {dayKeys.map((key) => (
+          <DayRow
+            key={key}
+            dayKey={key}
+            day={schedule.days[key]}
+            error={errors[key]}
+            canCopy={workingCount > 1}
+            onChange={(patch) => updateDay(key, patch)}
+            onCopy={() => copyToWorkingDays(key)}
+          />
+        ))}
+      </ul>
     </EditorDialog>
+  )
+}
+
+function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (value: boolean) => void }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-label={label}
+      aria-checked={checked}
+      onClick={() => onChange(!checked)}
+      className={`relative h-6 w-11 shrink-0 overflow-hidden border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3159ff] ${checked ? 'border-[#3159ff] bg-[#3159ff]' : 'border-[#111111]/20 bg-[#111111]/10'}`}
+    >
+      <span className={`absolute left-0.5 top-0.5 size-4.5 bg-[#f6f6f3] transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
+    </button>
+  )
+}
+
+function ShiftInputs({ id, label, shift, invalid, onChange }: { id: string; label: string; shift: Shift; invalid: boolean; onChange: (shift: Shift) => void }) {
+  return (
+    <fieldset className="flex flex-col gap-1.5">
+      <legend className={`${labelClass} mb-1.5`}>{label}</legend>
+      <div className="flex items-center gap-2">
+        <label htmlFor={`${id}-start`} className="sr-only">{label} start</label>
+        <input id={`${id}-start`} type="time" required value={shift.start} onChange={(e) => onChange({ ...shift, start: e.target.value })} aria-invalid={invalid} className={`${fieldClass} sm:w-32`} />
+        <span aria-hidden="true" className="text-[#111111]/40">–</span>
+        <label htmlFor={`${id}-end`} className="sr-only">{label} end</label>
+        <input id={`${id}-end`} type="time" required value={shift.end} onChange={(e) => onChange({ ...shift, end: e.target.value })} aria-invalid={invalid} className={`${fieldClass} sm:w-32`} />
+      </div>
+    </fieldset>
+  )
+}
+
+function DayRow({ dayKey, day, error, canCopy, onChange, onCopy }: { dayKey: DayKey; day: DaySchedule; error: string | null; canCopy: boolean; onChange: (patch: Partial<DaySchedule>) => void; onCopy: () => void }) {
+  const name = dayLabels[dayKey].long
+  const hours = Math.round((dayMinutes(day) / 60) * 10) / 10
+
+  return (
+    <li className={`flex flex-col gap-4 px-5 py-4 lg:flex-row lg:items-start ${day.working ? '' : 'bg-[#111111]/[0.03]'}`}>
+      <div className="flex items-center gap-3 lg:w-40 lg:pt-6">
+        <Toggle label={`${name} is a working day`} checked={day.working} onChange={(working) => onChange({ working })} />
+        <div>
+          <p className="text-sm font-semibold">{name}</p>
+          <p className="font-mono text-[10px] text-[#111111]/50">{day.working ? `${hours} hrs` : 'Rest day'}</p>
+        </div>
+      </div>
+
+      {day.working ? (
+        <div className="flex flex-1 flex-col gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-end">
+            <ShiftInputs id={`${dayKey}-first`} label={day.split ? 'Morning / first shift' : 'Work hours'} shift={day.shift} invalid={Boolean(error)} onChange={(shift) => onChange({ shift })} />
+            {day.split && (
+              <ShiftInputs id={`${dayKey}-second`} label="Night / second shift" shift={day.second} invalid={Boolean(error)} onChange={(second) => onChange({ second })} />
+            )}
+          </div>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <div className="flex items-center gap-2">
+              <Toggle label={`Split shift on ${name}`} checked={day.split} onChange={(split) => onChange({ split })} />
+              <span className="text-xs font-semibold text-[#111111]/70">Split shift {day.split ? 'enabled' : 'disabled'}</span>
+            </div>
+            {canCopy && (
+              <button type="button" onClick={onCopy} className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#3159ff] hover:underline">
+                <Copy aria-hidden="true" className="size-3.5" /> Copy to all working days
+              </button>
+            )}
+          </div>
+          {day.split && !error && <p className="text-xs text-[#111111]/55">Both shifts count as one work day.</p>}
+          {error && <p role="alert" className="text-xs font-semibold text-[#c2410c]">{error}</p>}
+        </div>
+      ) : (
+        <p className="flex-1 text-sm text-[#111111]/50 lg:pt-6">Not scheduled. Turn the switch on to add hours for {name}.</p>
+      )}
+    </li>
   )
 }
 
