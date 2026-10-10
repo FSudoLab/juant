@@ -4,7 +4,7 @@ import { PageIntro, Panel, StatGrid } from '@/components/dashboard/primitives'
 import { HrModuleChart } from '@/components/hr/hr-module-chart'
 import { HrModuleView } from '@/components/hr/hr-module-view'
 import { EmployeeInformationEditor } from '@/components/manager/employee-information-editor'
-import { SystemAdminSettingsForm } from '@/components/system-admin/system-admin-settings-form'
+import { TeamOverview } from '@/components/manager/team-overview'
 import { getHrModule, hrModules } from '@/lib/hr-modules'
 
 type Params = Promise<{ role: string; section: string }>
@@ -40,6 +40,18 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
 export default async function HrSectionPage({ params }: { params: Params }) {
   const { role, section } = await params
+  if ((role === 'manager' || role === 'hr') && section === 'employees') {
+    return (
+      <>
+        <PageIntro
+          eyebrow={role === 'manager' ? 'Workspace / Team overview' : 'People Management / Employee Management'}
+          title={role === 'manager' ? 'Team overview' : 'Employee management'}
+          description="Everyone in the workspace in one place. Search by department or position, customize each person's schedule, and control what they can access."
+        />
+        <TeamOverview />
+      </>
+    )
+  }
   const customSection = role === 'manager' ? managerSections[section as keyof typeof managerSections] : role === 'system-admin' ? systemAdminSections[section as keyof typeof systemAdminSections] : undefined
   if (customSection) {
     if (role === 'manager' && section === 'employee-information') {
@@ -53,8 +65,8 @@ export default async function HrSectionPage({ params }: { params: Params }) {
     if (role === 'system-admin' && section === 'hr-access') {
       return (
         <>
-          <PageIntro eyebrow="System / HR access" title="HR access" description="Edit the HR user and open access permissions for every HR sidebar section." />
-          <SystemAdminSettingsForm />
+          <PageIntro eyebrow="System / Access" title="Access & permissions" description="Edit schedules and sidebar permissions for every employee, HR user, and manager." />
+          <TeamOverview />
         </>
       )
     }

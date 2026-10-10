@@ -1,24 +1,38 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { LogOut } from 'lucide-react'
-import { employeeNavigation, hrNavigation, managerNavigation, systemAdminNavigation, type HrAccessKey, type Role } from '@/lib/navigation'
+import { useConfirm } from '@/components/dashboard/confirm-dialog'
+import { ACCESS_EVENT, demoAccountByRole, navKey, readAccess } from '@/lib/access'
+import { employeeNavigation, hrNavigation, managerNavigation, systemAdminNavigation, type Role } from '@/lib/navigation'
 
 export function Sidebar({ role }: { role: Role }) {
   const pathname = usePathname()
-  const [hrAccess, setHrAccess] = useState<Record<string, boolean>>({})
+  const router = useRouter()
+  const confirm = useConfirm()
+  const [access, setAccess] = useState<Record<string, boolean>>({})
   const navigation = role === 'hr' ? hrNavigation : role === 'manager' ? managerNavigation : role === 'system-admin' ? systemAdminNavigation : employeeNavigation
   const workspaceLabel = role === 'hr' ? 'HR Dashboard' : role === 'manager' ? 'Manager Dashboard' : role === 'system-admin' ? 'System Admin' : 'Employee Portal'
 
   useEffect(() => {
-    if (role !== 'hr') return
-    const readAccess = () => setHrAccess(JSON.parse(window.localStorage.getItem('juant-hr-access') ?? '{}'))
-    readAccess()
-    window.addEventListener('juant-hr-access-updated', readAccess)
-    return () => window.removeEventListener('juant-hr-access-updated', readAccess)
+    const accountId = demoAccountByRole[role]
+    if (!accountId) return
+    const sync = () => setAccess(readAccess()[accountId] ?? {})
+    sync()
+    window.addEventListener(ACCESS_EVENT, sync)
+    window.addEventListener('storage', sync)
+    return () => {
+      window.removeEventListener(ACCESS_EVENT, sync)
+      window.removeEventListener('storage', sync)
+    }
   }, [role])
+
+  async function handleLogout() {
+    const ok = await confirm({ title: 'Would you really like to logout?', description: 'You will need to sign in again to return to your workspace.', confirmLabel: 'Yes, logout', tone: 'danger' })
+    if (ok) router.push('/signin')
+  }
 
   return (
     <aside className="sticky top-0 z-30 flex max-h-screen w-full shrink-0 flex-col border-b border-[#111111]/15 bg-[#111111] text-[#f6f6f3] lg:h-screen lg:w-72 lg:border-b-0 lg:border-r">
@@ -32,7 +46,7 @@ export function Sidebar({ role }: { role: Role }) {
         </Link>
         <nav className="scrollbar-hidden flex min-w-0 flex-1 flex-wrap gap-x-8 gap-y-6 overflow-y-auto lg:block" aria-label={`${role} navigation`}>
           {navigation.map((group) => {
-            const visibleItems = group.items.filter(({ href }) => role !== 'hr' || hrAccess[href.split('/').pop() as HrAccessKey] !== false)
+            const visibleItems = group.items.filter(({ href }) => access[navKey(href)] !== false)
             if (visibleItems.length === 0) return null
 
             return <div key={group.heading} className="min-w-[180px] lg:mb-7">
@@ -60,10 +74,10 @@ export function Sidebar({ role }: { role: Role }) {
             </div>
           })}
         </nav>
-        <Link href="/signin" className="mt-6 flex items-center gap-2 border-t border-white/15 pt-5 text-xs font-semibold text-white/60 hover:text-white">
+        <button type="button" onClick={handleLogout} className="mt-6 flex items-center gap-2 border-t border-white/15 pt-5 text-left text-xs font-semibold text-white/60 hover:text-white">
           <LogOut aria-hidden="true" className="size-4" />
           Logout
-        </Link>
+        </button>
       </div>
     </aside>
   )

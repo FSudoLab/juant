@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
+import { ConfirmProvider } from '@/components/dashboard/confirm-dialog'
 import { Sidebar } from '@/components/dashboard/sidebar'
 import { resolveRole } from '@/lib/roles'
 
@@ -9,6 +10,7 @@ export default async function DashboardLayout({ children, params }: { children: 
   const role = resolveRole(requestedRole)
 
   return (
+    <ConfirmProvider>
     <main className="min-h-screen bg-[#f6f6f3] text-[#111111]">
       <div className="flex min-h-screen flex-col lg:flex-row">
         <Sidebar role={role} />
@@ -25,5 +27,6 @@ export default async function DashboardLayout({ children, params }: { children: 
         </div>
       </div>
     </main>
+    </ConfirmProvider>
   )
 }

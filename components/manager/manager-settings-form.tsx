@@ -3,7 +3,6 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Panel, PrimaryButton } from '@/components/dashboard/primitives'
-import { SystemAdminSettingsForm } from '@/components/system-admin/system-admin-settings-form'
 
 function Toggle({ id, label, hint, defaultOn = false }: { id: string; label: string; hint: string; defaultOn?: boolean }) {
   const [checked, setChecked] = useState(defaultOn)
@@ -22,8 +21,6 @@ function Toggle({ id, label, hint, defaultOn = false }: { id: string; label: str
 }
 
 export function ManagerSettingsForm() {
-  const employees = ['Alex Cruz', 'Mia Santos', 'Noah Reyes', 'Jamie Lim']
-
   return (
     <>
       <Panel title="Employee schedules" description="Set the standard workweek and daily hours for your team.">
@@ -36,13 +33,9 @@ export function ManagerSettingsForm() {
         <div className="border-t border-[#111111]/15 px-5 py-4 sm:px-6"><PrimaryButton>Save schedule</PrimaryButton></div>
       </Panel>
 
-      <Panel title="Customize each employee" description="Each employee can have their own workweek, start time, and end time.">
-        <div className="divide-y divide-[#111111]/15">
-          {employees.map((employee, index) => <EmployeeSchedule key={employee} employee={employee} index={index} />)}
-        </div>
+      <Panel title="Individual schedules & permissions" description="Customize each person's schedule and sidebar access from Team overview." action={<Link href="/dashboard/manager/employees" className="text-sm font-semibold text-[#3159ff]">Open team overview →</Link>}>
+        <p className="p-5 text-sm text-[#111111]/60 sm:p-6">Use the Schedule and Permissions actions on any employee, HR user, or manager row.</p>
       </Panel>
-
-      <SystemAdminSettingsForm />
 
       <Panel title="Holidays" description="Choose whether company holiday dates appear in team planning.">
         <ul className="divide-y divide-[#111111]/15"><Toggle id="holiday-calendar" label="Show upcoming holidays" hint="Include holidays in schedules and reminders" defaultOn /></ul>
@@ -69,18 +62,4 @@ export function ManagerSettingsForm() {
 
     </>
   )
-}
-
-function EmployeeSchedule({ employee, index }: { employee: string; index: number }) {
-  const [workweek, setWorkweek] = useState(index === 1 ? 'monday-saturday' : 'monday-friday')
-  const [start, setStart] = useState(index === 2 ? '09:00' : '08:30')
-  const [end, setEnd] = useState(index === 2 ? '18:00' : '17:30')
-
-  return <div className="grid gap-4 p-5 sm:grid-cols-[1.1fr_1.3fr_1fr_1fr_auto] sm:items-end sm:p-6">
-    <p className="text-sm font-semibold">{employee}<span className="mt-1 block text-xs font-normal text-[#111111]/50">Individual schedule</span></p>
-    <label className="flex flex-col gap-2 text-xs font-semibold" htmlFor={`${employee}-workweek`}>Workweek<select id={`${employee}-workweek`} value={workweek} onChange={(event) => setWorkweek(event.target.value)} className="border border-[#111111]/20 bg-transparent px-3 py-2.5 text-sm font-normal"><option value="monday-friday">Mon-Fri</option><option value="monday-saturday">Mon-Sat</option><option value="all-week">Mon-Sun</option></select></label>
-    <label className="flex flex-col gap-2 text-xs font-semibold" htmlFor={`${employee}-start`}>Starts<input id={`${employee}-start`} type="time" value={start} onChange={(event) => setStart(event.target.value)} className="border border-[#111111]/20 bg-transparent px-3 py-2.5 text-sm font-normal" /></label>
-    <label className="flex flex-col gap-2 text-xs font-semibold" htmlFor={`${employee}-end`}>Ends<input id={`${employee}-end`} type="time" value={end} onChange={(event) => setEnd(event.target.value)} className="border border-[#111111]/20 bg-transparent px-3 py-2.5 text-sm font-normal" /></label>
-    <PrimaryButton>Save</PrimaryButton>
-  </div>
 }
