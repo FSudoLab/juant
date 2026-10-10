@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowUpRight, CalendarDays, CheckCircle2, Clock3, Users } from 'lucide-react'
+import { ArrowUpRight, CalendarDays, CheckCircle2, Clock3, ShieldCheck, Users } from 'lucide-react'
 import { DashboardInsightsChart } from '@/components/employee/dashboard-insights-chart'
 import { resolveRole } from '@/lib/roles'
 
@@ -20,6 +20,24 @@ const dashboardData = {
     cards: [
       { icon: Users, title: 'Team pulse', detail: '42 of 48 people checked in today', action: 'View attendance', href: '/dashboard/hr/attendance-management' },
       { icon: CheckCircle2, title: 'Needs your review', detail: '8 leave, overtime, and attendance requests', action: 'Open approval center', href: '/dashboard/hr/approvals' },
+    ],
+  },
+  manager: {
+    title: 'Your team, in rhythm.',
+    description: 'Keep schedules, approvals, and employee support moving from one focused workspace.',
+    stats: [['Team members', '18'], ['Pending approvals', '04'], ['Coverage this week', '96%']],
+    cards: [
+      { icon: CalendarDays, title: 'Schedule coverage', detail: 'All weekdays covered · 2 weekend shifts', action: 'Manage schedules', href: '/dashboard/manager/shifts' },
+      { icon: CheckCircle2, title: 'Requests to review', detail: '4 leave and schedule requests are waiting', action: 'Open approvals', href: '/dashboard/manager/approvals' },
+    ],
+  },
+  'system-admin': {
+    title: 'The system, clearly governed.',
+    description: 'Manage access, permissions, and the controls that keep every JuanT workspace dependable.',
+    stats: [['Active users', '72'], ['HR approval access', 'Enabled'], ['Open audit items', '03']],
+    cards: [
+      { icon: ShieldCheck, title: 'HR access control', detail: 'Approval access is enabled for the HR team', action: 'Review HR access', href: '/dashboard/system-admin/hr-access' },
+      { icon: Users, title: 'User access', detail: '72 active users across 3 workspace roles', action: 'Manage users', href: '/dashboard/system-admin/users' },
     ],
   },
 } as const

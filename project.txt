@@ -1,0 +1,116 @@
+Name of System: JuanT
+Scope:
+JuanT is a role-based employee and HR operations platform for small and medium-sized organizations. It centralizes employee self-service, HR administration, manager approvals, schedules, leave, documents, support, and access control in one workspace.
+
+The current project is a functional product prototype with demo accounts and interactive role-based screens. The production scope will be delivered in phases. The next production phase would add secure authentication, database persistence, audit logs, notifications, integrations, compliance controls, and subscription billing.
+
+Current prototype status:
+- Working now: role-based demo sign-in, employee/HR/manager/system-admin dashboards, navigation, manager schedule controls, employee information editing, HR module access toggles, performance overview screens, and interactive sample settings.
+- Planned for production: real authentication, organization and employee database, persistent settings, peer performance submissions, payroll integrations, document storage, notification delivery, audit logs, reporting exports, billing, and complete security/compliance review.
+
+Features:
+- Role-based workspaces for employees, HR, managers, and JuanT system administrators.
+- Employee self-service for attendance, schedules, leave, requests, payroll and payslips, documents, profile, performance, notifications, and support.
+- HR workspace for employee management, organization structure, employee 201 files, documents and forms, recruitment, onboarding, attendance, schedules, leave, overtime, payroll, loans, government contributions, performance, engagement, offboarding, reports, and Ask Juan AI.
+- Manager administration for individual employee schedules, weekday or weekend work, work hours, leave allowances, leave approvals, documents, employee information, reminders, and HR support.
+- Per-employee schedule customization, including workweek, start time, and end time.
+- Employee information editing with manager-controlled edit access.
+- Performance rating workflow managed by the company manager, with reviews scheduled every month or every three months.
+- Peer feedback from other employees within the same organization, combined with the manager's rating and review comments.
+- Configurable performance criteria, rating scales, review history, and employee acknowledgement of results.
+- Underperformance alerts and improvement-plan tracking when an employee falls below the company's chosen rating threshold.
+- HR escalation workflow for documented performance concerns. The manager can recommend further action, while HR reviews the case and manages any formal termination and offboarding process.
+- HR-ready offboarding handoff for employees who require separation, including clearance, asset return, exit interview, and final pay preparation.
+- HR sidebar access management, allowing managers to show or hide specific HR modules for HR users.
+- Leave approval and decline workflows, holiday visibility settings, attendance and schedule management, and team reminders.
+- Documents and forms management for company policies and employee resources.
+- Dashboard summaries, pending approvals, team coverage, attendance insights, and operational metrics.
+- Responsive web interface designed for desktop and mobile use.
+
+Plan feature clarification:
+- Starter includes a basic performance tab for employee goals, feedback, and review history. It does not include formal peer-rating campaigns.
+- Growth includes manager-led monthly or quarterly performance reviews, peer ratings within the same organization, improvement plans, and HR escalation.
+- Business includes advanced performance analytics, configurable criteria, calibration, audit history, and exports.
+
+Payroll and compliance scope:
+- Starter and Growth provide payroll and payslip record-keeping, document storage, and employee visibility. They do not promise automatic statutory payroll computation.
+- Business may include payroll computation through validated integrations or a separately scoped payroll add-on.
+- SSS, PhilHealth, Pag-IBIG, and BIR information should be treated as records and reporting support until each calculation and filing integration is validated for the relevant Philippine rules.
+- Full payroll computation, tax filing, remittance, and legal compliance require a dedicated implementation review and should not be assumed from the prototype.
+
+Security and privacy:
+- JuanT should follow the Philippine Data Privacy Act of 2012 (RA 10173) for employee records, payslips, 201 files, and performance information.
+- Production requirements include consent and privacy notices, role-based least-privilege access, encryption in transit and at rest, secure authentication, audit logs, retention and deletion policies, backups, breach response procedures, and access reviews.
+- Data retention periods and consent requirements should be configurable by organization and aligned with applicable employment, tax, and privacy obligations.
+
+Technology direction:
+- Frontend: Next.js, React, TypeScript, and Tailwind CSS.
+- Current data: demo and in-memory UI state for prototyping.
+- Planned production data layer: secure relational database, authenticated API, object storage for documents, background jobs for notifications, and payment provider integration.
+
+Target clients:
+- Small and medium-sized businesses that need an affordable HR operations system.
+- Companies moving from spreadsheets, email, and manual HR processes to a centralized platform.
+- Organizations with managers who need direct control over schedules, leave, employee information, and team support.
+- Philippine-based companies and other regional organizations requiring attendance, leave, payroll, and employee records management.
+- US-based or multi-country companies that need configurable holiday calendars and flexible workweek settings.
+- HR teams, people operations teams, department managers, and company administrators.
+
+Subscription/Different Plans included:
+Proposed plans:
+
+1. Starter
+- For small teams beginning to digitize HR operations.
+- Employee profiles, attendance, schedules, leave requests, documents, notifications, basic employee self-service, and basic goals/feedback performance history.
+- Up to 25 employees.
+- Standard email support.
+- Privacy and security baseline included; payroll is record-keeping only.
+
+2. Growth
+- For growing companies that need manager and HR workflows.
+- Everything in Starter, plus manager dashboards, per-employee schedules, leave approvals, employee information editing, HR access controls, reports, reminders, and document management.
+- Includes formal monthly or quarterly performance reviews, same-organization peer ratings, improvement plans, and HR escalation.
+- Up to 100 employees.
+- Priority support.
+- Privacy and security baseline included; payroll and statutory information remain record-keeping only unless an approved integration is added.
+
+3. Business
+- For organizations with more advanced HR operations.
+- Everything in Growth, plus advanced reports, payroll and reimbursement workflows, organization structure, recruitment and onboarding, performance tracking, audit logs, configurable permissions, and priority onboarding.
+- Up to 500 employees.
+- Dedicated customer success support.
+- Payroll computation and statutory integrations are separately validated and scoped; they are not automatically included by the plan name alone.
+
+4. Enterprise
+- For larger or multi-location organizations.
+- Custom employee limits, custom permissions, integrations, single sign-on, multi-country configuration, data retention controls, service-level agreements, and dedicated implementation support.
+- Custom pricing and contract.
+
+Price per plan:
+Proposed starting prices, subject to validation through customer interviews and operating-cost analysis:
+
+- Starter: PHP 2,500 per month for up to 25 employees.
+- Growth: PHP 7,500 per month for up to 100 employees.
+- Business: PHP 20,000 per month for up to 500 employees.
+- Enterprise: Custom quote based on employee count, integrations, support level, and implementation requirements.
+
+Pricing notes:
+- Annual billing may include a 15% discount.
+- Additional employees can be charged using a per-employee monthly rate that remains high enough to make the next plan upgrade economically attractive. Proposed overage rates: PHP 110 per employee for Starter, PHP 85 per employee for Growth, and PHP 50 per employee for Business.
+- A free trial or guided demo can be offered before subscription.
+- Final pricing should be confirmed after validating target customer demand, hosting costs, support costs, and required integrations.
+
+Roadmap:
+1. Production foundation: authentication, organization setup, database persistence, permissions, audit logs, privacy notices, and backups.
+2. Core HR operations: employee records, attendance, schedules, leave, documents, notifications, and manager workflows.
+3. Performance and lifecycle: peer ratings, monthly/quarterly reviews, improvement plans, HR escalation, offboarding, clearance, and final pay preparation.
+4. Integrations and scale: payroll integrations, statutory reporting support, SSO, billing, multi-country settings, analytics, and mobile improvements.
+
+Success metrics:
+- Employee onboarding completion rate.
+- Monthly active employees and manager adoption.
+- Reduction in manual HR requests, spreadsheets, and email approvals.
+- Leave and schedule approval turnaround time.
+- Performance review completion rate.
+- Time required to complete an offboarding checklist.
+- Customer retention, plan upgrades, support response time, and data/security incidents.

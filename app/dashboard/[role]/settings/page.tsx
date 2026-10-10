@@ -1,6 +1,7 @@
 import { PageIntro, Panel } from '@/components/dashboard/primitives'
 import { SettingsForm } from '@/components/employee/settings-form'
-import { requireEmployee } from '@/lib/roles'
+import { ManagerSettingsForm } from '@/components/manager/manager-settings-form'
+import { resolveRole } from '@/lib/roles'
 
 const preferences = [
   ['Language', 'English'],
@@ -10,7 +11,30 @@ const preferences = [
 ]
 
 export default async function SettingsPage({ params }: { params: Promise<{ role: string }> }) {
-  await requireEmployee(params)
+  const { role: requestedRole } = await params
+  const role = resolveRole(requestedRole)
+
+  if (role === 'manager') {
+    return (
+      <>
+        <PageIntro eyebrow="Team operations / Manager settings" title="Manager settings" description="Shape schedules, leave rules, team information, reminders, and HR support for your team." />
+        <ManagerSettingsForm />
+      </>
+    )
+  }
+
+  if (role === 'system-admin') {
+    return (
+      <>
+        <PageIntro eyebrow="System / Settings" title="System settings" description="Platform-level controls for the JuanT system workspace." />
+        <Panel title="JuanT platform controls" description="System-level settings for the JuanT platform and its workspace infrastructure.">
+          <div className="p-5 text-sm text-[#111111]/60 sm:p-6">Platform administration is separate from company HR permissions. Company managers control HR access from Manager settings.</div>
+        </Panel>
+      </>
+    )
+  }
+
+  if (role !== 'employee') return null
 
   return (
     <>

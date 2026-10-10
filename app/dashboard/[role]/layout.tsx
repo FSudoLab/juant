@@ -18,7 +18,7 @@ export default async function DashboardLayout({ children, params }: { children: 
               <Link href="/" className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.12em] text-[#111111]/60 hover:text-[#3159ff]">
                 <ArrowLeft aria-hidden="true" className="size-4" /> Back to site
               </Link>
-              <span className="font-mono text-xs font-bold uppercase tracking-[0.12em] text-[#3159ff]">{role === 'hr' ? 'HR manager workspace' : 'Employee workspace'}</span>
+              <span className="font-mono text-xs font-bold uppercase tracking-[0.12em] text-[#3159ff]">{role === 'hr' ? 'HR manager workspace' : role === 'manager' ? 'Manager workspace' : role === 'system-admin' ? 'System admin workspace' : 'Employee workspace'}</span>
             </header>
             {children}
           </div>

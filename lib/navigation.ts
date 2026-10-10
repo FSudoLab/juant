@@ -24,15 +24,42 @@ import {
   Target,
   Timer,
   UserPlus,
+  UserCog,
+  UserPen,
   UserRound,
   Users,
   Wallet,
   type LucideIcon,
 } from 'lucide-react'
 
-export type Role = 'employee' | 'hr'
+export type Role = 'employee' | 'hr' | 'manager' | 'system-admin'
 export type NavItem = { label: string; href: string; icon: LucideIcon; badge?: string }
 export type NavGroup = { heading: string; items: NavItem[] }
+export type HrAccessKey = 'approvals' | 'employees' | 'organization' | '201-files' | 'forms' | 'recruitment' | 'onboarding' | 'attendance-management' | 'shifts' | 'leave-management' | 'overtime' | 'payroll-runs' | 'loans' | 'contributions' | 'kpis' | 'engagement' | 'offboarding' | 'final-pay' | 'reports' | 'ask-juan' | 'hr-settings'
+
+export const hrAccessItems: { key: HrAccessKey; label: string }[] = [
+  { key: 'approvals', label: 'Approval Center' },
+  { key: 'employees', label: 'Employee Management' },
+  { key: 'organization', label: 'Organization Structure' },
+  { key: '201-files', label: 'Employee 201 Files' },
+  { key: 'forms', label: 'Documents & Forms' },
+  { key: 'recruitment', label: 'Recruitment' },
+  { key: 'onboarding', label: 'Onboarding' },
+  { key: 'attendance-management', label: 'Attendance Management' },
+  { key: 'shifts', label: 'Schedules & Shifts' },
+  { key: 'leave-management', label: 'Leave Management' },
+  { key: 'overtime', label: 'Overtime & Holiday Work' },
+  { key: 'payroll-runs', label: 'Payroll' },
+  { key: 'loans', label: 'Loans & Reimbursements' },
+  { key: 'contributions', label: 'Government Contributions & Tax' },
+  { key: 'kpis', label: 'Performance & KPIs' },
+  { key: 'engagement', label: 'Engagement & Feedback' },
+  { key: 'offboarding', label: 'Offboarding & Clearance' },
+  { key: 'final-pay', label: 'Final Pay' },
+  { key: 'reports', label: 'Reports & Analytics' },
+  { key: 'ask-juan', label: 'Ask Juan AI' },
+  { key: 'hr-settings', label: 'HR Settings' },
+]
 
 const employeeBase = '/dashboard/employee'
 
@@ -121,6 +148,62 @@ export const hrNavigation: NavGroup[] = [
       hrItem('Reports & Analytics', 'reports', BarChart3),
       hrItem('Ask Juan AI', 'ask-juan', Bot),
       hrItem('HR Settings', 'hr-settings', Settings),
+    ],
+  },
+]
+
+const managerBase = '/dashboard/manager'
+const managerItem = (label: string, slug: string, icon: LucideIcon, badge?: string): NavItem => ({ label, href: `${managerBase}/${slug}`, icon, badge })
+
+export const managerNavigation: NavGroup[] = [
+  {
+    heading: 'Workspace',
+    items: [
+      { label: 'Dashboard', href: managerBase, icon: LayoutDashboard },
+      managerItem('Team overview', 'employees', Users),
+      managerItem('Approval center', 'approvals', CheckCircle2, '4'),
+    ],
+  },
+  {
+    heading: 'Team operations',
+    items: [
+      managerItem('Schedules & shifts', 'shifts', CalendarDays),
+      managerItem('Leave management', 'leave-management', ShieldCheck),
+      managerItem('Upcoming holidays', 'holidays', Sun),
+    ],
+  },
+  {
+    heading: 'Team resources',
+    items: [
+      managerItem('Documents', 'documents', FileText),
+      managerItem('Employee information', 'employee-information', UserPen),
+    ],
+  },
+  {
+    heading: 'Support',
+    items: [
+      managerItem('Notifications & reminders', 'notifications', Bell),
+      managerItem('Help & HR support', 'help', HelpCircle),
+      managerItem('Manager settings', 'settings', Settings),
+    ],
+  },
+]
+
+const systemAdminBase = '/dashboard/system-admin'
+
+export const systemAdminNavigation: NavGroup[] = [
+  {
+    heading: 'Workspace',
+    items: [
+      { label: 'Dashboard', href: systemAdminBase, icon: LayoutDashboard },
+      { label: 'User access', href: `${systemAdminBase}/users`, icon: UserCog },
+    ],
+  },
+  {
+    heading: 'System',
+    items: [
+      { label: 'Audit log', href: `${systemAdminBase}/audit-log`, icon: FileText },
+      { label: 'System settings', href: `${systemAdminBase}/settings`, icon: Settings },
     ],
   },
 ]

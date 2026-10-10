@@ -4,14 +4,13 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 import {
-  Area,
-  AreaChart,
-  Bar,
-  BarChart,
   CartesianGrid,
   ReferenceLine,
+  ReferenceDot,
   ResponsiveContainer,
   Tooltip,
+  Line,
+  LineChart,
   XAxis,
   YAxis,
 } from 'recharts'
@@ -123,57 +122,33 @@ export function DashboardInsightsChart() {
       </div>
 
       <div className="grid sm:grid-cols-[1fr_14rem]">
-        <div className="h-72 p-4 sm:p-6" role="tabpanel" aria-label={`${current.label} chart`}>
+        <div className="h-72 bg-transparent p-4 sm:p-6" role="tabpanel" aria-label={`${current.label} chart`}>
           <ResponsiveContainer width="100%" height="100%">
             {view === 'attendance' ? (
-              <BarChart data={attendanceTrend} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
+              <LineChart data={attendanceTrend} margin={{ top: 18, right: 14, left: -16, bottom: 0 }}>
                 <CartesianGrid vertical={false} stroke="rgba(17,17,17,0.08)" />
                 <XAxis dataKey="label" tickLine={false} axisLine={false} tick={axisTick} dy={8} />
-                <YAxis tickLine={false} axisLine={false} tick={axisTick} domain={[30, 45]} />
+                <YAxis tickLine={false} axisLine={false} tick={axisTick} domain={[35, 45]} />
                 <ReferenceLine
                   y={40}
-                  stroke="#111111"
+                  stroke="rgba(17,17,17,0.3)"
                   strokeDasharray="4 4"
-                  strokeOpacity={0.4}
-                  label={{ value: 'Target 40h', position: 'insideTopRight', fill: 'rgba(17,17,17,0.5)', fontSize: 11 }}
+                  label={{ value: 'Target 40h', position: 'insideTopRight', fill: 'rgba(17,17,17,0.55)', fontSize: 11 }}
                 />
-                <Tooltip cursor={{ fill: 'rgba(49,89,255,0.06)' }} content={<ChartTooltip unit="h" />} />
-                <Bar dataKey="hours" name="Hours" fill="#3159ff" maxBarSize={36} animationDuration={600} />
-              </BarChart>
+                <Tooltip cursor={{ stroke: 'rgba(17,17,17,0.2)' }} content={<ChartTooltip unit="h" />} />
+                <Line type="monotone" dataKey="hours" name="Hours" stroke="#3159ff" strokeWidth={3} dot={false} activeDot={{ r: 5, fill: '#3159ff', stroke: '#f6f6f3', strokeWidth: 3 }} animationDuration={600} />
+                <ReferenceDot x="Oct 5" y={42.6} r={5} fill="#3159ff" stroke="#f6f6f3" strokeWidth={3} label={{ value: '42.6h', position: 'top', fill: '#111111', fontSize: 13, fontWeight: 700 }} />
+              </LineChart>
             ) : (
-              <AreaChart data={performanceTrend} margin={{ top: 8, right: 8, left: -16, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="scoreFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#3159ff" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="#3159ff" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
+              <LineChart data={performanceTrend} margin={{ top: 18, right: 14, left: -16, bottom: 0 }}>
                 <CartesianGrid vertical={false} stroke="rgba(17,17,17,0.08)" />
                 <XAxis dataKey="label" tickLine={false} axisLine={false} tick={axisTick} dy={8} />
                 <YAxis tickLine={false} axisLine={false} tick={axisTick} domain={[50, 100]} />
                 <Tooltip cursor={{ stroke: 'rgba(17,17,17,0.2)' }} content={<ChartTooltip unit="" />} />
-                <Area
-                  type="monotone"
-                  dataKey="goals"
-                  name="Goals met %"
-                  stroke="#111111"
-                  strokeOpacity={0.45}
-                  strokeDasharray="4 4"
-                  fill="transparent"
-                  strokeWidth={1.5}
-                  animationDuration={600}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="score"
-                  name="Score"
-                  stroke="#3159ff"
-                  strokeWidth={2.5}
-                  fill="url(#scoreFill)"
-                  activeDot={{ r: 5, fill: '#3159ff', stroke: '#f6f6f3', strokeWidth: 2 }}
-                  animationDuration={600}
-                />
-              </AreaChart>
+                <Line type="monotone" dataKey="goals" name="Goals met %" stroke="rgba(17,17,17,0.35)" strokeDasharray="4 4" strokeWidth={1.5} dot={false} animationDuration={600} />
+                <Line type="monotone" dataKey="score" name="Score" stroke="#3159ff" strokeWidth={3} dot={false} activeDot={{ r: 5, fill: '#3159ff', stroke: '#f6f6f3', strokeWidth: 3 }} animationDuration={600} />
+                <ReferenceDot x="Oct" y={91} r={5} fill="#3159ff" stroke="#f6f6f3" strokeWidth={3} label={{ value: '91', position: 'top', fill: '#111111', fontSize: 13, fontWeight: 700 }} />
+              </LineChart>
             )}
           </ResponsiveContainer>
         </div>

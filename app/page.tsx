@@ -43,7 +43,6 @@ export default function Page() {
         <div className="relative min-h-[520px] overflow-hidden bg-[#dce5ff] lg:min-h-0">
           <Image src="/juant-team-hero.png" alt="A diverse team collaborating in a bright office" fill priority className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" />
           <div className="absolute bottom-5 left-5 max-w-[250px] bg-[#f6f6f3] p-4 sm:bottom-8 sm:left-8"><p className="font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-[#3159ff]">Designed for momentum</p><p className="mt-2 text-sm font-medium leading-snug">The less time you spend managing work, the more time your people have to do it.</p></div>
-          <div className="absolute right-5 top-5 grid size-16 place-items-center bg-[#d8f06a] font-mono text-xs font-bold uppercase leading-none tracking-tight sm:right-8 sm:top-8"><Sparkles aria-hidden="true" /><span className="sr-only">Human-first design</span></div>
         </div>
       </section>
 
