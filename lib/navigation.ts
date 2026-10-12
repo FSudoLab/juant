@@ -33,7 +33,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 
-export type Role = 'employee' | 'hr' | 'manager' | 'system-admin'
+export type Role = 'employee' | 'hr' | 'system-admin'
 export type NavItem = { label: string; href: string; icon: LucideIcon; badge?: string }
 export type NavGroup = { heading: string; items: NavItem[] }
 export type HrAccessKey = 'approval-center' | 'employee-management' | 'organization-structure' | '201-files' | 'company-documents' | 'recruitment' | 'onboarding' | 'attendance-management' | 'schedules-shifts' | 'leave-management' | 'overtime' | 'payroll-runs' | 'loans-reimbursements' | 'government-contributions' | 'evaluations' | 'eval-surveys' | 'offboarding' | 'final-pay' | 'reports-analytics' | 'ask-juan' | 'hr-settings'
@@ -144,43 +144,6 @@ export const hrNavigation: NavGroup[] = [
       hrItem('Reports & Analytics', 'reports-analytics', BarChart3),
       hrItem('Ask Juan AI', 'ask-juan', Bot),
       hrItem('Settings', 'hr-settings', Settings),
-    ],
-  },
-]
-
-const managerBase = '/dashboard/manager'
-const managerItem = (label: string, slug: string, icon: LucideIcon, badge?: string): NavItem => ({ label, href: `${managerBase}/${slug}`, icon, badge })
-
-export const managerNavigation: NavGroup[] = [
-  {
-    heading: 'Workspace',
-    items: [
-      { label: 'Dashboard', href: managerBase, icon: LayoutDashboard },
-      managerItem('Team overview', 'team-overview', Users),
-      managerItem('Approval center', 'approval-center', CheckCircle2, '4'),
-    ],
-  },
-  {
-    heading: 'Team operations',
-    items: [
-      managerItem('Schedules & shifts', 'schedules-shifts', CalendarDays),
-      managerItem('Leave management', 'leave-management', ShieldCheck),
-      managerItem('Upcoming holidays', 'holidays', Sun),
-    ],
-  },
-  {
-    heading: 'Team resources',
-    items: [
-      managerItem('Documents', 'team-documents', FileText),
-      managerItem('Employee information', 'employee-information', UserPen),
-    ],
-  },
-  {
-    heading: 'Support',
-    items: [
-      managerItem('Notifications & reminders', 'notifications-reminders', Bell),
-      managerItem('Help & HR support', 'help-hr-support', HelpCircle),
-      managerItem('Manager settings', 'settings', Settings),
     ],
   },
 ]

@@ -5,12 +5,11 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { ArrowUpRight, Check } from 'lucide-react'
 
-type Role = 'employee' | 'hr' | 'manager' | 'system-admin'
+type Role = 'employee' | 'hr' | 'system-admin'
 
 const demoAccounts = {
   employee: { email: 'employee@juant.demo', password: 'employee123', name: 'Demo Employee' },
   hr: { email: 'hr@juant.demo', password: 'hr123456', name: 'Demo HR Manager' },
-  manager: { email: 'manager@juant.demo', password: 'manager123', name: 'Demo Team Manager' },
   'system-admin': { email: 'admin@juant.demo', password: 'admin12345', name: 'Demo System Admin' },
 }
 
@@ -53,10 +52,10 @@ export default function SignInPage() {
         </div>
         <p className="mt-5 max-w-sm text-sm leading-relaxed text-[#111111]/60">Choose a demo role to explore the JuanT experience.</p>
 
-        <div className="mt-8 grid grid-cols-2 border border-[#111111]/20 sm:grid-cols-4" role="tablist" aria-label="Demo account type">
-          {(['employee', 'hr', 'manager', 'system-admin'] as Role[]).map((option) => (
+        <div className="mt-8 grid grid-cols-2 border border-[#111111]/20 sm:grid-cols-3" role="tablist" aria-label="Demo account type">
+          {(['employee', 'hr', 'system-admin'] as Role[]).map((option) => (
             <button key={option} type="button" role="tab" aria-selected={role === option} onClick={() => chooseRole(option)} className={`border-r border-[#111111]/20 px-4 py-3 text-left text-sm font-semibold capitalize last:border-r-0 ${role === option ? 'bg-[#3159ff] text-white' : 'text-[#111111]/60 hover:bg-[#111111]/5'}`}>
-              {option === 'hr' ? 'HR manager' : option === 'system-admin' ? 'System admin' : option === 'manager' ? 'Manager' : 'Employee'}
+              {option === 'hr' ? 'HR manager' : option === 'system-admin' ? 'System admin' : 'Employee'}
             </button>
           ))}
         </div>
@@ -69,7 +68,7 @@ export default function SignInPage() {
 
         {error && <p className="mt-5 border border-red-600/30 bg-red-600/5 px-4 py-3 text-sm text-red-700" role="alert">{error}</p>}
         {signedIn && <div className="mt-5 border border-[#3159ff]/30 bg-[#3159ff]/5 px-4 py-4 text-sm" role="status"><p className="flex items-center gap-2 font-semibold"><Check aria-hidden="true" /> Demo sign in successful</p><p className="mt-1 text-[#111111]/60">You are viewing the {demoAccounts[role].name} experience. No account was created.</p></div>}
-        <p className="mt-8 border-t border-[#111111]/10 pt-5 text-xs leading-relaxed text-[#111111]/50">Demo credentials are prefilled. Employee: employee@juant.demo / employee123. HR: hr@juant.demo / hr123456. Manager: manager@juant.demo / manager123. System admin: admin@juant.demo / admin12345.</p>
+        <p className="mt-8 border-t border-[#111111]/10 pt-5 text-xs leading-relaxed text-[#111111]/50">Demo credentials are prefilled. Employee: employee@juant.demo / employee123. HR: hr@juant.demo / hr123456. System admin: admin@juant.demo / admin12345.</p>
       </section>
     </main>
   )

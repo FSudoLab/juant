@@ -62,7 +62,7 @@ export function ManagerSettingsForm() {
         <div className="border-t border-[#111111]/15 px-5 py-4 sm:px-6"><PrimaryButton>Save schedule</PrimaryButton></div>
       </Panel>
 
-      <Panel title="Individual schedules & permissions" description="Customize each person's schedule and sidebar access from Team overview." action={<Link href="/dashboard/manager/employees" className="text-sm font-semibold text-[#3159ff]">Open team overview →</Link>}>
+      <Panel title="Individual schedules & permissions" description="Customize each person's schedule and sidebar access from Team overview." action={<Link href="/dashboard/hr/team-overview" className="text-sm font-semibold text-[#3159ff]">Open team overview →</Link>}>
         <p className="p-5 text-sm text-[#111111]/60 sm:p-6">Use the Schedule and Permissions actions on any employee, HR user, or manager row.</p>
       </Panel>
 
@@ -79,7 +79,7 @@ export function ManagerSettingsForm() {
         <div className="border-t border-[#111111]/15 px-5 py-4 sm:px-6"><PrimaryButton>Save leave rules</PrimaryButton></div>
       </Panel>
 
-      <Panel title="Team resources" description="Control the information and materials your team can receive from you." action={<Link href="/dashboard/manager/employee-information" className="text-sm font-semibold text-[#3159ff]">Try employee information →</Link>}>
+      <Panel title="Team resources" description="Control the information and materials your team can receive from you." action={<Link href="/dashboard/hr/employee-management" className="text-sm font-semibold text-[#3159ff]">Open employee management →</Link>}>
         <ul className="divide-y divide-[#111111]/15"><Toggle id="documents" label="Add team documents" hint="Allow document uploads for your employees" defaultOn /><Toggle id="employee-information" label="Edit employee information" hint="Allow updates to team contact and profile details" defaultOn /></ul>
         <div className="grid gap-5 border-t border-[#111111]/15 p-5 sm:grid-cols-[1fr_auto] sm:items-end sm:p-6"><label className="flex flex-col gap-2 text-sm font-semibold" htmlFor="document-name">Add a document<input id="document-name" type="text" placeholder="e.g. Updated remote work policy" className="border border-[#111111]/20 bg-transparent px-3 py-2.5 font-normal" /></label><PrimaryButton>Add document</PrimaryButton></div>
       </Panel>

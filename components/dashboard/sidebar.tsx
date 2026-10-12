@@ -7,7 +7,7 @@ import { LogOut } from 'lucide-react'
 import { useConfirm } from '@/components/dashboard/confirm-dialog'
 import { ACCESS_EVENT, demoAccountByRole, navKey, powerAccessId, powerNavigationFor, readAccess, readPowerUsers } from '@/lib/access'
 import { DEMO_HR_ACCOUNT, SYSTEMS_EVENT, defaultSystemConfig, isSectionEnabled, systemConfigFor, type SystemConfig } from '@/lib/systems'
-import { employeeNavigation, hrNavigation, managerNavigation, systemAdminNavigation, type NavGroup, type Role } from '@/lib/navigation'
+import { employeeNavigation, hrNavigation, systemAdminNavigation, type NavGroup, type Role } from '@/lib/navigation'
 
 export function Sidebar({ role }: { role: Role }) {
   const pathname = usePathname()
@@ -16,9 +16,9 @@ export function Sidebar({ role }: { role: Role }) {
   const [access, setAccess] = useState<Record<string, boolean>>({})
   const [powerNav, setPowerNav] = useState<NavGroup[]>([])
   const [systems, setSystems] = useState<SystemConfig>(defaultSystemConfig)
-  const baseNavigation = role === 'hr' ? hrNavigation : role === 'manager' ? managerNavigation : role === 'system-admin' ? systemAdminNavigation : employeeNavigation
+  const baseNavigation = role === 'hr' ? hrNavigation : role === 'system-admin' ? systemAdminNavigation : employeeNavigation
   const navigation = [...baseNavigation, ...powerNav]
-  const workspaceLabel = role === 'hr' ? 'HR Dashboard' : role === 'manager' ? 'Manager Dashboard' : role === 'system-admin' ? 'System Admin' : 'Employee Portal'
+  const workspaceLabel = role === 'hr' ? 'HR Dashboard' : role === 'system-admin' ? 'System Admin' : 'Employee Portal'
   const isSampleAccount = pathname === '/dashboard/system-admin/sample-new-account'
 
   useEffect(() => {
@@ -90,7 +90,7 @@ export function Sidebar({ role }: { role: Role }) {
           })}
         </nav>
         <div className="mt-6 flex items-center justify-between gap-3 border-t border-white/15 pt-5">
-          <p className="min-w-0 truncate text-sm font-semibold text-white">{role === 'hr' ? 'HR Admin' : role === 'manager' ? 'Manager' : role === 'system-admin' ? 'System Admin' : 'Alex'}</p>
+          <p className="min-w-0 truncate text-sm font-semibold text-white">{role === 'hr' ? 'HR Admin' : role === 'system-admin' ? 'System Admin' : 'Alex'}</p>
           <button type="button" onClick={handleLogout} className="inline-flex shrink-0 items-center gap-2 text-left text-sm font-semibold text-white/60 hover:text-white">
             <LogOut aria-hidden="true" className="size-4" />
             Logout

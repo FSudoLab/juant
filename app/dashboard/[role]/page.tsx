@@ -22,15 +22,6 @@ const dashboardData = {
       { icon: CheckCircle2, title: 'Needs your review', detail: '8 leave, overtime, and attendance requests', action: 'Open approval center', href: '/dashboard/hr/approvals' },
     ],
   },
-  manager: {
-    title: 'Your team, in rhythm.',
-    description: 'Keep schedules, approvals, and employee support moving from one focused workspace.',
-    stats: [['Team members', '18'], ['Pending approvals', '04'], ['Coverage this week', '96%']],
-    cards: [
-      { icon: CalendarDays, title: 'Schedule coverage', detail: 'All weekdays covered · 2 weekend shifts', action: 'Manage schedules', href: '/dashboard/manager/shifts' },
-      { icon: CheckCircle2, title: 'Requests to review', detail: '4 leave and schedule requests are waiting', action: 'Open approvals', href: '/dashboard/manager/approvals' },
-    ],
-  },
   'system-admin': {
     title: 'The system, clearly governed.',
     description: 'Manage access, permissions, and the controls that keep every JuanT workspace dependable.',

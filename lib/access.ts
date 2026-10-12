@@ -1,6 +1,6 @@
-import { employeeNavigation, hrNavigation, managerNavigation, type NavGroup, type Role } from './navigation'
+import { employeeNavigation, hrNavigation, type NavGroup, type Role } from './navigation'
 
-export type TeamRole = 'Employee' | 'HR' | 'Manager'
+export type TeamRole = 'Employee' | 'HR'
 export type AccessMap = Record<string, Record<string, boolean>>
 
 export const ACCESS_STORAGE_KEY = 'juant-access'
@@ -9,13 +9,11 @@ export const ACCESS_EVENT = 'juant-access-updated'
 export const demoAccountByRole: Partial<Record<Role, string>> = {
   employee: 'e1',
   hr: 'hr1',
-  manager: 'm1',
 }
 
 const navigationByTeamRole: Record<TeamRole, NavGroup[]> = {
   Employee: employeeNavigation,
   HR: hrNavigation,
-  Manager: managerNavigation,
 }
 
 const lockedSections = new Set(['employee-management', 'team-overview', 'settings', 'hr-settings'])

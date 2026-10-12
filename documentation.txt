@@ -1,0 +1,380 @@
+JUANT PRODUCT DOCUMENTATION
+===========================
+
+Purpose
+-------
+JuanT is a role-based employee and HR operations platform for small and medium-sized organizations. It brings attendance, schedules, leave, employee records, payroll records, documents, approvals, performance, and support into one workspace.
+
+This document describes the intended behavior of every role and every current sidebar tab. The current Next.js app is a functional prototype with demo data and in-memory or browser-local state. Production implementation requires authentication, database persistence, file storage, audit logs, notifications, and permission enforcement on the server.
+
+Global rules
+------------
+- Every record belongs to an organization and must be isolated from other organizations.
+- Every important action records the actor, timestamp, previous value, new value, and reason when applicable.
+- Employee data, 201 files, payslips, performance records, and requests require least-privilege access.
+- Approval actions must show the request details, supporting files, approver, decision, date, and optional comment.
+- Status values should be explicit and filterable. Destructive actions should archive or deactivate records instead of deleting history.
+- Notifications should be generated for submissions, approvals, declines, reminders, expiring files, and approaching deadlines.
+
+
+EMPLOYEE
+========
+
+Workspace
+---------
+
+Dashboard
+  Purpose: Give the employee a quick view of today's workday and open actions.
+  Show: time-in status, today's schedule, leave balance, open requests, upcoming leave, notifications, and quick links.
+  Actions: time in, time out, view schedule, file a request, open leave, and view notifications.
+
+Time In
+  Purpose: Record attendance and correct missing or inaccurate time records.
+  Show: time in/out controls, current location or work setup when enabled, daily attendance history, monthly records, and manual request history.
+  Actions: time in, time out, view attendance history, submit a manual time-in/time-out request, attach an explanation or evidence, and track approval.
+  Rule: A manual attendance request is never final until reviewed and approved by the configured manager or HR approver.
+
+My Schedule
+  Purpose: Show the employee's assigned work schedule.
+  Show: workdays, start/end time, breaks, location, holidays, weekend work, and schedule changes.
+  Actions: view the current schedule and request a schedule change when the organization allows it.
+
+Leave Management
+  Purpose: Let employees use and monitor leave credits.
+  Show: leave type, total credits, used credits, remaining balance, blackout dates, and leave history.
+  Actions: file leave, upload supporting documents, withdraw a pending request, and view approval or decline comments.
+  Statuses: Pending, Approved, Declined, Cancelled.
+
+My Requests
+  Purpose: Keep every employee-submitted request in one queue.
+  Request types: leave, overtime, attendance correction, schedule change, certificate of employment, reimbursement, and other organization-defined requests.
+  Show: request ID, type, summary, filed date, approver, status, decision date, and comments.
+
+My Employment
+------------
+
+Payroll & Payslips
+  Purpose: Give employees access to released payroll records.
+  Show: pay period, gross pay, deductions, contributions, tax withholding, net pay, pay date, and payslip download.
+  Rule: Draft or unreleased payroll is not visible to employees. Payroll computation and statutory filing must be validated separately for each country.
+
+My Documents
+  Purpose: Provide employee-visible policies, forms, certificates, and assigned documents.
+  Show: document name, category, version, updated date, status, and download or acknowledgement state.
+  Actions: view, download, acknowledge, and submit requested documents.
+
+My Profile
+  Purpose: Maintain employee contact and personal information.
+  Show: name, contact details, address, emergency contact, employment details, and profile photo where enabled.
+  Actions: edit permitted fields and submit restricted changes for manager or HR review.
+  Rule: Changes to employment-sensitive fields require approval and an audit entry.
+
+My Performance
+  Purpose: Let employees understand goals, feedback, and review history.
+  Show: goals, KPI criteria, review cycle, manager rating, peer feedback where enabled, comments, improvement plan, and acknowledgement state.
+  Actions: update goals, submit self-review, provide allowed peer feedback, acknowledge results, and view improvement-plan actions.
+
+Support
+-------
+
+Notifications
+  Purpose: Show time-sensitive events and reminders.
+  Show: unread count, event type, source, timestamp, and deep link to the related record.
+  Actions: mark read, open the related item, and manage notification preferences.
+
+Ask Juan
+  Purpose: Answer employee questions about policies and workspace actions.
+  Behavior: Use approved organization documents as sources, protect personal data, and route uncertain or sensitive questions to HR.
+  Actions: ask a question, open a cited document, and create an HR support request.
+
+Help & HR Support
+  Purpose: Provide support channels and a history of employee help requests.
+  Show: HR contact, FAQs, policy links, request status, and response history.
+  Actions: create a support request, attach files, reply, and close the request.
+
+Settings
+  Purpose: Manage employee preferences.
+  Show: notification settings, language, timezone, security, and active sessions.
+  Actions: update preferences, change password, sign out other sessions, and request account help.
+
+
+HR
+==
+
+Workspace
+---------
+
+Dashboard
+  Show: team members, pending requests, attendance percentage, checked-in count, late count, absent count, on-leave count, notifications, and quick action buttons.
+  Quick actions: open approval center, review attendance, add employee, publish a document, and view reports.
+
+Time In
+  Purpose: Give HR a time-clock and attendance exception workspace.
+  Show: time in/out records, attendance history, location or work setup, missing punches, late and absent employees, and attendance trends.
+  Actions: review records, submit a manual attendance request for an employee, attach evidence, and view manual-request history.
+  Rule: HR may correct a record only through an auditable approved workflow unless the organization explicitly grants direct correction access.
+
+Approval Center
+  Purpose: Process requests that require HR review.
+  Queues: manual attendance, leave, overtime, holiday or rest-day work, reimbursements, profile changes, and other configured requests.
+  Show: pending count, approved/declined counts, turnaround time, requester, request type, dates, evidence, and prior decisions.
+  Actions: approve, decline with reason, request more information, and open the employee record.
+  Dashboard counters: checked in today, late, absent, and on leave.
+
+People Management
+-----------------
+
+Employee Management
+  Purpose: Maintain the employee roster.
+  Show: employee name, employee number, department, position, employment type, role, schedule, manager, and status.
+  Actions: add employee, edit permitted fields, regularize probationary staff, deactivate, reactivate, assign manager, and open the employee record.
+  Statuses: Probationary, Regular, Contractual, Active, Inactive.
+
+Organization Structure
+  Purpose: Maintain the company reporting structure.
+  Department fields: department name, department head, reports to, headcount, open roles, and status.
+  Show: organization tree, headcount by department, team leads, reporting lines, and open roles.
+  Actions: add department, edit reporting lines, archive, restore, and review span of control.
+
+Employee 201 Files
+  Purpose: Track required employee records and compliance documents.
+  Show: employee, required file, missing items, submitted count, last updated date, expiration date, and verification status.
+  Actions: upload file, request a missing file, verify, reject with reason, replace an expired file, and view file history.
+  Statuses: Complete, Incomplete, For review, Expired.
+
+Documents & Forms
+  Purpose: Publish employee-facing policies, forms, and templates.
+  Fields: document name, category, version, updated date, owner, audience, file, and status.
+  Actions: create draft, upload a revision, publish, archive, restore, require acknowledgement, and view download history.
+  Statuses: Draft, Published, Archived.
+
+Talent Acquisition
+------------------
+
+Recruitment
+  Purpose: Manage candidates from application through hiring decision.
+  Candidate fields: name, role, source, applied on, contact details, resume, notes, owner, and status.
+  Actions: add candidate, move through screening, interview, offer, hired, or rejected, schedule interviews, record feedback, and convert a hired candidate to onboarding.
+  Statuses: Applied, Screening, Interview, Offer, Hired, Rejected.
+
+Onboarding
+  Purpose: Move new hires through a repeatable first-day and first-month checklist.
+  Fields: name, role, start date, department, manager, buddy, checklist, and status.
+  Actions: add new hire, assign tasks, upload requirements, start onboarding, complete tasks, and mark the plan complete.
+  Statuses: Not started, In progress, Completed.
+
+Time & Attendance
+-----------------
+
+Attendance Management
+  Purpose: Monitor live attendance and resolve exceptions.
+  Show: checked in today, late, absent, on leave, attendance percentage, employee time records, and exceptions.
+  Actions: filter by date or department, review evidence, excuse an exception through policy, and send a correction request.
+
+Schedules & Shifts
+  Purpose: Define reusable schedules and assign them to employees.
+  Fields: shift name, days, start/end time, breaks, location setup, overnight flag, and assigned employees.
+  Actions: create, publish, disable, assign, reassign, and manually customize an employee's Monday-to-Friday or weekend schedule.
+  Statuses: Draft, Active, Disabled.
+
+Leave Management
+  Purpose: Administer leave types, balances, applications, and availability.
+  Actions: configure leave policies, review applications, approve or decline, adjust balances with a reason, and view team coverage.
+  Show: pending applications, employees on leave today, approved leave, credits, and approval history.
+
+Overtime & Holiday Work
+  Purpose: Review additional work before it reaches payroll.
+  Show: employee, date, work type, hours, reason, approver, and estimated cost.
+  Actions: approve or decline regular overtime, rest-day work, and holiday work; record the reason; and export approved hours to payroll.
+
+Compensation
+------------
+
+Payroll
+  Purpose: Prepare, process, review, and release payroll runs.
+  Show: cutoff, employee count, gross, deductions, contributions, net, pay date, exceptions, and release status.
+  Actions: create a run, validate attendance and approved requests, process, resolve exceptions, release, generate payslips, and lock the run.
+  Statuses: Draft, Processing, Released, Voided.
+
+Loans & Reimbursements
+  Purpose: Manage company loans, government loans, and expense claims.
+  Show: employee, type, amount, terms, filed date, approval, balance, and payment state.
+  Actions: review evidence, approve, decline, schedule deduction or payment, mark paid, and view outstanding balance.
+
+Government Contributions & Tax
+  Purpose: Track contribution and tax records, deadlines, filings, and remittances.
+  Records: SSS, PhilHealth, Pag-IBIG, BIR withholding, applicable period, employee share, employer share, due date, filing date, and remittance reference.
+  Actions: prepare report, mark filed, mark remitted, attach proof, and flag overdue items.
+  Rule: Treat these as records and reporting support until calculations and filing integrations are separately validated for the applicable Philippine rules.
+
+Employee Development
+-------------------
+
+Performance & KPIs
+  Purpose: Run review cycles and monitor performance outcomes.
+  Show: cycle, employee, reviewer, goals, KPI score, rating, comments, status, and overdue reviews.
+  Actions: configure criteria and rating scale, start review, collect manager or peer feedback, complete review, publish results, acknowledge, and create an improvement plan.
+  Statuses: Not started, In review, Completed, Acknowledged.
+
+Learning & Development
+  Purpose: Manage training programs and completion.
+  Fields: program name, category, owner, schedule, enrolled employees, materials, attendance, and completion.
+  Actions: create, publish, enroll, start, complete, and export training history.
+  Statuses: Scheduled, Ongoing, Completed, Archived.
+
+Engagement & Feedback
+  Purpose: Collect pulse surveys, suggestions, recognition, and engagement signals.
+  Show: eNPS, response rate, engagement trend, suggestions, recognitions, and anonymity settings.
+  Actions: create or close a survey, acknowledge suggestions, respond through a controlled channel, and export aggregated results.
+  Rule: Preserve anonymity where promised and never expose individual survey responses without permission.
+
+Employee Lifecycle
+------------------
+
+Offboarding & Clearance
+  Purpose: Coordinate separation, clearance, asset return, and exit tasks.
+  Fields: employee, last day, reason, manager, checklist, assets, exit interview, sign-offs, and status.
+  Actions: start offboarding, notify stakeholders, collect department sign-offs, record asset return, complete exit interview, and mark cleared.
+  Statuses: In progress, Cleared, Cancelled.
+  Rule: Final pay cannot be released until required clearance rules are satisfied or an authorized exception is documented.
+
+Final Pay
+  Purpose: Prepare final compensation after separation.
+  Show: last day, unpaid salary, leave conversion, approved overtime, deductions, loans, statutory items, clearance status, and net final pay.
+  Actions: calculate or import validated amounts, review, approve, release, generate final payslip, and retain the audit record.
+
+Insights & System
+-----------------
+
+Reports & Analytics
+  Purpose: Turn HR records into operational and compliance insights.
+  Reports: headcount, turnover, attendance, leave, overtime, payroll records, recruitment funnel, onboarding completion, performance, training, engagement, and offboarding.
+  Actions: filter by date, department, and status; save views; export permitted reports; and schedule report delivery.
+
+Ask Juan AI
+  Purpose: Help HR find policies, summarize records, and understand workflow steps.
+  Rule: AI must respect role permissions, cite approved sources, avoid making final employment or payroll decisions, and route sensitive questions to authorized HR users.
+
+HR Settings
+  Purpose: Configure HR workspace behavior.
+  Settings: leave types, approval routing, holidays, workweeks, shifts, document categories, required 201 files, payroll cutoffs, performance cycles, notification rules, and HR module visibility.
+  Actions: update configuration, preview impact, save, restore previous settings, and review audit history.
+
+
+MANAGER
+=======
+
+Workspace
+---------
+
+Dashboard
+  Show: team members, pending approvals, weekly coverage, attendance exceptions, upcoming leave, reminders, and quick links.
+  Actions: open team overview, review approvals, manage schedules, and contact HR support.
+
+Team Overview
+  Purpose: Give the manager a current view of direct reports.
+  Show: employee name, department, position, schedule, status, today's attendance, upcoming leave, and open requests.
+  Actions: open an employee, review team coverage, and send a reminder.
+
+Approval Center
+  Purpose: Process requests owned by the manager.
+  Queues: leave, schedule changes, attendance corrections, overtime, and other organization-configured approvals.
+  Actions: approve, decline with reason, request more information, and escalate to HR.
+
+Team Operations
+--------------
+
+Schedules & Shifts
+  Purpose: Plan team work and maintain coverage.
+  Actions: assign a schedule, change an employee's Monday-to-Friday or weekend hours, manage work location, and review conflicts.
+  Rule: Changes must show an effective date and create a notification and audit entry.
+
+Leave Management
+  Purpose: Review team leave and protect coverage.
+  Show: team calendar, balances where permitted, overlapping leave, and pending applications.
+  Actions: approve or decline leave, add a comment, and escalate policy questions to HR.
+
+Upcoming Holidays
+  Purpose: Show holidays that affect staffing and schedules.
+  Show: date, holiday name, work requirement, assigned coverage, and expected pay treatment.
+  Actions: review coverage and request holiday or rest-day work approval.
+
+Team Resources
+--------------
+
+Documents
+  Purpose: Share policies, forms, and team resources.
+  Actions: view published HR documents, share permitted resources, and track required acknowledgement.
+
+Employee Information
+  Purpose: Review and update permitted direct-report information.
+  Show: contact, emergency contact, role, department, and employment details allowed by policy.
+  Actions: edit allowed fields, submit restricted changes to HR, and view change history.
+
+Support
+-------
+
+Notifications & Reminders
+  Purpose: Keep the manager aware of attendance, approvals, schedule gaps, and team events.
+  Actions: mark read, open the related record, and send a team reminder.
+
+Help & HR Support
+  Purpose: Ask HR questions and track manager support cases.
+  Actions: create a case, attach context, reply, and view resolution history.
+
+Manager Settings
+  Purpose: Manage manager preferences.
+  Settings: notifications, timezone, security, and default team view.
+
+
+SYSTEM ADMIN
+===========
+
+Workspace
+---------
+
+Dashboard
+  Show: active users, role distribution, HR access state, open audit items, recent security events, and system health.
+  Actions: manage users, review HR access, open the audit log, and open system settings.
+
+User Access
+  Purpose: Manage who can access the organization workspace.
+  Show: user name, email, employee link, role, status, last sign-in, and invitation state.
+  Actions: invite user, assign role, deactivate, reactivate, reset access, and revoke sessions.
+  Rule: Role changes require confirmation and an audit event. Deactivation must preserve historical records.
+
+HR Access
+  Purpose: Control which HR modules are visible and usable by HR users.
+  Show: HR user, module name, access state, last changed by, and last changed date.
+  Actions: enable or disable approval center, employee records, attendance, payroll, performance, lifecycle, reports, Ask Juan, and other HR modules.
+  Rule: Access changes must be permission-checked, audited, and applied server-side; hiding a sidebar item is not a security boundary.
+
+System
+-------
+
+Audit Log
+  Purpose: Provide a tamper-evident history of security and administrative actions.
+  Show: actor, action, resource, organization, timestamp, IP or session context where legally permitted, and before/after summary.
+  Actions: filter, inspect details, export according to policy, and flag an event for investigation.
+
+System Settings
+  Purpose: Configure organization-wide platform controls.
+  Settings: organization profile, timezone, locale, country, data retention, security policy, authentication, notification providers, integrations, backups, and billing plan.
+  Actions: update settings, test an integration, review configuration history, and manage data export or deletion requests.
+
+
+Permission model
+----------------
+Employee users can access their own records and employee-facing documents. Managers can access direct-report information and assigned approvals. HR can access organization-wide people operations according to HR module permissions. System administrators manage access and platform configuration but should not automatically receive unrestricted access to private HR content.
+
+Production foundation checklist
+-------------------------------
+- Secure authentication, password recovery, optional SSO, and session revocation.
+- Organization, user, employee, department, role, and permission data model.
+- Relational persistence with transactional approval and payroll state changes.
+- Object storage with malware scanning and access-controlled document URLs.
+- Notifications by in-app, email, and configurable provider integrations.
+- Immutable audit events for access, approvals, profile changes, documents, payroll, and settings.
+- Backups, retention and deletion controls, privacy notices, consent records, and breach response.
+- Philippine Data Privacy Act of 2012 (RA 10173) review for employee records and personal data.
+- Automated tests for role isolation, approval transitions, payroll visibility, file access, and audit coverage.
