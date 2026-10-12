@@ -9,19 +9,14 @@ const labelClass = 'text-sm font-semibold text-[#111111]/75'
 export function SampleAccountSetup() {
   const [company, setCompany] = useState('')
   const [logoName, setLogoName] = useState('')
-  const [industry, setIndustry] = useState('technology')
-  const [telephone, setTelephone] = useState('')
   const [hrHotline, setHrHotline] = useState('')
-  const [email, setEmail] = useState('')
-  const [street, setStreet] = useState('')
+  const [address1, setAddress1] = useState('')
   const [city, setCity] = useState('')
-  const [postal, setPostal] = useState('')
-  const [province, setProvince] = useState('')
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
   }
 
-  const companyComplete = Boolean(company && industry && telephone && email && street && city && postal && province)
+  const companyComplete = Boolean(company && hrHotline && address1 && city)
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 py-1 lg:flex-row lg:items-start">
@@ -52,14 +47,9 @@ export function SampleAccountSetup() {
         <section className="pt-8">
           <div className="grid gap-x-6 gap-y-6 sm:grid-cols-2 xl:grid-cols-4">
             <Field id="sample-company" label="Company name" required value={company} onChange={setCompany} placeholder="Enter company name" />
-            <FieldSelect id="sample-industry" label="Industry" value={industry} onChange={setIndustry} options={[['technology', 'Technology'], ['retail', 'Retail'], ['services', 'Professional services']]} />
-            <Field id="sample-telephone" label="Telephone number" required value={telephone} onChange={setTelephone} placeholder="Enter telephone number" />
-            <Field id="sample-hr-hotline" label="HR telephone number" value={hrHotline} onChange={setHrHotline} placeholder="Enter HR telephone number" />
-            <Field id="sample-email" label="Email address" required type="email" value={email} onChange={setEmail} placeholder="Enter email address" />
-            <div className="sm:col-span-2 xl:col-span-2"><Field id="sample-street" label="Street address" required value={street} onChange={setStreet} placeholder="Enter street address" /></div>
+            <Field id="sample-hr-hotline" label="HR telephone number" required value={hrHotline} onChange={setHrHotline} placeholder="Enter HR telephone number" />
+            <div className="sm:col-span-2 xl:col-span-2"><Field id="sample-address-1" label="Address 1" required value={address1} onChange={setAddress1} placeholder="Enter address" /></div>
             <Field id="sample-city" label="City" required value={city} onChange={setCity} placeholder="Enter city" />
-            <Field id="sample-postal" label="Postal / zip code" required value={postal} onChange={setPostal} placeholder="Enter postal / zip code" />
-            <FieldSelect id="sample-province" label="State / province" required value={province} onChange={setProvince} options={[['', 'Select state / province'], ['metro-manila', 'Metro Manila'], ['cebu', 'Cebu'], ['davao', 'Davao']]} />
           </div>
         </section>
 
