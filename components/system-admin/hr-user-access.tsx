@@ -1,17 +1,17 @@
 'use client'
 
-import { Fragment, useState, type FormEvent } from 'react'
-import { Mail, SlidersHorizontal, Trash2, UserPlus } from 'lucide-react'
+import { useState, type FormEvent } from 'react'
+import { Check, Mail, Pencil, SlidersHorizontal, Trash2, UserPlus, X } from 'lucide-react'
 import { HrSystemConfig } from '@/components/system-admin/hr-system-config'
 import { Panel, StatusBadge, statusTone } from '@/components/dashboard/primitives'
 import { useConfirm } from '@/components/dashboard/confirm-dialog'
 
-type HrUser = { id: string; name: string; email: string; employees: number; status: 'Active' | 'Pending' }
+type HrUser = { id: string; name: string; company: string; email: string; employees: number; status: 'Active' | 'Pending' }
 
 const initialUsers: HrUser[] = [
-  { id: 'hr1', name: 'Maria Santos', email: 'maria.santos@juant.ph', employees: 24, status: 'Active' },
-  { id: 'hr2', name: 'Paolo Reyes', email: 'paolo.reyes@juant.ph', employees: 18, status: 'Active' },
-  { id: 'hr3', name: 'Andrea Cruz', email: 'andrea.cruz@juant.ph', employees: 6, status: 'Pending' },
+  { id: 'hr1', name: 'Maria Santos', company: 'Juant Technologies', email: 'maria.santos@juant.ph', employees: 24, status: 'Active' },
+  { id: 'hr2', name: 'Paolo Reyes', company: 'Northstar Labs', email: 'paolo.reyes@juant.ph', employees: 18, status: 'Active' },
+  { id: 'hr3', name: 'Andrea Cruz', company: 'Juant Technologies', email: 'andrea.cruz@juant.ph', employees: 6, status: 'Pending' },
 ]
 
 const fieldClass = 'h-10 w-full border border-[#111111]/15 bg-white px-3 text-sm outline-none focus:border-[#3159ff]'
@@ -22,23 +22,35 @@ export function HrUserAccess() {
   const confirm = useConfirm()
   const [users, setUsers] = useState<HrUser[]>(initialUsers)
   const [name, setName] = useState('')
+  const [company, setCompany] = useState('')
   const [email, setEmail] = useState('')
   const [employees, setEmployees] = useState('')
+  const [editingEmployees, setEditingEmployees] = useState<string | null>(null)
+  const [editedEmployeeCount, setEditedEmployeeCount] = useState('')
   const [status, setStatus] = useState('')
   const [configuring, setConfiguring] = useState<string | null>(null)
 
   const employeeCount = Number(employees)
   const emailTaken = users.some((u) => u.email.toLowerCase() === email.trim().toLowerCase())
-  const valid = name.trim() && /^\S+@\S+\.\S+$/.test(email.trim()) && !emailTaken && Number.isInteger(employeeCount) && employeeCount >= 0 && employees !== ''
+  const valid = name.trim() && company.trim() && /^\S+@\S+\.\S+$/.test(email.trim()) && !emailTaken && Number.isInteger(employeeCount) && employeeCount >= 0 && employees !== ''
+
+  function saveEmployeeCount(userId: string) {
+    const nextCount = Number(editedEmployeeCount)
+    if (!Number.isInteger(nextCount) || nextCount < 0 || editedEmployeeCount === '') return
+    setUsers((current) => current.map((user) => user.id === userId ? { ...user, employees: nextCount } : user))
+    setEditingEmployees(null)
+    setStatus('Employee count updated.')
+  }
 
   async function invite(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     if (!valid) return
     const ok = await confirm({ title: `Would you like to invite ${name.trim()} as HR?`, description: `An invitation will be sent to ${email.trim()}.`, confirmLabel: 'Yes, send invite' })
     if (!ok) return
-    setUsers((current) => [...current, { id: `hr${Date.now()}`, name: name.trim(), email: email.trim(), employees: employeeCount, status: 'Pending' }])
+    setUsers((current) => [...current, { id: `hr${Date.now()}`, name: name.trim(), company: company.trim(), email: email.trim(), employees: employeeCount, status: 'Pending' }])
     setStatus(`Invitation sent to ${email.trim()}.`)
     setName('')
+    setCompany('')
     setEmail('')
     setEmployees('')
   }
@@ -52,6 +64,7 @@ export function HrUserAccess() {
     const ok = await confirm({ title: `Would you like to remove ${user.name}'s HR access?`, description: 'They will no longer be able to sign in to the HR workspace.', confirmLabel: 'Yes, remove', tone: 'danger' })
     if (!ok) return
     setUsers((current) => current.filter((u) => u.id !== user.id))
+    setConfiguring((current) => (current === user.id ? null : current))
     setStatus(`${user.name} was removed.`)
   }
 
@@ -62,8 +75,12 @@ export function HrUserAccess() {
       <Panel title="Invite HR" description="Send an invitation to give someone access to the HR workspace.">
         <form onSubmit={invite} className="flex flex-col gap-4 p-5 sm:p-6 lg:flex-row lg:items-end">
           <div className="flex flex-1 flex-col gap-1.5">
-            <label htmlFor="invite-name" className={labelClass}>Name</label>
+            <label htmlFor="invite-name" className={labelClass}>HR</label>
             <input id="invite-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Juan dela Cruz" autoComplete="off" className={fieldClass} />
+          </div>
+          <div className="flex flex-1 flex-col gap-1.5">
+            <label htmlFor="invite-company" className={labelClass}>Company</label>
+            <input id="invite-company" value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Company name" autoComplete="organization" className={fieldClass} />
           </div>
           <div className="flex flex-1 flex-col gap-1.5">
             <label htmlFor="invite-email" className={labelClass}>Email</label>
@@ -85,7 +102,7 @@ export function HrUserAccess() {
           <table className="w-full min-w-[640px] text-left text-sm">
             <thead>
               <tr className="border-b border-[#111111]/15">
-                {['Name', 'Email', 'Employees', 'Actions'].map((heading) => (
+                {['HR', 'Company', 'Email', 'Employees', 'Actions'].map((heading) => (
                   <th key={heading} scope="col" className={`px-5 py-3 font-mono text-[10px] font-bold uppercase tracking-[0.12em] text-[#111111]/50 sm:px-6 ${heading === 'Employees' ? 'text-right' : ''} ${heading === 'Actions' ? 'text-right' : ''}`}>
                     {heading}
                   </th>
@@ -94,23 +111,33 @@ export function HrUserAccess() {
             </thead>
             <tbody className="divide-y divide-[#111111]/15">
               {users.map((user) => (
-                <Fragment key={user.id}>
-                <tr>
+                <tr key={user.id}>
                   <td className="px-5 py-4 sm:px-6">
                     <div className="flex items-center gap-3">
                       <span className="font-semibold">{user.name}</span>
                       <StatusBadge tone={statusTone(user.status)}>{user.status}</StatusBadge>
                     </div>
                   </td>
+                  <td className="px-5 py-4 text-[#111111]/70 sm:px-6">{user.company}</td>
                   <td className="px-5 py-4 text-[#111111]/70 sm:px-6">{user.email}</td>
-                  <td className="px-5 py-4 text-right font-mono tabular-nums sm:px-6">{user.employees}</td>
+                  <td className="px-5 py-4 text-right font-mono tabular-nums sm:px-6">
+                    {editingEmployees === user.id ? (
+                      <div className="flex justify-end gap-2">
+                        <input aria-label={`Employee count for ${user.name}`} type="number" min={0} step={1} value={editedEmployeeCount} onChange={(event) => setEditedEmployeeCount(event.target.value)} className="h-9 w-20 border border-[#3159ff] px-2 text-right font-mono outline-none" />
+                        <button type="button" onClick={() => saveEmployeeCount(user.id)} aria-label={`Save employee count for ${user.name}`} title="Save employee count" className={`${iconButtonClass} hover:border-[#3159ff] hover:text-[#3159ff]`}><Check aria-hidden="true" className="size-4" /></button>
+                      </div>
+                    ) : (
+                      <button type="button" onClick={() => { setEditingEmployees(user.id); setEditedEmployeeCount(String(user.employees)) }} className="inline-flex items-center gap-2 font-mono tabular-nums hover:text-[#3159ff]" aria-label={`Edit employee count for ${user.name}`} title="Edit employee count">
+                        {user.employees}<Pencil aria-hidden="true" className="size-3.5" />
+                      </button>
+                    )}
+                  </td>
                   <td className="px-5 py-4 sm:px-6">
                     <div className="flex justify-end gap-2">
                       <button
                         type="button"
                         onClick={() => setConfiguring((current) => (current === user.id ? null : user.id))}
                         aria-expanded={configuring === user.id}
-                        aria-controls={`config-${user.id}`}
                         aria-label={`Configure systems for ${user.name}`}
                         title="Configuration"
                         className={`${iconButtonClass} hover:border-[#3159ff] hover:text-[#3159ff] ${configuring === user.id ? 'border-[#3159ff] bg-[#3159ff] text-white hover:text-white' : ''}`}
@@ -128,24 +155,48 @@ export function HrUserAccess() {
                     </div>
                   </td>
                 </tr>
-                {configuring === user.id && (
-                  <tr id={`config-${user.id}`}>
-                    <td colSpan={4} className="p-0">
-                      <HrSystemConfig userId={user.id} userName={user.name} onSaved={setStatus} />
-                    </td>
-                  </tr>
-                )}
-                </Fragment>
               ))}
               {users.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-5 py-8 text-center text-[#111111]/60 sm:px-6">No HR users yet. Invite someone above.</td>
+                  <td colSpan={5} className="px-5 py-8 text-center text-[#111111]/60 sm:px-6">No HR users yet. Invite someone above.</td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
       </Panel>
+
+      {configuring && users.find((user) => user.id === configuring) && (() => {
+        const user = users.find((candidate) => candidate.id === configuring)
+        if (!user) return null
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#111111]/55 p-4 sm:p-6" role="presentation" onClick={() => setConfiguring(null)}>
+            <section
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="permissions-dialog-title"
+              className="flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden bg-white shadow-2xl sm:max-h-[calc(100vh-3rem)]"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <header className="flex items-start justify-between border-b border-[#111111]/15 px-5 py-5 sm:px-8 sm:py-6">
+                <div>
+                  <h2 id="permissions-dialog-title" className="text-2xl font-bold tracking-tight">Edit permissions</h2>
+                  <p className="mt-1 text-sm text-[#111111]/60">{user.name} · {user.status} · HR workspace access</p>
+                </div>
+                <button type="button" onClick={() => setConfiguring(null)} aria-label="Close permissions dialog" className="flex size-9 shrink-0 items-center justify-center border border-[#111111]/15 text-[#111111]/60 hover:border-[#3159ff] hover:text-[#3159ff]">
+                  <X aria-hidden="true" className="size-5" />
+                </button>
+              </header>
+              <div className="overflow-y-auto">
+                <HrSystemConfig userId={user.id} userName={user.name} onSaved={setStatus} />
+              </div>
+              <footer className="flex justify-end border-t border-[#111111]/15 px-5 py-4 sm:px-8">
+                <button type="button" onClick={() => setConfiguring(null)} className="h-10 border border-[#111111]/20 px-5 text-sm font-semibold hover:border-[#3159ff] hover:text-[#3159ff]">Done</button>
+              </footer>
+            </section>
+          </div>
+        )
+      })()}
     </div>
   )
 }

@@ -19,6 +19,7 @@ export function Sidebar({ role }: { role: Role }) {
   const baseNavigation = role === 'hr' ? hrNavigation : role === 'manager' ? managerNavigation : role === 'system-admin' ? systemAdminNavigation : employeeNavigation
   const navigation = [...baseNavigation, ...powerNav]
   const workspaceLabel = role === 'hr' ? 'HR Dashboard' : role === 'manager' ? 'Manager Dashboard' : role === 'system-admin' ? 'System Admin' : 'Employee Portal'
+  const isSampleAccount = pathname === '/dashboard/system-admin/sample-new-account'
 
   useEffect(() => {
     const accountId = demoAccountByRole[role]
@@ -44,6 +45,8 @@ export function Sidebar({ role }: { role: Role }) {
     const ok = await confirm({ title: 'Would you really like to logout?', description: 'You will need to sign in again to return to your workspace.', confirmLabel: 'Yes, logout', tone: 'danger' })
     if (ok) router.replace('/signin')
   }
+
+  if (isSampleAccount) return null
 
   return (
     <aside className="sticky top-0 z-30 flex max-h-screen w-full shrink-0 flex-col border-b border-[#111111]/15 bg-[#111111] text-[#f6f6f3] lg:h-screen lg:w-72 lg:border-b-0 lg:border-r">
