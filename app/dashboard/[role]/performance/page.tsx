@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { PageIntro, Panel, ProgressBar, StatGrid, StatusBadge } from '@/components/dashboard/primitives'
 import { PeerFeedbackSummary } from '@/components/employee/peer-feedback-summary'
+import { ReceivedPeerRatings } from '@/components/employee/received-peer-ratings'
 import { demoAccountByRole } from '@/lib/access'
 import { requireEmployee } from '@/lib/roles'
 
@@ -39,6 +40,7 @@ export default async function PerformancePage({ params }: { params: Promise<{ ro
         ]}
       />
       <PeerFeedbackSummary employeeId={demoAccountByRole.employee ?? ''} peerEvaluationHref={`/dashboard/${role}/peer-evaluation`} />
+      <ReceivedPeerRatings employeeId={demoAccountByRole.employee ?? ''} />
       <Panel title="Recent feedback">
         <ul className="grid gap-px bg-[#111111]/15 sm:grid-cols-2">
           {feedback.map((item) => (
