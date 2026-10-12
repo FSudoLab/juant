@@ -5,21 +5,27 @@ import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { LogOut } from 'lucide-react'
 import { useConfirm } from '@/components/dashboard/confirm-dialog'
-import { ACCESS_EVENT, demoAccountByRole, navKey, readAccess } from '@/lib/access'
-import { employeeNavigation, hrNavigation, managerNavigation, systemAdminNavigation, type Role } from '@/lib/navigation'
+import { ACCESS_EVENT, demoAccountByRole, navKey, powerAccessId, powerNavigationFor, readAccess, readPowerUsers } from '@/lib/access'
+import { employeeNavigation, hrNavigation, managerNavigation, systemAdminNavigation, type NavGroup, type Role } from '@/lib/navigation'
 
 export function Sidebar({ role }: { role: Role }) {
   const pathname = usePathname()
   const router = useRouter()
   const confirm = useConfirm()
   const [access, setAccess] = useState<Record<string, boolean>>({})
-  const navigation = role === 'hr' ? hrNavigation : role === 'manager' ? managerNavigation : role === 'system-admin' ? systemAdminNavigation : employeeNavigation
+  const [powerNav, setPowerNav] = useState<NavGroup[]>([])
+  const baseNavigation = role === 'hr' ? hrNavigation : role === 'manager' ? managerNavigation : role === 'system-admin' ? systemAdminNavigation : employeeNavigation
+  const navigation = [...baseNavigation, ...powerNav]
   const workspaceLabel = role === 'hr' ? 'HR Dashboard' : role === 'manager' ? 'Manager Dashboard' : role === 'system-admin' ? 'System Admin' : 'Employee Portal'
 
   useEffect(() => {
     const accountId = demoAccountByRole[role]
     if (!accountId) return
-    const sync = () => setAccess(readAccess()[accountId] ?? {})
+    const sync = () => {
+      const map = readAccess()
+      setAccess(map[accountId] ?? {})
+      setPowerNav(role === 'employee' && readPowerUsers()[accountId] ? powerNavigationFor(map[powerAccessId(accountId)] ?? {}) : [])
+    }
     sync()
     window.addEventListener(ACCESS_EVENT, sync)
     window.addEventListener('storage', sync)

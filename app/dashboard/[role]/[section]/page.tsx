@@ -60,7 +60,7 @@ export default async function HrSectionPage({ params }: { params: Params }) {
           title={role === 'manager' ? 'Team overview' : 'Employee management'}
           description="Everyone in the workspace in one place. Search by department or position, customize each person's schedule, and control what they can access."
         />
-        <TeamOverview />
+        <TeamOverview canGrantPower={role === 'hr'} />
       </>
     )
   }
@@ -70,9 +70,9 @@ export default async function HrSectionPage({ params }: { params: Params }) {
         <PageIntro
           eyebrow="Workspace / Team Overview"
           title="Team overview"
-          description="Every employee, HR user, and manager in one place. HR can edit schedules and grant or remove access for anyone."
+          description="Every employee, HR user, and manager in one place. HR can edit schedules, grant or remove access for anyone, and promote employees to power users."
         />
-        <TeamOverview />
+        <TeamOverview canGrantPower />
       </>
     )
   }
