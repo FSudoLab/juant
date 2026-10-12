@@ -4,6 +4,7 @@ import {
   Bot,
   CalendarDays,
   CheckCircle2,
+  ClipboardCheck,
   Clock3,
   FileText,
   FolderOpen,
@@ -34,24 +35,24 @@ import {
 export type Role = 'employee' | 'hr' | 'manager' | 'system-admin'
 export type NavItem = { label: string; href: string; icon: LucideIcon; badge?: string }
 export type NavGroup = { heading: string; items: NavItem[] }
-export type HrAccessKey = 'approvals' | 'employees' | 'organization' | '201-files' | 'forms' | 'recruitment' | 'onboarding' | 'attendance-management' | 'shifts' | 'leave-management' | 'overtime' | 'payroll-runs' | 'loans' | 'contributions' | 'kpis' | 'engagement' | 'offboarding' | 'final-pay' | 'reports' | 'ask-juan' | 'hr-settings'
+export type HrAccessKey = 'approval-center' | 'employee-management' | 'organization-structure' | '201-files' | 'company-documents' | 'recruitment' | 'onboarding' | 'attendance-management' | 'schedules-shifts' | 'leave-management' | 'overtime' | 'payroll-runs' | 'loans-reimbursements' | 'government-contributions' | 'evaluations' | 'eval-surveys' | 'offboarding' | 'final-pay' | 'reports-analytics' | 'ask-juan' | 'hr-settings'
 
 export const hrAccessItems: { key: HrAccessKey; label: string }[] = [
-  { key: 'approvals', label: 'Approval Center (attendance, leave, overtime)' },
+  { key: 'approval-center', label: 'Approval Center (attendance, leave, overtime)' },
   { key: 'recruitment', label: 'Recruitment' },
   { key: 'onboarding', label: 'Onboarding' },
-  { key: 'employees', label: 'Employee Management' },
+  { key: 'employee-management', label: 'Employee Management' },
   { key: 'offboarding', label: 'Offboarding & Clearance' },
-  { key: 'organization', label: 'Organization Structure' },
+  { key: 'organization-structure', label: 'Organization Structure' },
   { key: '201-files', label: 'Employee 201 Files' },
-  { key: 'forms', label: 'Company Documents' },
+  { key: 'company-documents', label: 'Company Documents' },
   { key: 'payroll-runs', label: 'Payroll' },
-  { key: 'loans', label: 'Loans & Reimbursements' },
-  { key: 'contributions', label: 'Government Contributions & Tax' },
+  { key: 'loans-reimbursements', label: 'Loans & Reimbursements' },
+  { key: 'government-contributions', label: 'Government Contributions & Tax' },
   { key: 'final-pay', label: 'Final Pay' },
-  { key: 'kpis', label: 'Evaluations' },
-  { key: 'engagement', label: 'Eval Surveys' },
-  { key: 'reports', label: 'Reports & Analytics' },
+  { key: 'evaluations', label: 'Evaluations' },
+  { key: 'eval-surveys', label: 'Eval Surveys' },
+  { key: 'reports-analytics', label: 'Reports & Analytics' },
   { key: 'ask-juan', label: 'Ask Juan AI' },
   { key: 'hr-settings', label: 'HR Settings' },
 ]
@@ -76,6 +77,7 @@ export const employeeNavigation: NavGroup[] = [
       { label: 'My Documents', href: `${employeeBase}/documents`, icon: FolderOpen },
       { label: 'My Profile', href: `${employeeBase}/profile`, icon: UserRound },
       { label: 'My Performance', href: `${employeeBase}/performance`, icon: BarChart3 },
+      { label: 'Peer Evaluation', href: `${employeeBase}/peer-evaluation`, icon: ClipboardCheck },
     ],
   },
   {
@@ -99,7 +101,7 @@ export const hrNavigation: NavGroup[] = [
       { label: 'Dashboard', href: hrBase, icon: LayoutDashboard },
       hrItem('Time In', 'attendance', Timer),
       hrItem('Team Overview', 'team-overview', Users),
-      hrItem('Approval Center', 'approvals', CheckCircle2, '8'),
+      hrItem('Approval Center', 'approval-center', CheckCircle2, '8'),
     ],
   },
   {
@@ -107,38 +109,38 @@ export const hrNavigation: NavGroup[] = [
     items: [
       hrItem('Recruitment', 'recruitment', UserPlus),
       hrItem('Onboarding', 'onboarding', Handshake),
-      hrItem('Employee Management', 'employees', Users),
+      hrItem('Employee Management', 'employee-management', Users),
       hrItem('Offboarding & Clearance', 'offboarding', LogOut),
     ],
   },
   {
     heading: 'Records',
     items: [
-      hrItem('Organization Structure', 'organization', Network),
+      hrItem('Organization Structure', 'organization-structure', Network),
       hrItem('Employee 201 Files', '201-files', FolderOpen),
-      hrItem('Company Documents', 'forms', FileText),
+      hrItem('Company Documents', 'company-documents', FileText),
     ],
   },
   {
     heading: 'Compensation',
     items: [
       hrItem('Payroll', 'payroll-runs', Wallet),
-      hrItem('Loans & Reimbursements', 'loans', HandCoins),
-      hrItem('Government Contributions & Tax', 'contributions', Landmark),
+      hrItem('Loans & Reimbursements', 'loans-reimbursements', HandCoins),
+      hrItem('Government Contributions & Tax', 'government-contributions', Landmark),
       hrItem('Final Pay', 'final-pay', Receipt),
     ],
   },
   {
     heading: 'Employee Development',
     items: [
-      hrItem('Evaluations', 'kpis', Target),
-      hrItem('Eval Surveys', 'engagement', MessageCircle),
+      hrItem('Evaluations', 'evaluations', Target),
+      hrItem('Eval Surveys', 'eval-surveys', MessageCircle),
     ],
   },
   {
     heading: 'Insights & System',
     items: [
-      hrItem('Reports & Analytics', 'reports', BarChart3),
+      hrItem('Reports & Analytics', 'reports-analytics', BarChart3),
       hrItem('Ask Juan AI', 'ask-juan', Bot),
       hrItem('Settings', 'hr-settings', Settings),
     ],
@@ -153,14 +155,14 @@ export const managerNavigation: NavGroup[] = [
     heading: 'Workspace',
     items: [
       { label: 'Dashboard', href: managerBase, icon: LayoutDashboard },
-      managerItem('Team overview', 'employees', Users),
-      managerItem('Approval center', 'approvals', CheckCircle2, '4'),
+      managerItem('Team overview', 'team-overview', Users),
+      managerItem('Approval center', 'approval-center', CheckCircle2, '4'),
     ],
   },
   {
     heading: 'Team operations',
     items: [
-      managerItem('Schedules & shifts', 'shifts', CalendarDays),
+      managerItem('Schedules & shifts', 'schedules-shifts', CalendarDays),
       managerItem('Leave management', 'leave-management', ShieldCheck),
       managerItem('Upcoming holidays', 'holidays', Sun),
     ],
@@ -168,15 +170,15 @@ export const managerNavigation: NavGroup[] = [
   {
     heading: 'Team resources',
     items: [
-      managerItem('Documents', 'documents', FileText),
+      managerItem('Documents', 'team-documents', FileText),
       managerItem('Employee information', 'employee-information', UserPen),
     ],
   },
   {
     heading: 'Support',
     items: [
-      managerItem('Notifications & reminders', 'notifications', Bell),
-      managerItem('Help & HR support', 'help', HelpCircle),
+      managerItem('Notifications & reminders', 'notifications-reminders', Bell),
+      managerItem('Help & HR support', 'help-hr-support', HelpCircle),
       managerItem('Manager settings', 'settings', Settings),
     ],
   },

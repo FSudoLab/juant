@@ -24,7 +24,7 @@ const approveDecline: HrRowAction[] = [
 
 export const hrModules: HrModule[] = [
   {
-    slug: 'approvals',
+    slug: 'approval-center',
     group: 'Workspace',
     label: 'Approval Center',
     title: 'Approval center',
@@ -56,7 +56,7 @@ export const hrModules: HrModule[] = [
     actions: approveDecline,
   },
   {
-    slug: 'employees',
+    slug: 'employee-management',
     group: 'People Management',
     label: 'Employee Management',
     title: 'Employee management',
@@ -104,7 +104,7 @@ export const hrModules: HrModule[] = [
     },
   },
   {
-    slug: 'organization',
+    slug: 'organization-structure',
     group: 'People Management',
     label: 'Organization Structure',
     title: 'Organization structure',
@@ -206,7 +206,7 @@ export const hrModules: HrModule[] = [
     },
   },
   {
-    slug: 'forms',
+    slug: 'company-documents',
     group: 'People Management',
     label: 'Company Documents',
     title: 'Company documents',
@@ -397,7 +397,7 @@ export const hrModules: HrModule[] = [
     actions: [{ label: 'Excuse', to: 'Excused', when: ['Late', 'Absent'] }],
   },
   {
-    slug: 'shifts',
+    slug: 'schedules-shifts',
     group: 'Time & Attendance',
     label: 'Schedules & Shifts',
     title: 'Schedules & shifts',
@@ -559,7 +559,7 @@ export const hrModules: HrModule[] = [
     },
   },
   {
-    slug: 'loans',
+    slug: 'loans-reimbursements',
     group: 'Compensation',
     label: 'Loans & Reimbursements',
     title: 'Loans & reimbursements',
@@ -591,7 +591,7 @@ export const hrModules: HrModule[] = [
     actions: [...approveDecline, { label: 'Mark paid', to: 'Paid', when: ['Approved'], variant: 'primary' }],
   },
   {
-    slug: 'contributions',
+    slug: 'government-contributions',
     group: 'Compensation',
     label: 'Government Contributions & Tax',
     title: 'Government contributions & tax',
@@ -625,7 +625,7 @@ export const hrModules: HrModule[] = [
     ],
   },
   {
-    slug: 'kpis',
+    slug: 'evaluations',
     group: 'Employee Development',
     label: 'Evaluations',
     title: 'Evaluations',
@@ -671,7 +671,7 @@ export const hrModules: HrModule[] = [
     ],
   },
   {
-    slug: 'engagement',
+    slug: 'eval-surveys',
     group: 'Employee Development',
     label: 'Eval Surveys',
     title: 'Eval surveys',
@@ -797,7 +797,7 @@ export const hrModules: HrModule[] = [
     ],
   },
   {
-    slug: 'reports',
+    slug: 'reports-analytics',
     group: 'Insights & System',
     label: 'Reports & Analytics',
     title: 'Reports & analytics',

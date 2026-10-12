@@ -37,7 +37,7 @@ export function Sidebar({ role }: { role: Role }) {
 
   async function handleLogout() {
     const ok = await confirm({ title: 'Would you really like to logout?', description: 'You will need to sign in again to return to your workspace.', confirmLabel: 'Yes, logout', tone: 'danger' })
-    if (ok) router.push('/signin')
+    if (ok) router.replace('/signin')
   }
 
   return (
