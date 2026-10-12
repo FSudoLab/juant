@@ -33,7 +33,26 @@ export function SampleAccountSetup() {
   }
 
   return (
-    <form onSubmit={submit} className="flex flex-col gap-8">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 py-2 sm:py-6">
+      <header className="flex flex-col gap-5 border-b border-[#111111]/15 pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div className="flex items-center gap-3">
+          <span className="flex size-10 items-center justify-center bg-[#3159ff] font-mono text-sm font-bold text-white">JT</span>
+          <div>
+            <p className="text-xl font-bold tracking-[-0.04em]">JuanT</p>
+            <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[#111111]/50">HR workspace setup</p>
+          </div>
+        </div>
+        <div className="text-left sm:text-right">
+          <p className="font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-[#3159ff]">HR preview</p>
+          <p className="mt-1 text-sm text-[#111111]/60">Configure the workspace before inviting the team.</p>
+        </div>
+      </header>
+      <div>
+        <p className="mb-2 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-[#111111]/50">New account setup</p>
+        <h1 className="text-3xl font-bold tracking-[-0.05em] sm:text-4xl">Set up your HR workspace</h1>
+        <p className="mt-3 max-w-2xl text-base leading-7 text-[#111111]/60">Add your company details, invite HR, and prepare your first employees. This is the workspace HR will use after setup is complete.</p>
+      </div>
+      <form onSubmit={submit} className="flex flex-col gap-8">
       <div className="grid gap-4 border border-[#111111]/15 bg-[#f7f7f4] p-5 sm:grid-cols-[auto_1fr] sm:items-center sm:p-6">
         <div className="flex size-16 items-center justify-center border border-dashed border-[#3159ff]/50 bg-white text-[#3159ff]">
           {logoName ? <span className="font-mono text-xs font-bold">LOGO</span> : <Upload aria-hidden="true" className="size-5" />}
@@ -75,7 +94,8 @@ export function SampleAccountSetup() {
         <p className="flex items-center gap-2 text-sm text-[#111111]/60"><Circle aria-hidden="true" className="size-3 fill-[#111111]/20" /> HR configures modules, permissions, and policies after accepting the invite.</p>
         <button type="submit" className="inline-flex h-11 items-center justify-center gap-2 bg-[#3159ff] px-6 text-sm font-semibold text-white hover:bg-[#2447d6]"><UserPlus aria-hidden="true" className="size-4" /> Create sample account</button>
       </div>
-      {completed && <div role="status" className="flex items-center gap-2 border border-[#3159ff]/25 bg-[#3159ff]/5 p-4 text-sm"><Check aria-hidden="true" className="size-4 text-[#3159ff]" /> Sample account prepared for {company}. The HR invitation is ready to send.</div>}
-    </form>
+        {completed && <div role="status" className="flex items-center gap-2 border border-[#3159ff]/25 bg-[#3159ff]/5 p-4 text-sm"><Check aria-hidden="true" className="size-4 text-[#3159ff]" /> Sample account prepared for {company}. The HR invitation is ready to send.</div>}
+      </form>
+    </div>
   )
 }

@@ -133,12 +133,7 @@ export default async function HrSectionPage({ params }: { params: Params }) {
       )
     }
     if (role === 'system-admin' && section === 'sample-new-account') {
-      return (
-        <>
-          <PageIntro eyebrow="System / New account" title={customSection.title} description={customSection.description} />
-          <SampleAccountSetup />
-        </>
-      )
+      return <SampleAccountSetup />
     }
     if (role === 'system-admin' && section === 'hr-access') {
       return (
