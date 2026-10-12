@@ -9,6 +9,30 @@ const scheduleFieldClass =
   'h-11 w-full rounded-none border border-[#111111]/20 bg-white px-3 text-sm font-normal leading-none focus-visible:border-[#3159ff] focus-visible:outline-none'
 const scheduleSelectClass = `${scheduleFieldClass} appearance-none pr-10`
 
+const timeOptions = Array.from({ length: 48 }, (_, index) => {
+  const hours = Math.floor(index / 2)
+  const minutes = index % 2 === 0 ? '00' : '30'
+  const value = `${String(hours).padStart(2, '0')}:${minutes}`
+  const label = `${hours % 12 === 0 ? 12 : hours % 12}:${minutes} ${hours < 12 ? 'AM' : 'PM'}`
+  return { value, label }
+})
+
+function TimeSelect({ id, label, defaultValue }: { id: string; label: string; defaultValue: string }) {
+  return (
+    <label className="flex flex-col gap-2 text-sm font-semibold" htmlFor={id}>
+      {label}
+      <span className="relative">
+        <select id={id} defaultValue={defaultValue} className={scheduleSelectClass}>
+          {timeOptions.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+        <ChevronDown aria-hidden className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[#111111]/60" />
+      </span>
+    </label>
+  )
+}
+
 function Toggle({ id, label, hint, defaultOn = false }: { id: string; label: string; hint: string; defaultOn?: boolean }) {
   const [checked, setChecked] = useState(defaultOn)
 
@@ -31,8 +55,8 @@ export function ManagerSettingsForm() {
       <Panel title="Employee schedules" description="Set the standard workweek and daily hours for your team.">
         <div className="grid gap-5 p-5 sm:grid-cols-2 sm:p-6">
           <label className="flex flex-col gap-2 text-sm font-semibold" htmlFor="schedule-days">Workweek<span className="relative"><select id="schedule-days" defaultValue="monday-friday" className={scheduleSelectClass}><option value="monday-friday">Monday to Friday</option><option value="all-week">Monday to Sunday</option></select><ChevronDown aria-hidden className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[#111111]/60" /></span></label>
-          <label className="flex flex-col gap-2 text-sm font-semibold" htmlFor="start-time">Start time<input id="start-time" type="time" defaultValue="08:30" className={scheduleFieldClass} /></label>
-          <label className="flex flex-col gap-2 text-sm font-semibold" htmlFor="end-time">End time<input id="end-time" type="time" defaultValue="17:30" className={scheduleFieldClass} /></label>
+          <TimeSelect id="start-time" label="Start time" defaultValue="08:30" />
+          <TimeSelect id="end-time" label="End time" defaultValue="17:30" />
           <label className="flex flex-col gap-2 text-sm font-semibold" htmlFor="break-time">Break duration<span className="relative"><select id="break-time" defaultValue="60" className={scheduleSelectClass}><option value="30">30 minutes</option><option value="60">60 minutes</option><option value="90">90 minutes</option></select><ChevronDown aria-hidden className="pointer-events-none absolute right-3 top-1/2 size-4 -translate-y-1/2 text-[#111111]/60" /></span></label>
         </div>
         <div className="border-t border-[#111111]/15 px-5 py-4 sm:px-6"><PrimaryButton>Save schedule</PrimaryButton></div>

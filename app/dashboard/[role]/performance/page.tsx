@@ -1,3 +1,5 @@
+import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 import { PageIntro, Panel, ProgressBar, StatGrid, StatusBadge } from '@/components/dashboard/primitives'
 import { PeerFeedbackSummary } from '@/components/employee/peer-feedback-summary'
 import { demoAccountByRole } from '@/lib/access'
@@ -21,7 +23,14 @@ export default async function PerformancePage({ params }: { params: Promise<{ ro
 
   return (
     <>
-      <PageIntro eyebrow="My Employment / My Performance" title="My performance" description="Goals for the H2 2026 review cycle, progress to date, and recent feedback." />
+      <PageIntro eyebrow="My Employment / My Performance" title="My performance" description="Goals for the H2 2026 review cycle, progress to date, and recent feedback."
+        action={
+          <Link href={`/dashboard/${role}/peer-evaluation`} className="inline-flex items-center gap-2 bg-[#3159ff] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#2447d9]">
+            Go to peer evaluation
+            <ArrowRight aria-hidden className="size-4" />
+          </Link>
+        }
+      />
       <StatGrid
         label="Performance summary"
         stats={[
