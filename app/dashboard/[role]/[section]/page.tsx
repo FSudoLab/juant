@@ -12,6 +12,7 @@ import { HrModuleView } from '@/components/hr/hr-module-view'
 import { EmployeeInformationEditor } from '@/components/manager/employee-information-editor'
 import { ManagerSettingsForm } from '@/components/manager/manager-settings-form'
 import { TeamOverview } from '@/components/manager/team-overview'
+import { HrUserAccess } from '@/components/system-admin/hr-user-access'
 import { getHrModule, hrModules } from '@/lib/hr-modules'
 
 type Params = Promise<{ role: string; section: string }>
@@ -118,6 +119,14 @@ export default async function HrSectionPage({ params }: { params: Params }) {
         <>
           <PageIntro eyebrow="Team operations / Employee information" title="Employee information" description="Review and update the contact and profile information held for your team." />
           <EmployeeInformationEditor />
+        </>
+      )
+    }
+    if (role === 'system-admin' && section === 'users') {
+      return (
+        <>
+          <PageIntro eyebrow="System / User access" title={customSection.title} description="Invite HR users and review how many employees each one manages." />
+          <HrUserAccess />
         </>
       )
     }
