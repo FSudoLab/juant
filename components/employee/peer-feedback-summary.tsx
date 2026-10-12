@@ -49,17 +49,6 @@ export function PeerFeedbackSummary({ employeeId, peerEvaluationHref }: { employ
         </ul>
       </div>
 
-      {reviews.length > 0 && (
-        <ul className="grid gap-px border-t border-[#111111]/15 bg-[#111111]/15 sm:grid-cols-2">
-          {reviews.slice(0, 4).map((review, index) => (
-            <li key={review.reviewerId} className="flex flex-col gap-2 bg-[#f6f6f3] p-5 sm:p-6">
-              <p className={labelClass}>Anonymous peer {index + 1}</p>
-              <p className="text-pretty text-sm leading-relaxed">{`“${review.rationale || 'No rationale given.'}”`}</p>
-            </li>
-          ))}
-        </ul>
-      )}
-
       <div className="flex flex-col gap-3 border-t border-[#111111]/15 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div className="flex items-center gap-3 text-sm">
           <StatusBadge tone={remaining === 0 ? 'blue' : 'amber'}>{remaining === 0 ? 'All done' : `${remaining} to rate`}</StatusBadge>
