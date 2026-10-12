@@ -1,4 +1,6 @@
 import { PageIntro, Panel, ProgressBar, StatGrid, StatusBadge } from '@/components/dashboard/primitives'
+import { PeerFeedbackSummary } from '@/components/employee/peer-feedback-summary'
+import { demoAccountByRole } from '@/lib/access'
 import { requireEmployee } from '@/lib/roles'
 
 const kpis = [
@@ -15,6 +17,7 @@ const feedback = [
 
 export default async function PerformancePage({ params }: { params: Promise<{ role: string }> }) {
   await requireEmployee(params)
+  const { role } = await params
 
   return (
     <>
@@ -47,6 +50,7 @@ export default async function PerformancePage({ params }: { params: Promise<{ ro
           ))}
         </ul>
       </Panel>
+      <PeerFeedbackSummary employeeId={demoAccountByRole.employee ?? ''} peerEvaluationHref={`/dashboard/${role}/peer-evaluation`} />
       <Panel title="Recent feedback">
         <ul className="grid gap-px bg-[#111111]/15 sm:grid-cols-2">
           {feedback.map((item) => (

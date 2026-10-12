@@ -12,7 +12,7 @@ export default async function PeerEvaluationPage({ params }: { params: Promise<{
   return (
     <>
       <PageIntro eyebrow="My Employment / Peer Evaluation" title="Peer evaluation" description="Rate the co-workers in your department on each question and explain why. HR sees your ratings and rationale." />
-      <PeerEvaluationForm reviewerId={demoAccountByRole.employee} />
+      <PeerEvaluationForm reviewerId={demoAccountByRole.employee ?? ''} />
     </>
   )
 }
