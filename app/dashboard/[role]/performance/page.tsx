@@ -1,4 +1,6 @@
 import { PageIntro, Panel, ProgressBar, StatGrid, StatusBadge } from '@/components/dashboard/primitives'
+import { PeerFeedbackSummary } from '@/components/employee/peer-feedback-summary'
+import { demoAccountByRole } from '@/lib/access'
 import { requireEmployee } from '@/lib/roles'
 
 const kpis = [
@@ -15,6 +17,7 @@ const feedback = [
 
 export default async function PerformancePage({ params }: { params: Promise<{ role: string }> }) {
   await requireEmployee(params)
+  const { role } = await params
 
   return (
     <>
@@ -23,30 +26,10 @@ export default async function PerformancePage({ params }: { params: Promise<{ ro
         label="Performance summary"
         stats={[
           { label: 'Last rating', value: '4.3 / 5', hint: 'H1 2026 · Exceeds' },
-          { label: 'Goals on track', value: '3 / 4' },
-          { label: 'Overall progress', value: `${Math.round(kpis.reduce((sum, kpi) => sum + kpi.progress, 0) / kpis.length)}%` },
           { label: 'Next review', value: 'Dec 15', hint: 'Self-assessment opens Dec 1' },
         ]}
       />
-      <Panel title="Goals & KPIs" description="H2 2026 cycle">
-        <ul className="divide-y divide-[#111111]/15">
-          {kpis.map((kpi) => (
-            <li key={kpi.name} className="flex flex-col gap-3 px-5 py-5 sm:px-6">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="font-semibold">{kpi.name}</p>
-                  <p className="text-xs text-[#111111]/60">{kpi.target}</p>
-                </div>
-                <StatusBadge tone={kpi.status === 'On track' ? 'blue' : 'amber'}>{kpi.status}</StatusBadge>
-              </div>
-              <div className="flex items-center gap-4">
-                <ProgressBar value={kpi.progress} label={`${kpi.name} progress`} />
-                <span className="w-10 text-right font-mono text-xs font-bold">{kpi.progress}%</span>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </Panel>
+      <PeerFeedbackSummary employeeId={demoAccountByRole.employee ?? ''} peerEvaluationHref={`/dashboard/${role}/peer-evaluation`} />
       <Panel title="Recent feedback">
         <ul className="grid gap-px bg-[#111111]/15 sm:grid-cols-2">
           {feedback.map((item) => (
