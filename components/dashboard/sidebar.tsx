@@ -89,7 +89,11 @@ export function Sidebar({ role }: { role: Role }) {
             </div>
           })}
         </nav>
-        <button type="button" onClick={handleLogout} className="mt-6 flex items-center gap-2 border-t border-white/15 pt-5 text-left text-sm font-semibold text-white/60 hover:text-white">
+        <div className="mt-6 border-t border-white/15 pt-5">
+          <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/40">Signed in as</p>
+          <p className="mt-1 text-sm font-semibold text-white">{role === 'hr' ? 'HR Admin' : role === 'manager' ? 'Manager' : role === 'system-admin' ? 'System Admin' : 'Employee'}</p>
+        </div>
+        <button type="button" onClick={handleLogout} className="mt-4 flex items-center gap-2 text-left text-sm font-semibold text-white/60 hover:text-white">
           <LogOut aria-hidden="true" className="size-4" />
           Logout
         </button>
