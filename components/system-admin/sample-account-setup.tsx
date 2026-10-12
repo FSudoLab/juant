@@ -11,6 +11,7 @@ export function SampleAccountSetup() {
   const [logoName, setLogoName] = useState('')
   const [industry, setIndustry] = useState('technology')
   const [telephone, setTelephone] = useState('')
+  const [hrHotline, setHrHotline] = useState('')
   const [email, setEmail] = useState('')
   const [street, setStreet] = useState('')
   const [city, setCity] = useState('')
@@ -20,7 +21,7 @@ export function SampleAccountSetup() {
     event.preventDefault()
   }
 
-  const companyComplete = Boolean(company && industry && telephone && email && street && city && postal && province)
+  const companyComplete = Boolean(company && industry && telephone && hrHotline && email && street && city && postal && province)
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 py-1 lg:flex-row lg:items-start">
@@ -53,6 +54,7 @@ export function SampleAccountSetup() {
             <Field id="sample-company" label="Company name" required value={company} onChange={setCompany} placeholder="Enter company name" />
             <FieldSelect id="sample-industry" label="Industry" value={industry} onChange={setIndustry} options={[['technology', 'Technology'], ['retail', 'Retail'], ['services', 'Professional services']]} />
             <Field id="sample-telephone" label="Telephone number" required value={telephone} onChange={setTelephone} placeholder="Enter telephone number" />
+            <Field id="sample-hr-hotline" label="HR hotline number" required value={hrHotline} onChange={setHrHotline} placeholder="Enter HR hotline number" />
             <Field id="sample-email" label="Email address" required type="email" value={email} onChange={setEmail} placeholder="Enter email address" />
             <div className="sm:col-span-2 xl:col-span-2"><Field id="sample-street" label="Street address" required value={street} onChange={setStreet} placeholder="Enter street address" /></div>
             <Field id="sample-city" label="City" required value={city} onChange={setCity} placeholder="Enter city" />
