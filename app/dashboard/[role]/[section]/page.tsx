@@ -13,6 +13,7 @@ import { EmployeeInformationEditor } from '@/components/manager/employee-informa
 import { ManagerSettingsForm } from '@/components/manager/manager-settings-form'
 import { TeamOverview } from '@/components/manager/team-overview'
 import { HrUserAccess } from '@/components/system-admin/hr-user-access'
+import { SampleAccountSetup } from '@/components/system-admin/sample-account-setup'
 import { getHrModule, hrModules } from '@/lib/hr-modules'
 
 type Params = Promise<{ role: string; section: string }>
@@ -36,6 +37,7 @@ const systemAdminSections = {
   users: { title: 'User access', description: 'Review workspace users and the roles assigned to them.' },
   'hr-access': { title: 'HR access', description: 'Control the permissions HR uses to approve or decline requests.' },
   'audit-log': { title: 'Audit log', description: 'Review recent access and permission changes across the workspace.' },
+  'sample-new-account': { title: 'Sample new account', description: 'Prepare a company workspace, invite HR, and add the first employees before launch.' },
 }
 
 export function generateStaticParams() {
@@ -127,6 +129,14 @@ export default async function HrSectionPage({ params }: { params: Params }) {
         <>
           <PageIntro eyebrow="System / User access" title={customSection.title} description="Invite HR users and review how many employees each one manages." />
           <HrUserAccess />
+        </>
+      )
+    }
+    if (role === 'system-admin' && section === 'sample-new-account') {
+      return (
+        <>
+          <PageIntro eyebrow="System / New account" title={customSection.title} description={customSection.description} />
+          <SampleAccountSetup />
         </>
       )
     }

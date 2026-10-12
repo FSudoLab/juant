@@ -26,6 +26,7 @@ import {
   UserPlus,
   UserCog,
   UserPen,
+  WandSparkles,
   UserRound,
   Users,
   Wallet,
@@ -192,6 +193,7 @@ export const systemAdminNavigation: NavGroup[] = [
     items: [
       { label: 'Dashboard', href: systemAdminBase, icon: LayoutDashboard },
       { label: 'User access', href: `${systemAdminBase}/users`, icon: UserCog },
+      { label: 'Sample new account', href: `${systemAdminBase}/sample-new-account`, icon: WandSparkles },
     ],
   },
   {
