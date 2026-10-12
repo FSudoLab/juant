@@ -27,12 +27,12 @@ const attendanceTrend = [
 ]
 
 const performanceTrend = [
-  { label: 'May', score: 78, goals: 64 },
-  { label: 'Jun', score: 81, goals: 70 },
-  { label: 'Jul', score: 80, goals: 72 },
-  { label: 'Aug', score: 85, goals: 79 },
-  { label: 'Sep', score: 88, goals: 83 },
-  { label: 'Oct', score: 91, goals: 86 },
+  { label: 'May', score: 64, goals: 64 },
+  { label: 'Jun', score: 70, goals: 70 },
+  { label: 'Jul', score: 72, goals: 72 },
+  { label: 'Aug', score: 79, goals: 79 },
+  { label: 'Sep', score: 83, goals: 83 },
+  { label: 'Oct', score: 86, goals: 86 },
 ]
 
 const views = {
@@ -48,15 +48,15 @@ const views = {
     action: 'Full attendance',
   },
   performance: {
-    label: 'Performance',
-    title: 'Performance score trend',
+    label: 'Evaluation',
+    title: 'Evaluation score trend',
     summary: [
-      ['Current score', '91'],
+      ['Current score', '86'],
       ['Goals met', '86%'],
-      ['Since May', '+13 pts'],
+      ['Since May', '+22 pts'],
     ],
     href: '/dashboard/employee/performance',
-    action: 'Full performance',
+    action: 'Full evaluation',
   },
 } as const
 
@@ -147,7 +147,7 @@ export function DashboardInsightsChart() {
                 <Tooltip cursor={{ stroke: 'rgba(17,17,17,0.2)' }} content={<ChartTooltip unit="" />} />
                 <Line type="monotone" dataKey="goals" name="Goals met %" stroke="rgba(17,17,17,0.35)" strokeDasharray="4 4" strokeWidth={1.5} dot={false} animationDuration={600} />
                 <Line type="monotone" dataKey="score" name="Score" stroke="#3159ff" strokeWidth={3} dot={false} activeDot={{ r: 5, fill: '#3159ff', stroke: '#f6f6f3', strokeWidth: 3 }} animationDuration={600} />
-                <ReferenceDot x="Oct" y={91} r={5} fill="#3159ff" stroke="#f6f6f3" strokeWidth={3} label={{ value: '91', position: 'top', fill: '#111111', fontSize: 13, fontWeight: 700 }} />
+                <ReferenceDot x="Oct" y={86} r={5} fill="#3159ff" stroke="#f6f6f3" strokeWidth={3} label={{ value: '86', position: 'top', fill: '#111111', fontSize: 13, fontWeight: 700 }} />
               </LineChart>
             )}
           </ResponsiveContainer>
