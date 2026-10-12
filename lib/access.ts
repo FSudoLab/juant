@@ -44,3 +44,43 @@ export function writeAccess(employeeId: string, access: Record<string, boolean>)
   window.localStorage.setItem(ACCESS_STORAGE_KEY, JSON.stringify(next))
   window.dispatchEvent(new Event(ACCESS_EVENT))
 }
+
+export const POWER_STORAGE_KEY = 'juant-power-users'
+export const powerAccessId = (employeeId: string) => `power:${employeeId}`
+
+// HR-exclusive sections stay with HR so it remains the top of the hierarchy.
+const hrOnlySections = new Set(['', 'team-overview', 'manager-settings', 'hr-settings', 'settings'])
+
+export function powerAccessItems() {
+  return hrNavigation
+    .map((group) => ({
+      heading: group.heading,
+      items: group.items
+        .filter((item) => !hrOnlySections.has(navKey(item.href)))
+        .map((item) => ({ key: navKey(item.href), label: item.label, locked: false })),
+    }))
+    .filter((group) => group.items.length > 0)
+}
+
+export function powerNavigationFor(access: Record<string, boolean>): NavGroup[] {
+  return hrNavigation
+    .map((group) => ({
+      heading: `Power · ${group.heading}`,
+      items: group.items.filter((item) => !hrOnlySections.has(navKey(item.href)) && access[navKey(item.href)] !== false),
+    }))
+    .filter((group) => group.items.length > 0)
+}
+
+export function readPowerUsers(): Record<string, boolean> {
+  try {
+    return JSON.parse(window.localStorage.getItem(POWER_STORAGE_KEY) ?? '{}')
+  } catch {
+    return {}
+  }
+}
+
+export function writePowerUser(employeeId: string, isPower: boolean) {
+  const next = { ...readPowerUsers(), [employeeId]: isPower }
+  window.localStorage.setItem(POWER_STORAGE_KEY, JSON.stringify(next))
+  window.dispatchEvent(new Event(ACCESS_EVENT))
+}

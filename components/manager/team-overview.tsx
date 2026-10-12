@@ -1,10 +1,10 @@
 'use client'
 
-import { useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react'
-import { CalendarClock, Copy, KeyRound, Search, X } from 'lucide-react'
+import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react'
+import { CalendarClock, Copy, KeyRound, Search, ShieldCheck, ShieldOff, X } from 'lucide-react'
 import { Panel, StatGrid, StatusBadge, statusTone } from '@/components/dashboard/primitives'
 import { useConfirm } from '@/components/dashboard/confirm-dialog'
-import { accessItemsFor, readAccess, writeAccess } from '@/lib/access'
+import { ACCESS_EVENT, accessItemsFor, powerAccessId, powerAccessItems, readAccess, readPowerUsers, writeAccess, writePowerUser } from '@/lib/access'
 import {
   dayError,
   dayKeys,
@@ -32,9 +32,41 @@ const statusActions: Record<TeamMember['status'], { label: string; to: TeamMembe
   Inactive: { label: 'Reactivate', to: 'Active' },
 }
 
-export function TeamOverview() {
+const POWER = 'Power user'
+
+export function TeamOverview({ canGrantPower = false }: { canGrantPower?: boolean }) {
   const confirm = useConfirm()
   const [members, setMembers] = useState(teamRoster)
+  const [powerUsers, setPowerUsers] = useState<Record<string, boolean>>({})
+
+  useEffect(() => {
+    const sync = () => setPowerUsers(readPowerUsers())
+    sync()
+    window.addEventListener(ACCESS_EVENT, sync)
+    window.addEventListener('storage', sync)
+    return () => {
+      window.removeEventListener(ACCESS_EVENT, sync)
+      window.removeEventListener('storage', sync)
+    }
+  }, [])
+
+  const isPower = (m: TeamMember) => Boolean(powerUsers[m.id])
+  const roleLabel = (m: TeamMember) => (isPower(m) ? (m.role === 'Employee' ? POWER : `${m.role} · Power`) : m.role)
+
+  async function togglePower(member: TeamMember) {
+    const granting = !isPower(member)
+    const ok = await confirm({
+      title: granting ? `Would you like to promote ${member.name} to power user?` : `Would you like to remove power access from ${member.name}?`,
+      description: granting
+        ? 'They will get HR-level sections in their sidebar. You can still limit exactly what they see under Permissions → Power permissions.'
+        : `They will go back to normal ${member.role} access. Their power permission settings are kept in case you grant it again.`,
+      confirmLabel: granting ? 'Yes, promote' : 'Yes, demote',
+      tone: granting ? 'primary' : 'danger',
+    })
+    if (!ok) return
+    writePowerUser(member.id, granting)
+    setAnnouncement(granting ? `${member.name} is now a power user.` : `${member.name} is back to normal employee access.`)
+  }
   const [query, setQuery] = useState('')
   const [department, setDepartment] = useState(ALL)
   const [position, setPosition] = useState(ALL)
@@ -52,7 +84,8 @@ export function TeamOverview() {
   const visible = members.filter((m) => {
     if (department !== ALL && m.department !== department) return false
     if (position !== ALL && m.position !== position) return false
-    if (role !== ALL && m.role !== role) return false
+    if (role === POWER && !isPower(m)) return false
+    if (role !== ALL && role !== POWER && (m.role !== role || isPower(m))) return false
     const needle = query.trim().toLowerCase()
     return !needle || [m.name, m.email, m.empNo, m.department, m.position].some((value) => value.toLowerCase().includes(needle))
   })
@@ -87,6 +120,7 @@ export function TeamOverview() {
           { label: 'People', value: String(members.length).padStart(2, '0') },
           { label: 'Departments', value: String(departments.length - 1).padStart(2, '0') },
           { label: 'HR users', value: String(members.filter((m) => m.role === 'HR').length).padStart(2, '0') },
+          { label: 'Power users', value: String(members.filter(isPower).length).padStart(2, '0') },
           { label: 'Inactive', value: String(members.filter((m) => m.status === 'Inactive').length).padStart(2, '0') },
         ]}
       />
@@ -116,6 +150,7 @@ export function TeamOverview() {
             <select id="team-role" value={role} onChange={(e) => setRole(e.target.value)} className={fieldClass}>
               <option value={ALL}>All roles</option>
               <option value="Employee">Employee</option>
+              <option value={POWER}>Power user</option>
               <option value="HR">HR</option>
               <option value="Manager">Manager</option>
             </select>
@@ -153,7 +188,7 @@ export function TeamOverview() {
                     </td>
                     <td className="px-4 py-4 text-[#111111]/70">{member.department}</td>
                     <td className="px-4 py-4 text-[#111111]/70">{member.position}</td>
-                    <td className="px-4 py-4"><StatusBadge tone={member.role === 'Employee' ? 'neutral' : 'blue'}>{member.role}</StatusBadge></td>
+                    <td className="px-4 py-4"><StatusBadge tone={isPower(member) ? 'dark' : member.role === 'Employee' ? 'neutral' : 'blue'}>{roleLabel(member)}</StatusBadge></td>
                     <td className="px-4 py-4 text-[#111111]/70">
                       <span className="block font-medium text-[#111111]">{workingDaysLabel(member.schedule)}</span>
                       <span className="block text-xs">{hoursLabel(member.schedule)}</span>
@@ -168,6 +203,17 @@ export function TeamOverview() {
                         <button type="button" onClick={() => setAccessTarget(member)} aria-label={`Edit permissions for ${member.name}`} className="inline-flex items-center gap-1.5 whitespace-nowrap border border-[#111111]/20 px-3 py-1.5 text-xs font-semibold text-[#111111]/70 hover:border-[#3159ff] hover:text-[#3159ff]">
                           <KeyRound aria-hidden="true" className="size-3.5" /> Permissions
                         </button>
+                        {canGrantPower && (
+                          <button
+                            type="button"
+                            onClick={() => togglePower(member)}
+                            aria-label={isPower(member) ? `Demote ${member.name} to normal employee` : `Promote ${member.name} to power user`}
+                            className={`inline-flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 text-xs font-semibold transition-colors ${isPower(member) ? 'border border-[#111111]/20 text-[#111111]/70 hover:border-[#c2410c] hover:text-[#c2410c]' : 'border border-[#111111] bg-[#111111] text-[#f6f6f3] hover:bg-[#111111]/85'}`}
+                          >
+                            {isPower(member) ? <ShieldOff aria-hidden="true" className="size-3.5" /> : <ShieldCheck aria-hidden="true" className="size-3.5" />}
+                            {isPower(member) ? 'Demote' : 'Promote'}
+                          </button>
+                        )}
                         {statusAction && (
                           <button type="button" onClick={() => changeStatus(member)} aria-label={`${statusAction.label} ${member.name}`} className={`whitespace-nowrap px-3 py-1.5 text-xs font-semibold transition-colors ${statusAction.danger ? 'border border-[#c2410c]/40 text-[#c2410c] hover:bg-[#c2410c] hover:text-white' : 'bg-[#3159ff] text-white hover:bg-[#2447d6]'}`}>
                             {statusAction.label}
@@ -187,7 +233,7 @@ export function TeamOverview() {
       </Panel>
 
       {scheduleTarget && <ScheduleDialog key={scheduleTarget.id} member={scheduleTarget} onClose={() => setScheduleTarget(null)} onSave={saveSchedule} />}
-      {accessTarget && <PermissionsDialog key={accessTarget.id} member={accessTarget} onClose={() => setAccessTarget(null)} onSaved={() => setAnnouncement(`Saved permissions for ${accessTarget.name}.`)} />}
+      {accessTarget && <PermissionsDialog key={accessTarget.id} member={accessTarget} isPower={isPower(accessTarget)} canEditPower={canGrantPower} onClose={() => setAccessTarget(null)} onSaved={() => setAnnouncement(`Saved permissions for ${accessTarget.name}.`)} />}
     </>
   )
 }
@@ -383,32 +429,67 @@ function DayRow({ dayKey, day, error, canCopy, onChange, onCopy }: { dayKey: Day
   )
 }
 
-function PermissionsDialog({ member, onClose, onSaved }: { member: TeamMember; onClose: () => void; onSaved: () => void }) {
+type AccessGroup = { heading: string; items: { key: string; label: string; locked: boolean }[] }
+
+function initialAccess(groups: AccessGroup[], saved: Record<string, boolean>) {
+  return Object.fromEntries(groups.flatMap((g) => g.items).map((item) => [item.key, item.locked ? true : saved[item.key] !== false]))
+}
+
+function PermissionsDialog({ member, isPower, canEditPower, onClose, onSaved }: { member: TeamMember; isPower: boolean; canEditPower: boolean; onClose: () => void; onSaved: () => void }) {
   const confirm = useConfirm()
-  const groups = useMemo(() => accessItemsFor(member.role), [member.role])
-  const [access, setAccess] = useState<Record<string, boolean>>(() => {
-    const saved = readAccess()[member.id] ?? {}
-    return Object.fromEntries(groups.flatMap((g) => g.items).map((item) => [item.key, item.locked ? true : saved[item.key] !== false]))
-  })
-  const enabledCount = Object.values(access).filter(Boolean).length
+  const showPowerTab = isPower && canEditPower
+  const [tab, setTab] = useState<'base' | 'power'>('base')
+  const baseGroups = useMemo(() => accessItemsFor(member.role), [member.role])
+  const powerGroups = useMemo(() => powerAccessItems(), [])
+  const [baseAccess, setBaseAccess] = useState<Record<string, boolean>>(() => initialAccess(baseGroups, readAccess()[member.id] ?? {}))
+  const [powerAccess, setPowerAccess] = useState<Record<string, boolean>>(() => initialAccess(powerGroups, readAccess()[powerAccessId(member.id)] ?? {}))
+
+  const groups = tab === 'power' ? powerGroups : baseGroups
+  const access = tab === 'power' ? powerAccess : baseAccess
+  const setAccess = tab === 'power' ? setPowerAccess : setBaseAccess
+  const count = (map: Record<string, boolean>) => Object.values(map).filter(Boolean).length
+  const enabledCount = count(access)
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     const dialog = event.currentTarget.closest('dialog')
     const ok = await confirm({
       title: `Would you like to update ${member.name}'s permissions?`,
-      description: `${enabledCount} of ${Object.keys(access).length} sidebar sections will be visible to them.`,
+      description: showPowerTab
+        ? `Employee: ${count(baseAccess)} of ${Object.keys(baseAccess).length} sections on. Power: ${count(powerAccess)} of ${Object.keys(powerAccess).length} HR sections on.`
+        : `${count(baseAccess)} of ${Object.keys(baseAccess).length} sidebar sections will be visible to them.`,
       confirmLabel: 'Yes, save permissions',
     })
     if (!ok) return
-    writeAccess(member.id, access)
+    writeAccess(member.id, baseAccess)
+    if (showPowerTab) writeAccess(powerAccessId(member.id), powerAccess)
     onSaved()
     dialog?.close()
   }
 
+  const tabClass = (active: boolean) =>
+    `flex-1 px-4 py-3 text-left text-xs font-semibold transition-colors ${active ? 'border-b-2 border-[#3159ff] text-[#111111]' : 'border-b-2 border-transparent text-[#111111]/50 hover:text-[#111111]'}`
+
   return (
-    <EditorDialog title="Edit permissions" subtitle={`${member.name} · ${member.role} access · ${enabledCount} sections on`} onClose={onClose} onSubmit={handleSubmit}>
-      <div className="max-h-[55vh] overflow-y-auto">
+    <EditorDialog title="Edit permissions" subtitle={`${member.name} · ${isPower ? 'Power user' : member.role} · ${enabledCount} sections on`} onClose={onClose} onSubmit={handleSubmit}>
+      {showPowerTab && (
+        <div role="tablist" aria-label="Permission sets" className="flex border-b border-[#111111]/15">
+          <button type="button" role="tab" aria-selected={tab === 'base'} onClick={() => setTab('base')} className={tabClass(tab === 'base')}>
+            Employee permissions
+            <span className="block font-mono text-[10px] font-normal text-[#111111]/45">{count(baseAccess)} of {Object.keys(baseAccess).length} on</span>
+          </button>
+          <button type="button" role="tab" aria-selected={tab === 'power'} onClick={() => setTab('power')} className={tabClass(tab === 'power')}>
+            Power permissions
+            <span className="block font-mono text-[10px] font-normal text-[#111111]/45">{count(powerAccess)} of {Object.keys(powerAccess).length} HR sections on</span>
+          </button>
+        </div>
+      )}
+      {tab === 'power' && (
+        <p className="border-b border-[#111111]/15 bg-[#111111]/[0.03] px-5 py-3 text-xs leading-relaxed text-[#111111]/60">
+          HR-level sections this power user can open. Team overview, Manager settings, and HR settings always stay HR-only.
+        </p>
+      )}
+      <div className="max-h-[50vh] overflow-y-auto">
         {groups.map((group) => (
           <fieldset key={group.heading} className="border-b border-[#111111]/15 last:border-b-0">
             <legend className="sr-only">{group.heading}</legend>

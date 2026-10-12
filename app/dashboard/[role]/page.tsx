@@ -18,7 +18,7 @@ const dashboardData = {
     description: 'A clear view of your team, their time, and what needs attention.',
     stats: [['Team members', '48'], ['Pending requests', '07'], ['This month', '92%']],
     cards: [
-      { icon: Users, title: 'Team pulse', detail: '42 of 48 people checked in today', action: 'View attendance', href: '/dashboard/hr/attendance-management' },
+      { icon: Users, title: 'Team pulse', detail: '42 of 48 people checked in today', action: 'View attendance', href: '/dashboard/hr/approvals' },
       { icon: CheckCircle2, title: 'Needs your review', detail: '8 leave, overtime, and attendance requests', action: 'Open approval center', href: '/dashboard/hr/approvals' },
     ],
   },

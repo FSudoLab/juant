@@ -1,13 +1,27 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { PageIntro, Panel, StatGrid } from '@/components/dashboard/primitives'
+import { ApprovalCenter } from '@/components/hr/approval-center'
+import { EmployeeFilesView } from '@/components/hr/employee-files-view'
+import { EvalSurveyEditor } from '@/components/hr/eval-survey-editor'
+import { EvaluationsView } from '@/components/hr/evaluations-view'
+import { FaqEditor } from '@/components/hr/faq-editor'
+import { SettingsTabs } from '@/components/hr/settings-tabs'
 import { HrModuleChart } from '@/components/hr/hr-module-chart'
 import { HrModuleView } from '@/components/hr/hr-module-view'
 import { EmployeeInformationEditor } from '@/components/manager/employee-information-editor'
+import { ManagerSettingsForm } from '@/components/manager/manager-settings-form'
 import { TeamOverview } from '@/components/manager/team-overview'
 import { getHrModule, hrModules } from '@/lib/hr-modules'
 
 type Params = Promise<{ role: string; section: string }>
+
+const hrApprovalTabs = [
+  { id: 'approvals', label: 'All requests' },
+  { id: 'attendance-management', label: 'Attendance' },
+  { id: 'leave-management', label: 'Leave' },
+  { id: 'overtime', label: 'Overtime & holiday work' },
+]
 
 const managerSections = {
   holidays: { title: 'Upcoming holidays', description: 'Review the holiday calendar used by your team and its schedule planning.' },
@@ -26,6 +40,7 @@ const systemAdminSections = {
 export function generateStaticParams() {
   return [
     ...hrModules.map((module) => ({ role: 'hr', section: module.slug })),
+    { role: 'hr', section: 'team-overview' },
     ...hrModules.map((module) => ({ role: 'manager', section: module.slug })),
     ...Object.keys(managerSections).map((section) => ({ role: 'manager', section })),
     ...Object.keys(systemAdminSections).map((section) => ({ role: 'system-admin', section })),
@@ -48,7 +63,50 @@ export default async function HrSectionPage({ params }: { params: Params }) {
           title={role === 'manager' ? 'Team overview' : 'Employee management'}
           description="Everyone in the workspace in one place. Search by department or position, customize each person's schedule, and control what they can access."
         />
-        <TeamOverview />
+        <TeamOverview canGrantPower={role === 'hr'} />
+      </>
+    )
+  }
+  if (role === 'hr' && section === 'team-overview') {
+    return (
+      <>
+        <PageIntro
+          eyebrow="Workspace / Team Overview"
+          title="Team overview"
+          description="Every employee, HR user, and manager in one place. HR can edit schedules, grant or remove access for anyone, and promote employees to power users."
+        />
+        <TeamOverview canGrantPower />
+      </>
+    )
+  }
+  if (role === 'hr' && section === 'hr-settings') {
+    const policies = getHrModule('hr-settings')
+    return (
+      <>
+        <PageIntro eyebrow="Insights & System / Settings" title="Settings" description="Company policies, team rules, and the FAQs employees see — all in one place." />
+        <SettingsTabs
+          tabs={[
+            { id: 'policies', label: 'Policies', content: policies ? <HrModuleView module={policies} /> : null },
+            { id: 'team-rules', label: 'Team rules', content: <ManagerSettingsForm /> },
+            { id: 'faqs', label: 'Employee FAQs', content: <FaqEditor /> },
+          ]}
+        />
+      </>
+    )
+  }
+  if (role === 'hr' && section === 'kpis') {
+    return (
+      <>
+        <PageIntro eyebrow="Employee Development / Evaluations" title="Evaluations" description="See how co-workers rated each employee, then give your HR rating to set their final score." />
+        <EvaluationsView />
+      </>
+    )
+  }
+  if (role === 'hr' && section === 'engagement') {
+    return (
+      <>
+        <PageIntro eyebrow="Employee Development / Eval Surveys" title="Eval surveys" description="Write the questions employees answer about their co-workers and choose which departments run peer evaluations." />
+        <EvalSurveyEditor />
       </>
     )
   }
@@ -79,8 +137,29 @@ export default async function HrSectionPage({ params }: { params: Params }) {
       </>
     )
   }
+  if (role === 'hr' && section === 'approvals') {
+    const tabs = hrApprovalTabs.flatMap(({ id, label }) => {
+      const module = getHrModule(id)
+      return module ? [{ id, label, module }] : []
+    })
+    return (
+      <>
+        <PageIntro eyebrow="Workspace / Approval Center" title="Approval center" description="Every request waiting on HR, grouped by type. Review attendance, leave, and overtime without leaving the page." />
+        <ApprovalCenter tabs={tabs} />
+      </>
+    )
+  }
   const hrModule = role === 'hr' || role === 'manager' ? getHrModule(section) : undefined
   if (!hrModule) notFound()
+
+  if (section === '201-files') {
+    return (
+      <>
+        <PageIntro eyebrow={`${hrModule.group} / ${hrModule.label}`} title={hrModule.title} description={hrModule.description} />
+        <EmployeeFilesView />
+      </>
+    )
+  }
 
   return (
     <>

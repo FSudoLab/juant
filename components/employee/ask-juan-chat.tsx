@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, type FormEvent, type KeyboardEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react'
 import { Bot, Send } from 'lucide-react'
 
 type Message = { role: 'user' | 'juan'; text: string }
@@ -45,6 +45,12 @@ export function AskJuanChat({ variant = 'employee' }: { variant?: keyof typeof v
   const { suggestions } = config
   const [messages, setMessages] = useState<Message[]>([{ role: 'juan', text: config.greeting }])
   const [input, setInput] = useState('')
+  const listRef = useRef<HTMLOListElement>(null)
+
+  useEffect(() => {
+    const list = listRef.current
+    if (list) list.scrollTo({ top: list.scrollHeight, behavior: 'smooth' })
+  }, [messages])
 
   const answerFor = (question: string) => {
     const lower = question.toLowerCase()
@@ -73,7 +79,7 @@ export function AskJuanChat({ variant = 'employee' }: { variant?: keyof typeof v
 
   return (
     <section className="flex flex-col border border-[#111111]/15" aria-label="Chat with Juan">
-      <ol className="flex min-h-80 flex-col gap-4 p-5 sm:p-6" aria-live="polite">
+      <ol ref={listRef} className="flex h-[min(28rem,55vh)] flex-col gap-4 overflow-y-auto p-5 sm:p-6" aria-live="polite">
         {messages.map((message, index) => (
           <li key={index} className={`flex max-w-[85%] gap-3 ${message.role === 'user' ? 'self-end' : 'self-start'}`}>
             {message.role === 'juan' && (
