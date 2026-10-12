@@ -56,11 +56,11 @@ export function TeamOverview({ canGrantPower = false }: { canGrantPower?: boolea
   async function togglePower(member: TeamMember) {
     const granting = !isPower(member)
     const ok = await confirm({
-      title: granting ? `Would you like to make ${member.name} a power user?` : `Would you like to remove power access from ${member.name}?`,
+      title: granting ? `Would you like to promote ${member.name} to power user?` : `Would you like to demote ${member.name} to normal employee?`,
       description: granting
         ? 'They will get HR-level sections in their sidebar. You can still limit exactly what they see under Permissions → Power permissions.'
         : 'They will go back to normal employee access. Their power permission settings are kept in case you grant it again.',
-      confirmLabel: granting ? 'Yes, make power user' : 'Yes, remove power access',
+      confirmLabel: granting ? 'Yes, promote' : 'Yes, demote',
       tone: granting ? 'primary' : 'danger',
     })
     if (!ok) return
@@ -206,11 +206,11 @@ export function TeamOverview({ canGrantPower = false }: { canGrantPower?: boolea
                           <button
                             type="button"
                             onClick={() => togglePower(member)}
-                            aria-label={isPower(member) ? `Remove power access from ${member.name}` : `Make ${member.name} a power user`}
+                            aria-label={isPower(member) ? `Demote ${member.name} to normal employee` : `Promote ${member.name} to power user`}
                             className={`inline-flex items-center gap-1.5 whitespace-nowrap px-3 py-1.5 text-xs font-semibold transition-colors ${isPower(member) ? 'border border-[#111111]/20 text-[#111111]/70 hover:border-[#c2410c] hover:text-[#c2410c]' : 'border border-[#111111] bg-[#111111] text-[#f6f6f3] hover:bg-[#111111]/85'}`}
                           >
                             {isPower(member) ? <ShieldOff aria-hidden="true" className="size-3.5" /> : <ShieldCheck aria-hidden="true" className="size-3.5" />}
-                            {isPower(member) ? 'Remove power' : 'Make power user'}
+                            {isPower(member) ? 'Demote' : 'Promote'}
                           </button>
                         )}
                         {statusAction && (

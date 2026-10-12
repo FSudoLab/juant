@@ -1,11 +1,12 @@
 'use client'
 
 import { useMemo, useRef, useState } from 'react'
-import { BellRing, CheckCheck, FileCheck2, FolderOpen, Search, X } from 'lucide-react'
+import { BellRing, CheckCheck, Eye, FileImage, FilePlus2, FileText, FolderOpen, Search, Trash2, Upload, X } from 'lucide-react'
 import { Panel, StatGrid, StatusBadge, statusTone } from '@/components/dashboard/primitives'
 import { useConfirm } from '@/components/dashboard/confirm-dialog'
-import { countByStatus, employeeFiles, fileStatus, type EmployeeFile } from '@/lib/employee-files'
+import { acceptedFileTypes, countByStatus, employeeFiles, fileStatus, formatFileSize, maxFileSizeMb, type EmployeeFile } from '@/lib/employee-files'
 
+const OTHER_FILE = '__other__'
 const filters = ['All', 'Incomplete', 'For review', 'Complete'] as const
 const today = () => new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 
@@ -18,7 +19,10 @@ export function EmployeeFilesView() {
   const [filter, setFilter] = useState<(typeof filters)[number]>('All')
   const [openId, setOpenId] = useState<string | null>(null)
   const [announcement, setAnnouncement] = useState('')
+  const [uploadError, setUploadError] = useState('')
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const uploadTarget = useRef<string | null>(null)
   const confirm = useConfirm()
 
   const openFile = files.find((file) => file.id === openId)
@@ -51,12 +55,60 @@ export function EmployeeFilesView() {
     setAnnouncement(`Reminder sent to ${file.name}.`)
   }
 
-  const verify = async (file: EmployeeFile, documentName?: string) => {
-    const pending = documentName ? [documentName] : file.documents.filter((doc) => doc.status === 'For review').map((doc) => doc.name)
-    const ok = await confirm({ title: documentName ? `Would you like to verify ${documentName}?` : `Would you like to verify ${file.name}'s submitted documents?`, description: `${pending.join(', ')} will be marked as verified.`, confirmLabel: 'Yes, verify' })
+  const pickFile = (target: string) => {
+    uploadTarget.current = target
+    setUploadError('')
+    fileInputRef.current?.click()
+  }
+
+  const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const picked = event.target.files?.[0]
+    event.target.value = ''
+    const target = uploadTarget.current
+    if (!picked || !openFile || !target) return
+    if (picked.size > maxFileSizeMb * 1024 * 1024) {
+      setUploadError(`${picked.name} is larger than ${maxFileSizeMb} MB.`)
+      return
+    }
+    const isOther = target === OTHER_FILE
+    const ok = await confirm({
+      title: isOther ? `Would you like to add ${picked.name} to ${openFile.name}'s 201 file?` : `Would you like to upload ${picked.name} as ${target}?`,
+      description: `${formatFileSize(picked.size)} · ${isOther ? 'Saved under Other files.' : 'It will replace any existing file for this requirement.'}`,
+      confirmLabel: 'Yes, upload',
+    })
     if (!ok) return
-    update(file.id, (f) => ({ ...f, updated: today(), documents: f.documents.map((doc) => (pending.includes(doc.name) ? { ...doc, status: 'Verified' } : doc)) }))
-    setAnnouncement(`Verified ${pending.length} document${pending.length === 1 ? '' : 's'} for ${file.name}.`)
+    const attachment = { fileName: picked.name, size: picked.size, type: picked.type, url: URL.createObjectURL(picked) }
+    update(openFile.id, (f) => {
+      if (isOther) {
+        return { ...f, updated: today(), documents: [...f.documents, { name: picked.name, category: 'Other', status: 'Verified', uploaded: today(), attachment }] }
+      }
+      return {
+        ...f,
+        updated: today(),
+        documents: f.documents.map((doc) => {
+          if (doc.name !== target) return doc
+          if (doc.attachment) URL.revokeObjectURL(doc.attachment.url)
+          return { ...doc, status: 'Verified', uploaded: today(), attachment }
+        }),
+      }
+    })
+    setAnnouncement(`${picked.name} uploaded to ${openFile.name}'s 201 file.`)
+  }
+
+  const removeOther = async (file: EmployeeFile, documentName: string) => {
+    const ok = await confirm({ title: `Would you like to remove ${documentName}?`, description: 'This file will be deleted from the 201 file.', confirmLabel: 'Yes, remove', tone: 'danger' })
+    if (!ok) return
+    update(file.id, (f) => ({
+      ...f,
+      documents: f.documents.filter((doc) => {
+        if (doc.name === documentName && doc.category === 'Other') {
+          if (doc.attachment) URL.revokeObjectURL(doc.attachment.url)
+          return false
+        }
+        return true
+      }),
+    }))
+    setAnnouncement(`${documentName} removed.`)
   }
 
   const complete = async (file: EmployeeFile) => {
@@ -131,7 +183,6 @@ export function EmployeeFilesView() {
                 const status = fileStatus(file)
                 const total = file.documents.length
                 const submitted = total - countByStatus(file, 'Missing')
-                const forReview = countByStatus(file, 'For review')
                 return (
                   <tr key={file.id} className="transition-colors hover:bg-white">
                     <td className="px-5 py-4 sm:px-6">
@@ -157,9 +208,6 @@ export function EmployeeFilesView() {
                         </button>
                         <button type="button" onClick={() => sendReminder(file)} disabled={status !== 'Incomplete'} className={ghostButton} aria-label={`Send reminder to ${file.name}`}>
                           <BellRing aria-hidden="true" className="size-3.5" /> Remind
-                        </button>
-                        <button type="button" onClick={() => verify(file)} disabled={forReview === 0} className={ghostButton} aria-label={`Verify documents of ${file.name}`}>
-                          <FileCheck2 aria-hidden="true" className="size-3.5" /> Verify
                         </button>
                         <button type="button" onClick={() => complete(file)} disabled={status === 'Complete'} className={primaryButton} aria-label={`Mark ${file.name}'s file complete`}>
                           <CheckCheck aria-hidden="true" className="size-3.5" /> Complete
@@ -198,21 +246,51 @@ export function EmployeeFilesView() {
                 <span className="sr-only">Close</span>
               </button>
             </div>
+            <input ref={fileInputRef} type="file" accept={acceptedFileTypes} onChange={handleUpload} className="sr-only" tabIndex={-1} aria-hidden="true" />
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#111111]/15 bg-white px-5 py-3">
+              <p className="text-xs text-[#111111]/55">PDF, images, Word or Excel · up to {maxFileSizeMb} MB</p>
+              <button type="button" onClick={() => pickFile(OTHER_FILE)} className={primaryButton}>
+                <FilePlus2 aria-hidden="true" className="size-3.5" /> Add file
+              </button>
+            </div>
+            {uploadError && <p role="alert" className="border-b border-[#111111]/15 bg-[#ff4b2b]/10 px-5 py-2 text-xs font-semibold text-[#c2311a]">{uploadError}</p>}
             <ul className="divide-y divide-[#111111]/10 overflow-y-auto">
-              {openFile.documents.map((doc) => (
-                <li key={doc.name} className="flex items-center justify-between gap-3 px-5 py-3">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold">{doc.name}</p>
-                    <p className="text-xs text-[#111111]/50">{doc.category}{doc.uploaded ? ` · Uploaded ${doc.uploaded}` : ' · Not submitted'}</p>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-2">
-                    <StatusBadge tone={statusTone(doc.status === 'Verified' ? 'Complete' : doc.status === 'Missing' ? 'Incomplete' : 'For review')}>{doc.status}</StatusBadge>
-                    {doc.status === 'For review' && (
-                      <button type="button" onClick={() => verify(openFile, doc.name)} className={primaryButton}>Verify</button>
-                    )}
-                  </div>
-                </li>
-              ))}
+              {openFile.documents.map((doc) => {
+                const isOther = doc.category === 'Other'
+                const FileIcon = doc.attachment?.type.startsWith('image/') ? FileImage : FileText
+                return (
+                  <li key={`${doc.category}-${doc.name}`} className="flex items-center justify-between gap-3 px-5 py-3">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <FileIcon aria-hidden="true" className={`size-4 shrink-0 ${doc.attachment ? 'text-[#3159ff]' : 'text-[#111111]/30'}`} />
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold">{doc.name}</p>
+                        <p className="truncate text-xs text-[#111111]/50">
+                          {doc.category}
+                          {doc.attachment ? ` · ${doc.attachment.fileName} · ${formatFileSize(doc.attachment.size)}` : ''}
+                          {doc.uploaded ? ` · Uploaded ${doc.uploaded}` : ' · Not submitted'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-2">
+                      {!isOther && <StatusBadge tone={statusTone(doc.status === 'Verified' ? 'Complete' : doc.status === 'Missing' ? 'Incomplete' : 'For review')}>{doc.status}</StatusBadge>}
+                      {doc.attachment && (
+                        <a href={doc.attachment.url} target="_blank" rel="noreferrer" className={ghostButton} aria-label={`Open ${doc.attachment.fileName}`}>
+                          <Eye aria-hidden="true" className="size-3.5" /> Open
+                        </a>
+                      )}
+                      {isOther ? (
+                        <button type="button" onClick={() => removeOther(openFile, doc.name)} className={ghostButton} aria-label={`Remove ${doc.name}`}>
+                          <Trash2 aria-hidden="true" className="size-3.5" />
+                        </button>
+                      ) : (
+                        <button type="button" onClick={() => pickFile(doc.name)} className={ghostButton} aria-label={`Upload file for ${doc.name}`}>
+                          <Upload aria-hidden="true" className="size-3.5" /> {doc.attachment || doc.status !== 'Missing' ? 'Replace' : 'Upload'}
+                        </button>
+                      )}
+                    </div>
+                  </li>
+                )
+              })}
             </ul>
             <div className="flex flex-wrap justify-end gap-2 border-t border-[#111111]/15 p-5">
               <button type="button" onClick={() => sendReminder(openFile)} disabled={fileStatus(openFile) !== 'Incomplete'} className={ghostButton}>

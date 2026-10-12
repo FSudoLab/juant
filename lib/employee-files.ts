@@ -1,7 +1,24 @@
 export type DocumentStatus = 'Verified' | 'For review' | 'Missing'
 export type FileStatus = 'Complete' | 'For review' | 'Incomplete'
 
-export type EmployeeDocument = { name: string; category: 'Pre-employment' | 'Government' | 'Education' | 'Contract'; status: DocumentStatus; uploaded?: string }
+export type FileAttachment = { fileName: string; size: number; type: string; url: string }
+
+export type EmployeeDocument = {
+  name: string
+  category: 'Pre-employment' | 'Government' | 'Education' | 'Contract' | 'Other'
+  status: DocumentStatus
+  uploaded?: string
+  attachment?: FileAttachment
+}
+
+export const acceptedFileTypes = '.pdf,.png,.jpg,.jpeg,.webp,.heic,.doc,.docx,.xls,.xlsx'
+export const maxFileSizeMb = 10
+
+export function formatFileSize(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
 
 export type EmployeeFile = {
   id: string
