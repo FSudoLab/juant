@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { PageIntro } from '@/components/dashboard/primitives'
 import { PeerEvaluationForm } from '@/components/employee/peer-evaluation-form'
+import { ReceivedPeerRatings } from '@/components/employee/received-peer-ratings'
 import { demoAccountByRole } from '@/lib/access'
 import { requireEmployee } from '@/lib/roles'
 
@@ -12,6 +13,7 @@ export default async function PeerEvaluationPage({ params }: { params: Promise<{
   return (
     <>
       <PageIntro eyebrow="My Employment / Peer Evaluation" title="Peer evaluation" description="Rate the co-workers in your department on each question and explain why. HR sees your ratings and rationale." />
+      <ReceivedPeerRatings employeeId={demoAccountByRole.employee ?? ''} />
       <PeerEvaluationForm reviewerId={demoAccountByRole.employee ?? ''} />
     </>
   )
