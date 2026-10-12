@@ -81,19 +81,19 @@ export function HrUserAccess() {
         </form>
       </Panel>
 
+      {configuring && users.find((user) => user.id === configuring) && (() => {
+        const user = users.find((candidate) => candidate.id === configuring)
+        if (!user) return null
+        return (
+          <Panel title={`Configure ${user.name}`} description="Choose which HR systems this user can access.">
+            <div role="tabpanel">
+              <HrSystemConfig userId={user.id} userName={user.name} onSaved={setStatus} />
+            </div>
+          </Panel>
+        )
+      })()}
+
       <Panel title="HR users" description={`${users.length} ${users.length === 1 ? 'person has' : 'people have'} HR workspace access.`}>
-        <div className="border-b border-[#111111]/15 px-5 pt-4 sm:px-6">
-          <div className="flex flex-wrap gap-1" role="tablist" aria-label="HR user access">
-            <button type="button" role="tab" aria-selected={configuring === null} onClick={() => setConfiguring(null)} className={`border-b-2 px-3 py-2 text-sm font-semibold transition-colors ${configuring === null ? 'border-[#3159ff] text-[#3159ff]' : 'border-transparent text-[#111111]/60 hover:text-[#111111]'}`}>
-              All HR users
-            </button>
-            {users.map((user) => (
-              <button key={user.id} type="button" role="tab" aria-selected={configuring === user.id} onClick={() => setConfiguring(user.id)} className={`border-b-2 px-3 py-2 text-sm font-semibold transition-colors ${configuring === user.id ? 'border-[#3159ff] text-[#3159ff]' : 'border-transparent text-[#111111]/60 hover:text-[#111111]'}`}>
-                {user.name}
-              </button>
-            ))}
-          </div>
-        </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-left text-sm">
             <thead>
