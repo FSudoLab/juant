@@ -11,12 +11,11 @@ export function SampleAccountSetup() {
   const [logoName, setLogoName] = useState('')
   const [hrHotline, setHrHotline] = useState('')
   const [address1, setAddress1] = useState('')
-  const [city, setCity] = useState('')
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
   }
 
-  const companyComplete = Boolean(company && hrHotline && address1 && city)
+  const companyComplete = Boolean(company && hrHotline && address1)
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 py-1 lg:flex-row lg:items-start">
@@ -47,9 +46,8 @@ export function SampleAccountSetup() {
         <section className="pt-8">
           <div className="grid gap-x-6 gap-y-6 sm:grid-cols-2 xl:grid-cols-4">
             <Field id="sample-company" label="Company name" required value={company} onChange={setCompany} placeholder="Enter company name" />
-            <Field id="sample-hr-hotline" label="HR telephone number" required value={hrHotline} onChange={setHrHotline} placeholder="Enter HR telephone number" />
+            <Field id="sample-hr-hotline" label="HR hotline number" required value={hrHotline} onChange={setHrHotline} placeholder="Enter HR hotline number" />
             <div className="sm:col-span-2 xl:col-span-2"><Field id="sample-address-1" label="Address 1" required value={address1} onChange={setAddress1} placeholder="Enter address" /></div>
-            <Field id="sample-city" label="City" required value={city} onChange={setCity} placeholder="Enter city" />
           </div>
         </section>
 
