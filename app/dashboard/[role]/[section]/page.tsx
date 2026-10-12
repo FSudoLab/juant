@@ -6,6 +6,7 @@ import { EmployeeFilesView } from '@/components/hr/employee-files-view'
 import { HrModuleChart } from '@/components/hr/hr-module-chart'
 import { HrModuleView } from '@/components/hr/hr-module-view'
 import { EmployeeInformationEditor } from '@/components/manager/employee-information-editor'
+import { ManagerSettingsForm } from '@/components/manager/manager-settings-form'
 import { TeamOverview } from '@/components/manager/team-overview'
 import { getHrModule, hrModules } from '@/lib/hr-modules'
 
@@ -35,6 +36,8 @@ const systemAdminSections = {
 export function generateStaticParams() {
   return [
     ...hrModules.map((module) => ({ role: 'hr', section: module.slug })),
+    { role: 'hr', section: 'team-overview' },
+    { role: 'hr', section: 'manager-settings' },
     ...hrModules.map((module) => ({ role: 'manager', section: module.slug })),
     ...Object.keys(managerSections).map((section) => ({ role: 'manager', section })),
     ...Object.keys(systemAdminSections).map((section) => ({ role: 'system-admin', section })),
@@ -58,6 +61,26 @@ export default async function HrSectionPage({ params }: { params: Params }) {
           description="Everyone in the workspace in one place. Search by department or position, customize each person's schedule, and control what they can access."
         />
         <TeamOverview />
+      </>
+    )
+  }
+  if (role === 'hr' && section === 'team-overview') {
+    return (
+      <>
+        <PageIntro
+          eyebrow="Workspace / Team Overview"
+          title="Team overview"
+          description="Every employee, HR user, and manager in one place. HR can edit schedules and grant or remove access for anyone."
+        />
+        <TeamOverview />
+      </>
+    )
+  }
+  if (role === 'hr' && section === 'manager-settings') {
+    return (
+      <>
+        <PageIntro eyebrow="Insights & System / Manager Settings" title="Manager settings" description="Manage the same schedule, leave, reminder, and team rules managers use — HR has full control." />
+        <ManagerSettingsForm />
       </>
     )
   }

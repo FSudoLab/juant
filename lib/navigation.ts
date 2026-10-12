@@ -98,6 +98,7 @@ export const hrNavigation: NavGroup[] = [
     items: [
       { label: 'Dashboard', href: hrBase, icon: LayoutDashboard },
       hrItem('Time In', 'attendance', Timer),
+      hrItem('Team Overview', 'team-overview', Users),
       hrItem('Approval Center', 'approvals', CheckCircle2, '8'),
     ],
   },
@@ -140,6 +141,7 @@ export const hrNavigation: NavGroup[] = [
       hrItem('Reports & Analytics', 'reports', BarChart3),
       hrItem('Ask Juan AI', 'ask-juan', Bot),
       hrItem('HR Settings', 'hr-settings', Settings),
+      hrItem('Manager Settings', 'manager-settings', Settings),
     ],
   },
 ]
