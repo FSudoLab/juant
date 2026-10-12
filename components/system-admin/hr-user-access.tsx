@@ -1,6 +1,6 @@
 'use client'
 
-import { Fragment, useState, type FormEvent } from 'react'
+import { useState, type FormEvent } from 'react'
 import { Mail, SlidersHorizontal, Trash2, UserPlus } from 'lucide-react'
 import { HrSystemConfig } from '@/components/system-admin/hr-system-config'
 import { Panel, StatusBadge, statusTone } from '@/components/dashboard/primitives'
@@ -52,6 +52,7 @@ export function HrUserAccess() {
     const ok = await confirm({ title: `Would you like to remove ${user.name}'s HR access?`, description: 'They will no longer be able to sign in to the HR workspace.', confirmLabel: 'Yes, remove', tone: 'danger' })
     if (!ok) return
     setUsers((current) => current.filter((u) => u.id !== user.id))
+    setConfiguring((current) => (current === user.id ? null : current))
     setStatus(`${user.name} was removed.`)
   }
 
@@ -81,6 +82,18 @@ export function HrUserAccess() {
       </Panel>
 
       <Panel title="HR users" description={`${users.length} ${users.length === 1 ? 'person has' : 'people have'} HR workspace access.`}>
+        <div className="border-b border-[#111111]/15 px-5 pt-4 sm:px-6">
+          <div className="flex flex-wrap gap-1" role="tablist" aria-label="HR user access">
+            <button type="button" role="tab" aria-selected={configuring === null} onClick={() => setConfiguring(null)} className={`border-b-2 px-3 py-2 text-sm font-semibold transition-colors ${configuring === null ? 'border-[#3159ff] text-[#3159ff]' : 'border-transparent text-[#111111]/60 hover:text-[#111111]'}`}>
+              All HR users
+            </button>
+            {users.map((user) => (
+              <button key={user.id} type="button" role="tab" aria-selected={configuring === user.id} onClick={() => setConfiguring(user.id)} className={`border-b-2 px-3 py-2 text-sm font-semibold transition-colors ${configuring === user.id ? 'border-[#3159ff] text-[#3159ff]' : 'border-transparent text-[#111111]/60 hover:text-[#111111]'}`}>
+                {user.name}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-left text-sm">
             <thead>
@@ -94,8 +107,7 @@ export function HrUserAccess() {
             </thead>
             <tbody className="divide-y divide-[#111111]/15">
               {users.map((user) => (
-                <Fragment key={user.id}>
-                <tr>
+                <tr key={user.id}>
                   <td className="px-5 py-4 sm:px-6">
                     <div className="flex items-center gap-3">
                       <span className="font-semibold">{user.name}</span>
@@ -110,7 +122,6 @@ export function HrUserAccess() {
                         type="button"
                         onClick={() => setConfiguring((current) => (current === user.id ? null : user.id))}
                         aria-expanded={configuring === user.id}
-                        aria-controls={`config-${user.id}`}
                         aria-label={`Configure systems for ${user.name}`}
                         title="Configuration"
                         className={`${iconButtonClass} hover:border-[#3159ff] hover:text-[#3159ff] ${configuring === user.id ? 'border-[#3159ff] bg-[#3159ff] text-white hover:text-white' : ''}`}
@@ -128,14 +139,6 @@ export function HrUserAccess() {
                     </div>
                   </td>
                 </tr>
-                {configuring === user.id && (
-                  <tr id={`config-${user.id}`}>
-                    <td colSpan={4} className="p-0">
-                      <HrSystemConfig userId={user.id} userName={user.name} onSaved={setStatus} />
-                    </td>
-                  </tr>
-                )}
-                </Fragment>
               ))}
               {users.length === 0 && (
                 <tr>
@@ -145,6 +148,15 @@ export function HrUserAccess() {
             </tbody>
           </table>
         </div>
+        {configuring && users.find((user) => user.id === configuring) && (() => {
+          const user = users.find((candidate) => candidate.id === configuring)
+          if (!user) return null
+          return (
+            <div role="tabpanel" className="border-t border-[#111111]/15">
+              <HrSystemConfig userId={user.id} userName={user.name} onSaved={setStatus} />
+            </div>
+          )
+        })()}
       </Panel>
     </div>
   )
