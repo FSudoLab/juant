@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
-import { Circle, MapPin, Upload, UserPlus } from 'lucide-react'
+import { Circle, Upload, UserPlus } from 'lucide-react'
 
 const inputClass = 'h-12 w-full rounded-none border border-[#111111]/20 bg-white px-4 text-sm font-medium text-[#111111] outline-none transition placeholder:text-[#111111]/35 focus:border-[#111111] focus:ring-2 focus:ring-[#111111]/10'
 const labelClass = 'text-sm font-semibold text-[#111111]/75'
@@ -18,8 +18,8 @@ export function SampleAccountSetup() {
   const companyComplete = Boolean(company && hrHotline && address1)
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 py-1 lg:flex-row lg:items-start">
-      <aside className="w-full shrink-0 rounded-none border border-[#111111]/10 bg-white p-5 shadow-[0_12px_35px_rgba(17,17,17,0.08)] lg:w-72 lg:p-6">
+    <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 py-1 lg:h-[calc(100vh-2rem)] lg:flex-row lg:items-stretch">
+      <aside className="h-full w-full shrink-0 rounded-none border border-[#111111]/10 bg-white p-5 shadow-[0_12px_35px_rgba(17,17,17,0.08)] lg:w-72 lg:p-6">
         <label htmlFor="account-logo" className="flex h-52 cursor-pointer flex-col items-center justify-center rounded-none border-2 border-dashed border-[#111111]/25 bg-[#f6f6f3] text-center transition hover:border-[#111111]/60 hover:bg-[#111111]/5">
           <span className="mb-3 flex size-14 items-center justify-center rounded-full border border-[#111111]/20 bg-white text-[#111111] shadow-sm"><Upload aria-hidden="true" /></span>
           <span className="text-base font-bold">{logoName ? 'Logo selected' : 'Upload logo'}</span>
@@ -34,12 +34,11 @@ export function SampleAccountSetup() {
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-[#111111]/45">Sections</p>
           <div className="rounded-none bg-[#111111]/10 px-4 py-3.5 text-sm font-bold text-[#111111]">Company information</div>
         </div>
-        <button type="button" className="mt-8 inline-flex h-12 w-full items-center justify-center gap-2 rounded-none border border-[#111111]/12 text-sm font-semibold text-[#111111]/70 transition hover:border-[#111111]/50 hover:text-[#111111]"><MapPin aria-hidden="true" className="size-4 text-[#111111]" /> Pick on map</button>
       </aside>
 
-      <form onSubmit={submit} className="min-w-0 flex-1 overflow-y-auto rounded-none border border-[#111111]/10 bg-white p-6 shadow-[0_12px_35px_rgba(17,17,17,0.08)] sm:p-8 lg:max-h-[calc(100vh-2rem)] lg:p-10">
+      <form onSubmit={submit} className="h-full min-w-0 flex-1 overflow-y-auto rounded-none border border-[#111111]/10 bg-white p-6 shadow-[0_12px_35px_rgba(17,17,17,0.08)] sm:p-8 lg:max-h-[calc(100vh-2rem)] lg:p-10">
         <div className="flex flex-col gap-2 border-b border-[#111111]/10 pb-7 sm:flex-row sm:items-end sm:justify-between">
-          <div><p className="text-xs font-bold uppercase tracking-[0.14em] text-[#111111]">System admin · New account</p><h1 className="mt-2 text-2xl font-bold tracking-[-0.04em] sm:text-3xl">New account</h1><p className="mt-2 text-sm font-semibold text-[#111111]/55">Company information</p></div>
+          <div><p className="text-xs font-bold uppercase tracking-[0.14em] text-[#111111]">HR admin · New account</p><h1 className="mt-2 text-2xl font-bold tracking-[-0.04em] sm:text-3xl">New account</h1><p className="mt-2 text-sm font-semibold text-[#111111]/55">Company information</p></div>
           <p className="text-sm text-[#111111]/45">Required fields marked <span className="text-[#111111]">*</span></p>
         </div>
 
