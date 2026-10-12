@@ -627,8 +627,8 @@ export const hrModules: HrModule[] = [
   {
     slug: 'kpis',
     group: 'Employee Development',
-    label: 'Performance & KPIs',
-    title: 'Performance & KPIs',
+    label: 'Evaluations',
+    title: 'Evaluations',
     description: 'Run review cycles and track KPI scores across teams.',
     stats: [
       { label: 'Cycle', value: 'H2 2026' },
@@ -673,8 +673,8 @@ export const hrModules: HrModule[] = [
   {
     slug: 'engagement',
     group: 'Employee Development',
-    label: 'Engagement & Feedback',
-    title: 'Engagement & feedback',
+    label: 'Eval Surveys',
+    title: 'Eval surveys',
     description: 'Pulse surveys, eNPS, and anonymous suggestions from your people.',
     stats: [
       { label: 'eNPS', value: '+42' },
@@ -852,8 +852,8 @@ export const hrModules: HrModule[] = [
   {
     slug: 'hr-settings',
     group: 'Insights & System',
-    label: 'HR Settings',
-    title: 'HR settings',
+    label: 'Settings',
+    title: 'Settings',
     description: 'Company-wide policies that drive attendance, leave, and payroll rules.',
     stats: [
       { label: 'Policies', value: '08' },

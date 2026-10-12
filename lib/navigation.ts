@@ -49,8 +49,8 @@ export const hrAccessItems: { key: HrAccessKey; label: string }[] = [
   { key: 'loans', label: 'Loans & Reimbursements' },
   { key: 'contributions', label: 'Government Contributions & Tax' },
   { key: 'final-pay', label: 'Final Pay' },
-  { key: 'kpis', label: 'Performance & KPIs' },
-  { key: 'engagement', label: 'Engagement & Feedback' },
+  { key: 'kpis', label: 'Evaluations' },
+  { key: 'engagement', label: 'Eval Surveys' },
   { key: 'reports', label: 'Reports & Analytics' },
   { key: 'ask-juan', label: 'Ask Juan AI' },
   { key: 'hr-settings', label: 'HR Settings' },
@@ -131,8 +131,8 @@ export const hrNavigation: NavGroup[] = [
   {
     heading: 'Employee Development',
     items: [
-      hrItem('Performance & KPIs', 'kpis', Target),
-      hrItem('Engagement & Feedback', 'engagement', MessageCircle),
+      hrItem('Evaluations', 'kpis', Target),
+      hrItem('Eval Surveys', 'engagement', MessageCircle),
     ],
   },
   {
@@ -140,8 +140,7 @@ export const hrNavigation: NavGroup[] = [
     items: [
       hrItem('Reports & Analytics', 'reports', BarChart3),
       hrItem('Ask Juan AI', 'ask-juan', Bot),
-      hrItem('HR Settings', 'hr-settings', Settings),
-      hrItem('Manager Settings', 'manager-settings', Settings),
+      hrItem('Settings', 'hr-settings', Settings),
     ],
   },
 ]

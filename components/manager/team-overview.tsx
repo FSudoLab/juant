@@ -50,16 +50,16 @@ export function TeamOverview({ canGrantPower = false }: { canGrantPower?: boolea
     }
   }, [])
 
-  const isPower = (m: TeamMember) => m.role === 'Employee' && Boolean(powerUsers[m.id])
-  const roleLabel = (m: TeamMember) => (isPower(m) ? POWER : m.role)
+  const isPower = (m: TeamMember) => Boolean(powerUsers[m.id])
+  const roleLabel = (m: TeamMember) => (isPower(m) ? (m.role === 'Employee' ? POWER : `${m.role} · Power`) : m.role)
 
   async function togglePower(member: TeamMember) {
     const granting = !isPower(member)
     const ok = await confirm({
-      title: granting ? `Would you like to promote ${member.name} to power user?` : `Would you like to demote ${member.name} to normal employee?`,
+      title: granting ? `Would you like to promote ${member.name} to power user?` : `Would you like to remove power access from ${member.name}?`,
       description: granting
         ? 'They will get HR-level sections in their sidebar. You can still limit exactly what they see under Permissions → Power permissions.'
-        : 'They will go back to normal employee access. Their power permission settings are kept in case you grant it again.',
+        : `They will go back to normal ${member.role} access. Their power permission settings are kept in case you grant it again.`,
       confirmLabel: granting ? 'Yes, promote' : 'Yes, demote',
       tone: granting ? 'primary' : 'danger',
     })
@@ -84,7 +84,8 @@ export function TeamOverview({ canGrantPower = false }: { canGrantPower?: boolea
   const visible = members.filter((m) => {
     if (department !== ALL && m.department !== department) return false
     if (position !== ALL && m.position !== position) return false
-    if (role !== ALL && roleLabel(m) !== role) return false
+    if (role === POWER && !isPower(m)) return false
+    if (role !== ALL && role !== POWER && (m.role !== role || isPower(m))) return false
     const needle = query.trim().toLowerCase()
     return !needle || [m.name, m.email, m.empNo, m.department, m.position].some((value) => value.toLowerCase().includes(needle))
   })
@@ -202,7 +203,7 @@ export function TeamOverview({ canGrantPower = false }: { canGrantPower?: boolea
                         <button type="button" onClick={() => setAccessTarget(member)} aria-label={`Edit permissions for ${member.name}`} className="inline-flex items-center gap-1.5 whitespace-nowrap border border-[#111111]/20 px-3 py-1.5 text-xs font-semibold text-[#111111]/70 hover:border-[#3159ff] hover:text-[#3159ff]">
                           <KeyRound aria-hidden="true" className="size-3.5" /> Permissions
                         </button>
-                        {canGrantPower && member.role === 'Employee' && (
+                        {canGrantPower && (
                           <button
                             type="button"
                             onClick={() => togglePower(member)}

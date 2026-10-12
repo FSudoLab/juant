@@ -3,6 +3,10 @@ import { notFound } from 'next/navigation'
 import { PageIntro, Panel, StatGrid } from '@/components/dashboard/primitives'
 import { ApprovalCenter } from '@/components/hr/approval-center'
 import { EmployeeFilesView } from '@/components/hr/employee-files-view'
+import { EvalSurveyEditor } from '@/components/hr/eval-survey-editor'
+import { EvaluationsView } from '@/components/hr/evaluations-view'
+import { FaqEditor } from '@/components/hr/faq-editor'
+import { SettingsTabs } from '@/components/hr/settings-tabs'
 import { HrModuleChart } from '@/components/hr/hr-module-chart'
 import { HrModuleView } from '@/components/hr/hr-module-view'
 import { EmployeeInformationEditor } from '@/components/manager/employee-information-editor'
@@ -37,7 +41,6 @@ export function generateStaticParams() {
   return [
     ...hrModules.map((module) => ({ role: 'hr', section: module.slug })),
     { role: 'hr', section: 'team-overview' },
-    { role: 'hr', section: 'manager-settings' },
     ...hrModules.map((module) => ({ role: 'manager', section: module.slug })),
     ...Object.keys(managerSections).map((section) => ({ role: 'manager', section })),
     ...Object.keys(systemAdminSections).map((section) => ({ role: 'system-admin', section })),
@@ -76,11 +79,34 @@ export default async function HrSectionPage({ params }: { params: Params }) {
       </>
     )
   }
-  if (role === 'hr' && section === 'manager-settings') {
+  if (role === 'hr' && section === 'hr-settings') {
+    const policies = getHrModule('hr-settings')
     return (
       <>
-        <PageIntro eyebrow="Insights & System / Manager Settings" title="Manager settings" description="Manage the same schedule, leave, reminder, and team rules managers use — HR has full control." />
-        <ManagerSettingsForm />
+        <PageIntro eyebrow="Insights & System / Settings" title="Settings" description="Company policies, team rules, and the FAQs employees see — all in one place." />
+        <SettingsTabs
+          tabs={[
+            { id: 'policies', label: 'Policies', content: policies ? <HrModuleView module={policies} /> : null },
+            { id: 'team-rules', label: 'Team rules', content: <ManagerSettingsForm /> },
+            { id: 'faqs', label: 'Employee FAQs', content: <FaqEditor /> },
+          ]}
+        />
+      </>
+    )
+  }
+  if (role === 'hr' && section === 'kpis') {
+    return (
+      <>
+        <PageIntro eyebrow="Employee Development / Evaluations" title="Evaluations" description="See how co-workers rated each employee, then give your HR rating to set their final score." />
+        <EvaluationsView />
+      </>
+    )
+  }
+  if (role === 'hr' && section === 'engagement') {
+    return (
+      <>
+        <PageIntro eyebrow="Employee Development / Eval Surveys" title="Eval surveys" description="Write the questions employees answer about their co-workers and choose which departments run peer evaluations." />
+        <EvalSurveyEditor />
       </>
     )
   }
