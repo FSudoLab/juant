@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, type FormEvent } from 'react'
-import { Mail, SlidersHorizontal, Trash2, UserPlus } from 'lucide-react'
+import { Mail, SlidersHorizontal, Trash2, UserPlus, X } from 'lucide-react'
 import { HrSystemConfig } from '@/components/system-admin/hr-system-config'
 import { Panel, StatusBadge, statusTone } from '@/components/dashboard/primitives'
 import { useConfirm } from '@/components/dashboard/confirm-dialog'
@@ -81,18 +81,6 @@ export function HrUserAccess() {
         </form>
       </Panel>
 
-      {configuring && users.find((user) => user.id === configuring) && (() => {
-        const user = users.find((candidate) => candidate.id === configuring)
-        if (!user) return null
-        return (
-          <Panel title={`Configure ${user.name}`} description="Choose which HR systems this user can access.">
-            <div role="tabpanel">
-              <HrSystemConfig userId={user.id} userName={user.name} onSaved={setStatus} />
-            </div>
-          </Panel>
-        )
-      })()}
-
       <Panel title="HR users" description={`${users.length} ${users.length === 1 ? 'person has' : 'people have'} HR workspace access.`}>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[640px] text-left text-sm">
@@ -148,16 +136,39 @@ export function HrUserAccess() {
             </tbody>
           </table>
         </div>
-        {configuring && users.find((user) => user.id === configuring) && (() => {
-          const user = users.find((candidate) => candidate.id === configuring)
-          if (!user) return null
-          return (
-            <div role="tabpanel" className="border-t border-[#111111]/15">
-              <HrSystemConfig userId={user.id} userName={user.name} onSaved={setStatus} />
-            </div>
-          )
-        })()}
       </Panel>
+
+      {configuring && users.find((user) => user.id === configuring) && (() => {
+        const user = users.find((candidate) => candidate.id === configuring)
+        if (!user) return null
+        return (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#111111]/55 p-4 sm:p-6" role="presentation" onClick={() => setConfiguring(null)}>
+            <section
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="permissions-dialog-title"
+              className="flex max-h-[calc(100vh-2rem)] w-full max-w-3xl flex-col overflow-hidden bg-white shadow-2xl sm:max-h-[calc(100vh-3rem)]"
+              onClick={(event) => event.stopPropagation()}
+            >
+              <header className="flex items-start justify-between border-b border-[#111111]/15 px-5 py-5 sm:px-8 sm:py-6">
+                <div>
+                  <h2 id="permissions-dialog-title" className="text-2xl font-bold tracking-tight">Edit permissions</h2>
+                  <p className="mt-1 text-sm text-[#111111]/60">{user.name} · {user.status} · HR workspace access</p>
+                </div>
+                <button type="button" onClick={() => setConfiguring(null)} aria-label="Close permissions dialog" className="flex size-9 shrink-0 items-center justify-center border border-[#111111]/15 text-[#111111]/60 hover:border-[#3159ff] hover:text-[#3159ff]">
+                  <X aria-hidden="true" className="size-5" />
+                </button>
+              </header>
+              <div className="overflow-y-auto">
+                <HrSystemConfig userId={user.id} userName={user.name} onSaved={setStatus} />
+              </div>
+              <footer className="flex justify-end border-t border-[#111111]/15 px-5 py-4 sm:px-8">
+                <button type="button" onClick={() => setConfiguring(null)} className="h-10 border border-[#111111]/20 px-5 text-sm font-semibold hover:border-[#3159ff] hover:text-[#3159ff]">Done</button>
+              </footer>
+            </section>
+          </div>
+        )
+      })()}
     </div>
   )
 }
