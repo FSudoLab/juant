@@ -18,7 +18,7 @@ const navigationByTeamRole: Record<TeamRole, NavGroup[]> = {
   Manager: managerNavigation,
 }
 
-const lockedSections = new Set(['employees', 'settings', 'hr-settings'])
+const lockedSections = new Set(['employee-management', 'team-overview', 'settings', 'hr-settings'])
 
 export const navKey = (href: string) => href.split('/').slice(3).join('/')
 

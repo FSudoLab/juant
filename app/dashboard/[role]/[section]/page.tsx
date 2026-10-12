@@ -17,7 +17,7 @@ import { getHrModule, hrModules } from '@/lib/hr-modules'
 type Params = Promise<{ role: string; section: string }>
 
 const hrApprovalTabs = [
-  { id: 'approvals', label: 'All requests' },
+  { id: 'approval-center', label: 'All requests' },
   { id: 'attendance-management', label: 'Attendance' },
   { id: 'leave-management', label: 'Leave' },
   { id: 'overtime', label: 'Overtime & holiday work' },
@@ -25,10 +25,10 @@ const hrApprovalTabs = [
 
 const managerSections = {
   holidays: { title: 'Upcoming holidays', description: 'Review the holiday calendar used by your team and its schedule planning.' },
-  notifications: { title: 'Notifications & reminders', description: 'Keep daily attendance, approval, and team updates visible to the people who need them.' },
-  help: { title: 'Help & HR support', description: 'Share the right HR support channel with your employees.' },
+  'notifications-reminders': { title: 'Notifications & reminders', description: 'Keep daily attendance, approval, and team updates visible to the people who need them.' },
+  'help-hr-support': { title: 'Help & HR support', description: 'Share the right HR support channel with your employees.' },
   'employee-information': { title: 'Employee information', description: 'Review and update the contact and profile information held for your team.' },
-  documents: { title: 'Documents', description: 'Add and share policies, forms, and team resources.' },
+  'team-documents': { title: 'Documents', description: 'Add and share policies, forms, and team resources.' },
 }
 
 const systemAdminSections = {
@@ -41,6 +41,7 @@ export function generateStaticParams() {
   return [
     ...hrModules.map((module) => ({ role: 'hr', section: module.slug })),
     { role: 'hr', section: 'team-overview' },
+    { role: 'manager', section: 'team-overview' },
     ...hrModules.map((module) => ({ role: 'manager', section: module.slug })),
     ...Object.keys(managerSections).map((section) => ({ role: 'manager', section })),
     ...Object.keys(systemAdminSections).map((section) => ({ role: 'system-admin', section })),
@@ -55,7 +56,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
 export default async function HrSectionPage({ params }: { params: Params }) {
   const { role, section } = await params
-  if ((role === 'manager' || role === 'hr') && section === 'employees') {
+  if ((role === 'manager' && section === 'team-overview') || (role === 'hr' && section === 'employee-management')) {
     return (
       <>
         <PageIntro
@@ -94,18 +95,18 @@ export default async function HrSectionPage({ params }: { params: Params }) {
       </>
     )
   }
-  if (role === 'hr' && section === 'kpis') {
+  if (role === 'hr' && section === 'evaluations') {
     return (
       <>
-        <PageIntro eyebrow="Employee Development / Evaluations" title="Evaluations" description="See how co-workers rated each employee, then give your HR rating to set their final score." />
+        <PageIntro eyebrow="Employee Development / Evaluations" title="Evaluations" description="See how co-workers in the same department rated each employee. Open a record to view every rating and rationale." />
         <EvaluationsView />
       </>
     )
   }
-  if (role === 'hr' && section === 'engagement') {
+  if (role === 'hr' && section === 'eval-surveys') {
     return (
       <>
-        <PageIntro eyebrow="Employee Development / Eval Surveys" title="Eval surveys" description="Write the questions employees answer about their co-workers and choose which departments run peer evaluations." />
+        <PageIntro eyebrow="Employee Development / Eval Surveys" title="Eval surveys" description="Set up the categories and questions employees answer about their co-workers, open the survey, and choose which departments take part." />
         <EvalSurveyEditor />
       </>
     )
@@ -137,7 +138,7 @@ export default async function HrSectionPage({ params }: { params: Params }) {
       </>
     )
   }
-  if (role === 'hr' && section === 'approvals') {
+  if (role === 'hr' && section === 'approval-center') {
     const tabs = hrApprovalTabs.flatMap(({ id, label }) => {
       const module = getHrModule(id)
       return module ? [{ id, label, module }] : []
