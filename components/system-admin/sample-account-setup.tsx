@@ -21,7 +21,7 @@ export function SampleAccountSetup() {
     event.preventDefault()
   }
 
-  const companyComplete = Boolean(company && industry && telephone && hrHotline && email && street && city && postal && province)
+  const companyComplete = Boolean(company && industry && telephone && email && street && city && postal && province)
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 py-1 lg:flex-row lg:items-start">
@@ -34,7 +34,7 @@ export function SampleAccountSetup() {
         <input id="account-logo" type="file" accept="image/*" className="sr-only" onChange={(event) => setLogoName(event.target.files?.[0]?.name ?? '')} />
         <div className="mt-7">
           <p className="text-2xl font-bold tracking-[-0.04em]">New account</p>
-          <p className="mt-2 inline-flex items-center gap-2 rounded-full bg-[#111111]/10 px-3 py-1.5 text-sm font-semibold text-[#111111]"><Circle aria-hidden="true" className="size-2.5 fill-current" /> Draft · {companyComplete ? '1' : '0'} of 1 complete</p>
+          <p className="sticky top-4 z-10 mt-2 inline-flex w-fit items-center gap-2 rounded-full bg-[#111111]/10 px-3 py-1.5 text-sm font-semibold text-[#111111] shadow-sm"><Circle aria-hidden="true" className="size-2.5 fill-current" /> Draft · {companyComplete ? '1' : '0'} of 1 complete</p>
         </div>
         <div className="mt-8 flex flex-col gap-2">
           <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-[#111111]/45">Sections</p>
@@ -43,9 +43,9 @@ export function SampleAccountSetup() {
         <button type="button" className="mt-8 inline-flex h-12 w-full items-center justify-center gap-2 rounded-none border border-[#111111]/12 text-sm font-semibold text-[#111111]/70 transition hover:border-[#111111]/50 hover:text-[#111111]"><MapPin aria-hidden="true" className="size-4 text-[#111111]" /> Pick on map</button>
       </aside>
 
-      <form onSubmit={submit} className="min-w-0 flex-1 rounded-none border border-[#111111]/10 bg-white p-6 shadow-[0_12px_35px_rgba(17,17,17,0.08)] sm:p-8 lg:p-10">
+      <form onSubmit={submit} className="min-w-0 flex-1 overflow-y-auto rounded-none border border-[#111111]/10 bg-white p-6 shadow-[0_12px_35px_rgba(17,17,17,0.08)] sm:p-8 lg:max-h-[calc(100vh-2rem)] lg:p-10">
         <div className="flex flex-col gap-2 border-b border-[#111111]/10 pb-7 sm:flex-row sm:items-end sm:justify-between">
-          <div><p className="text-xs font-bold uppercase tracking-[0.14em] text-[#111111]">System admin · New account</p><h1 className="mt-2 text-2xl font-bold tracking-[-0.04em] sm:text-3xl">Company information</h1></div>
+          <div><p className="text-xs font-bold uppercase tracking-[0.14em] text-[#111111]">System admin · New account</p><h1 className="mt-2 text-2xl font-bold tracking-[-0.04em] sm:text-3xl">New account</h1><p className="mt-2 text-sm font-semibold text-[#111111]/55">Company information</p></div>
           <p className="text-sm text-[#111111]/45">Required fields marked <span className="text-[#111111]">*</span></p>
         </div>
 
@@ -54,7 +54,7 @@ export function SampleAccountSetup() {
             <Field id="sample-company" label="Company name" required value={company} onChange={setCompany} placeholder="Enter company name" />
             <FieldSelect id="sample-industry" label="Industry" value={industry} onChange={setIndustry} options={[['technology', 'Technology'], ['retail', 'Retail'], ['services', 'Professional services']]} />
             <Field id="sample-telephone" label="Telephone number" required value={telephone} onChange={setTelephone} placeholder="Enter telephone number" />
-            <Field id="sample-hr-hotline" label="HR hotline number" required value={hrHotline} onChange={setHrHotline} placeholder="Enter HR hotline number" />
+            <Field id="sample-hr-hotline" label="HR telephone number" value={hrHotline} onChange={setHrHotline} placeholder="Enter HR telephone number" />
             <Field id="sample-email" label="Email address" required type="email" value={email} onChange={setEmail} placeholder="Enter email address" />
             <div className="sm:col-span-2 xl:col-span-2"><Field id="sample-street" label="Street address" required value={street} onChange={setStreet} placeholder="Enter street address" /></div>
             <Field id="sample-city" label="City" required value={city} onChange={setCity} placeholder="Enter city" />
