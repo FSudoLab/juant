@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, type FormEvent } from 'react'
-import { Mail, Trash2, UserPlus } from 'lucide-react'
+import { Fragment, useState, type FormEvent } from 'react'
+import { Mail, SlidersHorizontal, Trash2, UserPlus } from 'lucide-react'
+import { HrSystemConfig } from '@/components/system-admin/hr-system-config'
 import { Panel, StatusBadge, statusTone } from '@/components/dashboard/primitives'
 import { useConfirm } from '@/components/dashboard/confirm-dialog'
 
@@ -24,6 +25,7 @@ export function HrUserAccess() {
   const [email, setEmail] = useState('')
   const [employees, setEmployees] = useState('')
   const [status, setStatus] = useState('')
+  const [configuring, setConfiguring] = useState<string | null>(null)
 
   const employeeCount = Number(employees)
   const emailTaken = users.some((u) => u.email.toLowerCase() === email.trim().toLowerCase())
@@ -92,7 +94,8 @@ export function HrUserAccess() {
             </thead>
             <tbody className="divide-y divide-[#111111]/15">
               {users.map((user) => (
-                <tr key={user.id}>
+                <Fragment key={user.id}>
+                <tr>
                   <td className="px-5 py-4 sm:px-6">
                     <div className="flex items-center gap-3">
                       <span className="font-semibold">{user.name}</span>
@@ -103,6 +106,17 @@ export function HrUserAccess() {
                   <td className="px-5 py-4 text-right font-mono tabular-nums sm:px-6">{user.employees}</td>
                   <td className="px-5 py-4 sm:px-6">
                     <div className="flex justify-end gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setConfiguring((current) => (current === user.id ? null : user.id))}
+                        aria-expanded={configuring === user.id}
+                        aria-controls={`config-${user.id}`}
+                        aria-label={`Configure systems for ${user.name}`}
+                        title="Configuration"
+                        className={`${iconButtonClass} hover:border-[#3159ff] hover:text-[#3159ff] ${configuring === user.id ? 'border-[#3159ff] bg-[#3159ff] text-white hover:text-white' : ''}`}
+                      >
+                        <SlidersHorizontal aria-hidden="true" className="size-4" />
+                      </button>
                       {user.status === 'Pending' && (
                         <button type="button" onClick={() => resend(user)} aria-label={`Resend invite to ${user.name}`} title="Resend invite" className={`${iconButtonClass} hover:border-[#3159ff] hover:text-[#3159ff]`}>
                           <Mail aria-hidden="true" className="size-4" />
@@ -114,6 +128,14 @@ export function HrUserAccess() {
                     </div>
                   </td>
                 </tr>
+                {configuring === user.id && (
+                  <tr id={`config-${user.id}`}>
+                    <td colSpan={4} className="p-0">
+                      <HrSystemConfig userId={user.id} userName={user.name} onSaved={setStatus} />
+                    </td>
+                  </tr>
+                )}
+                </Fragment>
               ))}
               {users.length === 0 && (
                 <tr>
