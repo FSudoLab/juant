@@ -62,7 +62,7 @@ export function ManagerSettingsForm() {
         <div className="border-t border-[#111111]/15 px-5 py-4 sm:px-6"><PrimaryButton>Save schedule</PrimaryButton></div>
       </Panel>
 
-      <Panel title="Individual schedules & permissions" description="Customize each person's schedule and sidebar access from Team overview." action={<Link href="/dashboard/hr/team-overview" className="text-sm font-semibold text-[#3159ff]">Open team overview →</Link>}>
+      <Panel title="Individual schedules & permissions" description="Customize each person's schedule and sidebar access from Employee management." action={<Link href="/dashboard/hr/employee-management" className="text-sm font-semibold text-[#3159ff]">Open employee management →</Link>}>
         <p className="p-5 text-sm text-[#111111]/60 sm:p-6">Use the Schedule and Permissions actions on any employee, HR user, or manager row.</p>
       </Panel>
 

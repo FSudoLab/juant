@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowUpRight, CalendarDays, CheckCircle2, Clock3, ShieldCheck, Users } from 'lucide-react'
+import { ArrowUpRight, CalendarDays, CheckCircle2, Clock3, Users } from 'lucide-react'
 import { DashboardInsightsChart } from '@/components/employee/dashboard-insights-chart'
 import { resolveRole } from '@/lib/roles'
 
@@ -27,7 +27,6 @@ const dashboardData = {
     description: 'Manage access, permissions, and the controls that keep every JuanT workspace dependable.',
     stats: [['Active users', '72'], ['HR users', '03'], ['Open audit items', '03']],
     cards: [
-      { icon: ShieldCheck, title: 'Access & permissions', detail: 'Edit schedules and sidebar permissions for every role', action: 'Review access', href: '/dashboard/system-admin/hr-access' },
       { icon: Users, title: 'User access', detail: '72 active users across 3 workspace roles', action: 'Manage users', href: '/dashboard/system-admin/users' },
     ],
   },

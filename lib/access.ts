@@ -16,7 +16,7 @@ const navigationByTeamRole: Record<TeamRole, NavGroup[]> = {
   HR: hrNavigation,
 }
 
-const lockedSections = new Set(['employee-management', 'team-overview', 'settings', 'hr-settings'])
+const lockedSections = new Set(['employee-management', 'settings', 'hr-settings'])
 
 export const navKey = (href: string) => href.split('/').slice(3).join('/')
 
@@ -47,7 +47,7 @@ export const POWER_STORAGE_KEY = 'juant-power-users'
 export const powerAccessId = (employeeId: string) => `power:${employeeId}`
 
 // HR-exclusive sections stay with HR so it remains the top of the hierarchy.
-const hrOnlySections = new Set(['', 'team-overview', 'manager-settings', 'hr-settings', 'settings'])
+const hrOnlySections = new Set(['', 'manager-settings', 'hr-settings', 'settings'])
 
 export function powerAccessItems() {
   return hrNavigation

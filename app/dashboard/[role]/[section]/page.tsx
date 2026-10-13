@@ -26,7 +26,6 @@ const hrApprovalTabs = [
 
 const systemAdminSections = {
   users: { title: 'User access', description: 'Review workspace users and the roles assigned to them.' },
-  'hr-access': { title: 'HR access', description: 'Control the permissions HR uses to approve or decline requests.' },
   'audit-log': { title: 'Audit log', description: 'Review recent access and permission changes across the workspace.' },
   'sample-new-account': { title: 'Sample new account', description: 'Prepare a company workspace, invite HR, and add the first employees before launch.' },
 }
@@ -34,7 +33,6 @@ const systemAdminSections = {
 export function generateStaticParams() {
   return [
     ...hrModules.map((module) => ({ role: 'hr', section: module.slug })),
-    { role: 'hr', section: 'team-overview' },
     ...Object.keys(systemAdminSections).map((section) => ({ role: 'system-admin', section })),
   ]
 }
@@ -56,18 +54,6 @@ export default async function HrSectionPage({ params }: { params: Params }) {
           description="Everyone in the workspace in one place. Search by department or position, customize each person's schedule, and control what they can access."
         />
         <TeamOverview canGrantPower={role === 'hr'} />
-      </>
-    )
-  }
-  if (role === 'hr' && section === 'team-overview') {
-    return (
-      <>
-        <PageIntro
-          eyebrow="Workspace / Team Overview"
-          title="Team overview"
-          description="Every employee, HR user, and manager in one place. HR can edit schedules, grant or remove access for anyone, and promote employees to power users."
-        />
-        <TeamOverview canGrantPower />
       </>
     )
   }
@@ -114,14 +100,6 @@ export default async function HrSectionPage({ params }: { params: Params }) {
     }
     if (role === 'system-admin' && section === 'sample-new-account') {
       return <SampleAccountSetup />
-    }
-    if (role === 'system-admin' && section === 'hr-access') {
-      return (
-        <>
-          <PageIntro eyebrow="System / Access" title="Access & permissions" description="Edit schedules and sidebar permissions for every employee, HR user, and manager." />
-          <TeamOverview />
-        </>
-      )
     }
     return (
       <>

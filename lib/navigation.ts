@@ -101,7 +101,6 @@ export const hrNavigation: NavGroup[] = [
     items: [
       { label: 'Dashboard', href: hrBase, icon: LayoutDashboard },
       hrItem('Time In', 'attendance', Timer),
-      hrItem('Team Overview', 'team-overview', Users),
       hrItem('Approval Center', 'approval-center', CheckCircle2, '8'),
     ],
   },

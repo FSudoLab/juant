@@ -486,7 +486,7 @@ function PermissionsDialog({ member, isPower, canEditPower, onClose, onSaved }: 
       )}
       {tab === 'power' && (
         <p className="border-b border-[#111111]/15 bg-[#111111]/[0.03] px-5 py-3 text-xs leading-relaxed text-[#111111]/60">
-          HR-level sections this power user can open. Team overview, Manager settings, and HR settings always stay HR-only.
+          HR-level sections this power user can open. Manager settings and HR settings always stay HR-only.
         </p>
       )}
       <div className="max-h-[50vh] overflow-y-auto">
