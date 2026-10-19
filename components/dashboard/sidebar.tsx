@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { LogOut, Menu, UserRound, X } from 'lucide-react'
+import { ChevronDown, LogOut, Menu, UserRound, X } from 'lucide-react'
 import { useConfirm } from '@/components/dashboard/confirm-dialog'
 import { ACCESS_EVENT, CARD_VIEW_EVENT, demoAccountByRole, navKey, powerAccessId, powerNavigationFor, readAccess, readCardViewPreference, readPowerUsers } from '@/lib/access'
 import { DEMO_HR_ACCOUNT, SYSTEMS_EVENT, defaultSystemConfig, isSectionEnabled, systemConfigFor, type SystemConfig } from '@/lib/systems'
@@ -45,6 +45,7 @@ function CardViewNavigation({ role }: { role: Role }) {
   const items = navigation.flatMap((group) => group.items).filter(({ href }) => href !== dashboardHref)
   const confirm = useConfirm()
   const router = useRouter()
+  const [profileOpen, setProfileOpen] = useState(false)
 
   async function handleCardLogout() {
     const ok = await confirm({ title: 'Would you really like to logout?', description: 'You will need to sign in again to return to your workspace.', confirmLabel: 'Yes, logout', tone: 'danger' })
@@ -62,15 +63,30 @@ function CardViewNavigation({ role }: { role: Role }) {
               <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#111111]/45">Employee Portal</span>
             </span>
           </Link>
-          <div className="flex items-center gap-4">
-            <Link href={`${dashboardHref}/profile`} className="inline-flex items-center gap-2 text-sm font-semibold text-[#111111]/65 transition-colors hover:text-[#3159ff]">
+          <div className="relative">
+            <button
+              type="button"
+              aria-expanded={profileOpen}
+              aria-haspopup="menu"
+              onClick={() => setProfileOpen((open) => !open)}
+              className="inline-flex items-center gap-2 border border-[#111111]/15 bg-white/70 px-4 py-2.5 text-sm font-semibold text-[#111111] shadow-sm transition-colors hover:border-[#3159ff] hover:text-[#3159ff]"
+            >
               <UserRound aria-hidden="true" className="size-4" />
-              <span className="hidden sm:inline">Profile</span>
-            </Link>
-            <button type="button" onClick={handleCardLogout} className="inline-flex items-center gap-2 text-sm font-semibold text-[#111111]/65 transition-colors hover:text-[#3159ff]">
-              <LogOut aria-hidden="true" className="size-4" />
-              <span className="hidden sm:inline">Logout</span>
+              <span>Profile</span>
+              <ChevronDown aria-hidden="true" className={`size-4 transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
             </button>
+            {profileOpen && (
+              <div role="menu" aria-label="Profile menu" className="absolute right-0 top-[calc(100%+0.5rem)] z-20 min-w-40 border border-[#111111]/15 bg-white p-1.5 shadow-lg">
+                <Link href={`${dashboardHref}/settings`} role="menuitem" onClick={() => setProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-[#111111]/75 transition-colors hover:bg-[#3159ff] hover:text-white">
+                  <UserRound aria-hidden="true" className="size-4" />
+                  Settings
+                </Link>
+                <button type="button" role="menuitem" onClick={handleCardLogout} className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm font-medium text-[#111111]/75 transition-colors hover:bg-[#3159ff] hover:text-white">
+                  <LogOut aria-hidden="true" className="size-4" />
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         </header>
         <section>
