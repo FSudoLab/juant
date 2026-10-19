@@ -107,26 +107,28 @@ export function Sidebar({ role }: { role: Role }) {
   if (isSampleAccount) return null
 
   return (
-    <aside className="sticky top-0 z-30 flex max-h-screen w-full shrink-0 flex-col border-b border-[#111111]/15 bg-[#111111] text-[#f6f6f3] lg:h-screen lg:w-72 lg:border-b-0 lg:border-r">
-      <div className="flex min-h-0 flex-1 flex-col p-5 sm:p-7">
-        <Link href="/" className="mb-8 flex items-center gap-3 border-b border-white/15 pb-6">
-          <span className="flex size-9 items-center justify-center bg-[#3159ff] font-mono text-sm font-bold text-white">JT</span>
-          <span>
-            <strong className="block text-lg tracking-[-0.04em]">JuanT</strong>
-            <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/50">{workspaceLabel}</span>
-          </span>
-        </Link>
-        <button
-          type="button"
-          aria-expanded={mobileOpen}
-          aria-controls="dashboard-sidebar-navigation"
-          onClick={() => setMobileOpen((open) => !open)}
-          className="mb-5 inline-flex items-center justify-between border border-white/15 px-3 py-2.5 text-sm font-semibold text-white/75 transition-colors hover:border-white/35 hover:text-white lg:hidden"
-        >
-          <span>{mobileOpen ? 'Close menu' : 'Open menu'}</span>
-          {mobileOpen ? <X aria-hidden="true" className="size-4" /> : <Menu aria-hidden="true" className="size-4" />}
-        </button>
-        <nav id="dashboard-sidebar-navigation" className={`${mobileOpen ? 'flex' : 'hidden'} scrollbar-hidden min-w-0 flex-1 flex-wrap gap-x-8 gap-y-6 overflow-y-auto lg:flex lg:overflow-y-auto`} aria-label={`${role} navigation`}>
+    <>
+      <button
+        type="button"
+        aria-expanded={mobileOpen}
+        aria-controls="dashboard-sidebar-navigation"
+        aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
+        onClick={() => setMobileOpen((open) => !open)}
+        className="fixed right-5 top-5 z-50 inline-flex size-11 items-center justify-center border border-[#111111]/15 bg-[#111111] text-[#f6f6f3] shadow-lg transition-colors hover:bg-[#3159ff] lg:hidden"
+      >
+        {mobileOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+      </button>
+      {mobileOpen && <button type="button" aria-label="Close navigation menu" onClick={() => setMobileOpen(false)} className="fixed inset-0 z-40 bg-[#111111]/35 lg:hidden" />}
+      <aside className={`fixed inset-y-0 right-0 z-40 flex w-[min(21rem,calc(100vw-1.5rem))] flex-col bg-[#111111] text-[#f6f6f3] shadow-2xl transition-transform duration-300 ease-out lg:sticky lg:top-0 lg:z-30 lg:h-screen lg:w-72 lg:shrink-0 lg:translate-x-0 lg:shadow-none ${mobileOpen ? 'translate-x-0' : 'translate-x-full'} lg:border-r lg:border-[#111111]/15`}>
+        <div className="flex min-h-0 flex-1 flex-col p-5 sm:p-7">
+          <Link href="/" className="mb-8 flex items-center gap-3 border-b border-white/15 pb-6">
+            <span className="flex size-9 items-center justify-center bg-[#3159ff] font-mono text-sm font-bold text-white">JT</span>
+            <span>
+              <strong className="block text-lg tracking-[-0.04em]">JuanT</strong>
+              <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/50">{workspaceLabel}</span>
+            </span>
+          </Link>
+        <nav id="dashboard-sidebar-navigation" className="scrollbar-hidden min-w-0 flex-1 flex-wrap gap-x-8 gap-y-6 overflow-y-auto lg:flex lg:overflow-y-auto" aria-label={`${role} navigation`}>
           {navigation.map((group) => {
             const isPowerGroup = group.heading.startsWith('Power · ')
             const visibleItems = group.items.filter(({ href }) => access[navKey(href)] !== false && isSectionEnabled(isPowerGroup ? 'hr' : role, navKey(href), systems))
@@ -167,5 +169,6 @@ export function Sidebar({ role }: { role: Role }) {
         </div>
       </div>
     </aside>
+    </>
   )
 }
