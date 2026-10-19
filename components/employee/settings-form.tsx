@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Panel } from '@/components/dashboard/primitives'
 import { readCardViewPreference, writeCardViewPreference } from '@/lib/access'
 
@@ -33,7 +33,11 @@ const groups = [
 ]
 
 function Toggle({ id, label, hint, defaultOn }: { id: string; label: string; hint: string; defaultOn: boolean }) {
-  const [checked, setChecked] = useState(() => id === 'card-view' ? readCardViewPreference() : defaultOn)
+  const [checked, setChecked] = useState(defaultOn)
+
+  useEffect(() => {
+    if (id === 'card-view') setChecked(readCardViewPreference())
+  }, [id])
 
   function toggle() {
     const nextValue = !checked
