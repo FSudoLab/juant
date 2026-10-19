@@ -35,7 +35,7 @@ function CardViewNavigation({ role }: { role: Role }) {
 
   if (pathname !== dashboardHref || searchParams.get('view') === 'overview') {
     return (
-      <div className="sticky top-0 z-30 w-full border-b border-[#111111]/10 bg-[#f6f6f3] px-5 py-5 text-[#111111] sm:px-10 lg:basis-full">
+      <div data-card-header className="sticky top-0 z-30 w-full border-b border-[#111111]/10 bg-[#f6f6f3] px-5 py-5 text-[#111111] sm:px-10 lg:basis-full">
         <div className="mx-auto flex max-w-5xl items-center justify-between">
           <Link href={dashboardHref} className="group inline-flex items-center gap-2 text-sm font-semibold text-[#111111]/65 transition-colors hover:text-[#3159ff]">
             <span aria-hidden="true" className="text-base leading-none transition-transform group-hover:-translate-x-1">&larr;</span>
