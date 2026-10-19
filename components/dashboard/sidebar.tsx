@@ -46,6 +46,7 @@ function CardViewNavigation({ role }: { role: Role }) {
   const confirm = useConfirm()
   const router = useRouter()
   const [profileOpen, setProfileOpen] = useState(false)
+  const firstName = role === 'employee' ? 'Alex' : role === 'hr' ? 'HR' : 'Admin'
 
   async function handleCardLogout() {
     const ok = await confirm({ title: 'Would you really like to logout?', description: 'You will need to sign in again to return to your workspace.', confirmLabel: 'Yes, logout', tone: 'danger' })
@@ -53,8 +54,8 @@ function CardViewNavigation({ role }: { role: Role }) {
   }
 
   return (
-    <nav className="w-full bg-[#f6f6f3] px-5 py-5 text-[#111111] sm:px-10 sm:py-7 lg:basis-full" aria-label={`${role} card navigation`}>
-      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col gap-8">
+    <nav className="h-screen w-full overflow-hidden bg-[#f6f6f3] px-5 py-5 text-[#111111] sm:px-10 sm:py-7 lg:basis-full" aria-label={`${role} card navigation`}>
+      <div className="mx-auto flex h-full max-w-6xl flex-col gap-6">
         <header className="flex items-center justify-between border-b border-[#111111]/15 pb-5">
           <Link href="/" className="flex items-center gap-3">
             <span aria-hidden="true" className="flex size-9 items-center justify-center bg-[#3159ff] font-mono text-sm font-bold text-white">JT</span>
@@ -69,14 +70,18 @@ function CardViewNavigation({ role }: { role: Role }) {
               aria-expanded={profileOpen}
               aria-haspopup="menu"
               onClick={() => setProfileOpen((open) => !open)}
-              className="inline-flex items-center gap-2 border border-[#111111]/15 bg-white/70 px-4 py-2.5 text-sm font-semibold text-[#111111] shadow-sm transition-colors hover:border-[#3159ff] hover:text-[#3159ff]"
+              className="inline-flex items-center gap-2 border-2 border-[#3159ff]/35 bg-white px-4 py-2.5 text-sm font-semibold text-[#3159ff] shadow-sm transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] hover:text-white"
             >
               <UserRound aria-hidden="true" className="size-4" />
-              <span>Profile</span>
+              <span>{firstName}</span>
               <ChevronDown aria-hidden="true" className={`size-4 transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
             </button>
             {profileOpen && (
               <div role="menu" aria-label="Profile menu" className="absolute right-0 top-[calc(100%+0.5rem)] z-20 min-w-40 border border-[#111111]/15 bg-white p-1.5 shadow-lg">
+                <Link href={`${dashboardHref}/profile`} role="menuitem" onClick={() => setProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-[#111111]/75 transition-colors hover:bg-[#3159ff] hover:text-white">
+                  <UserRound aria-hidden="true" className="size-4" />
+                  Profile
+                </Link>
                 <Link href={`${dashboardHref}/settings`} role="menuitem" onClick={() => setProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-[#111111]/75 transition-colors hover:bg-[#3159ff] hover:text-white">
                   <UserRound aria-hidden="true" className="size-4" />
                   Settings
@@ -94,7 +99,7 @@ function CardViewNavigation({ role }: { role: Role }) {
           <h1 className="mt-3 text-4xl font-semibold tracking-[-0.06em] sm:text-6xl">What would you like to do?</h1>
           <p className="mt-3 max-w-lg text-sm leading-relaxed text-[#111111]/55">Choose an area to continue.</p>
         </section>
-        <div className="flex flex-wrap justify-center gap-3">
+        <div className="grid min-h-0 flex-1 grid-cols-2 content-center gap-3 overflow-hidden sm:grid-cols-3 lg:grid-cols-4">
         {items.map(({ label, href, icon: Icon, badge }) => {
           return <Link key={label} href={href} className="group flex min-h-24 w-full flex-col items-center justify-center gap-2 border border-[#111111]/15 bg-white/55 px-3 py-3 text-center transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] sm:min-h-28 sm:w-[calc(33.333%-0.5rem)] lg:w-[calc(25%-0.75rem)]">
             <Icon aria-hidden="true" className="size-6 text-[#7c9aff] group-hover:text-white" />
