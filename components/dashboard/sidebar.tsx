@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { LogOut } from 'lucide-react'
+import { LogOut, Menu, X } from 'lucide-react'
 import { useConfirm } from '@/components/dashboard/confirm-dialog'
 import { ACCESS_EVENT, CARD_VIEW_EVENT, demoAccountByRole, navKey, powerAccessId, powerNavigationFor, readAccess, readCardViewPreference, readPowerUsers } from '@/lib/access'
 import { DEMO_HR_ACCOUNT, SYSTEMS_EVENT, defaultSystemConfig, isSectionEnabled, systemConfigFor, type SystemConfig } from '@/lib/systems'
@@ -73,6 +73,7 @@ export function Sidebar({ role }: { role: Role }) {
   const [access, setAccess] = useState<Record<string, boolean>>({})
   const [powerNav, setPowerNav] = useState<NavGroup[]>([])
   const [systems, setSystems] = useState<SystemConfig>(defaultSystemConfig)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const baseNavigation = role === 'hr' ? hrNavigation : role === 'system-admin' ? systemAdminNavigation : employeeNavigation
   const navigation = [...baseNavigation, ...powerNav]
   const workspaceLabel = role === 'hr' ? 'HR Dashboard' : role === 'system-admin' ? 'System Admin' : 'Employee Portal'
@@ -115,7 +116,17 @@ export function Sidebar({ role }: { role: Role }) {
             <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/50">{workspaceLabel}</span>
           </span>
         </Link>
-        <nav className="scrollbar-hidden flex min-w-0 flex-1 flex-wrap gap-x-8 gap-y-6 overflow-y-auto lg:block" aria-label={`${role} navigation`}>
+        <button
+          type="button"
+          aria-expanded={mobileOpen}
+          aria-controls="dashboard-sidebar-navigation"
+          onClick={() => setMobileOpen((open) => !open)}
+          className="mb-5 inline-flex items-center justify-between border border-white/15 px-3 py-2.5 text-sm font-semibold text-white/75 transition-colors hover:border-white/35 hover:text-white lg:hidden"
+        >
+          <span>{mobileOpen ? 'Close menu' : 'Open menu'}</span>
+          {mobileOpen ? <X aria-hidden="true" className="size-4" /> : <Menu aria-hidden="true" className="size-4" />}
+        </button>
+        <nav id="dashboard-sidebar-navigation" className={`${mobileOpen ? 'flex' : 'hidden'} scrollbar-hidden min-w-0 flex-1 flex-wrap gap-x-8 gap-y-6 overflow-y-auto lg:flex lg:overflow-y-auto`} aria-label={`${role} navigation`}>
           {navigation.map((group) => {
             const isPowerGroup = group.heading.startsWith('Power · ')
             const visibleItems = group.items.filter(({ href }) => access[navKey(href)] !== false && isSectionEnabled(isPowerGroup ? 'hr' : role, navKey(href), systems))
@@ -130,6 +141,7 @@ export function Sidebar({ role }: { role: Role }) {
                     <li key={label}>
                       <Link
                         href={href}
+                        onClick={() => setMobileOpen(false)}
                         aria-current={isActive ? 'page' : undefined}
                         className={`flex items-center justify-between gap-2 px-3 py-2.5 text-sm font-medium transition-colors hover:bg-white/10 hover:text-white ${isActive ? 'bg-[#3159ff] text-white hover:bg-[#3159ff]' : 'text-white/65'}`}
                       >
