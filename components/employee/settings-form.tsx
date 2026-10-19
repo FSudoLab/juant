@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Panel } from '@/components/dashboard/primitives'
+import { readCardViewPreference, writeCardViewPreference } from '@/lib/access'
 
 const groups = [
   {
@@ -15,6 +16,13 @@ const groups = [
     ],
   },
   {
+    title: 'Appearance',
+    description: 'Choose how your employee portal navigation appears',
+    options: [
+      { id: 'card-view', label: 'Card view', hint: 'Show dashboard actions as cards instead of the sidebar', defaultOn: false },
+    ],
+  },
+  {
     title: 'Privacy & security',
     description: 'Control your account and data',
     options: [
@@ -25,7 +33,13 @@ const groups = [
 ]
 
 function Toggle({ id, label, hint, defaultOn }: { id: string; label: string; hint: string; defaultOn: boolean }) {
-  const [checked, setChecked] = useState(defaultOn)
+  const [checked, setChecked] = useState(() => id === 'card-view' ? readCardViewPreference() : defaultOn)
+
+  function toggle() {
+    const nextValue = !checked
+    setChecked(nextValue)
+    if (id === 'card-view') writeCardViewPreference(nextValue)
+  }
   return (
     <li className="flex items-center justify-between gap-6 px-5 py-4 sm:px-6">
       <label htmlFor={id} className="cursor-pointer">
@@ -37,7 +51,7 @@ function Toggle({ id, label, hint, defaultOn }: { id: string; label: string; hin
         type="button"
         role="switch"
         aria-checked={checked}
-        onClick={() => setChecked((value) => !value)}
+        onClick={toggle}
         className={`relative h-6 w-11 shrink-0 overflow-hidden border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#3159ff] ${checked ? 'border-[#3159ff] bg-[#3159ff]' : 'border-[#111111]/20 bg-[#111111]/10'}`}
       >
         <span className={`absolute left-0.5 top-0.5 size-4.5 bg-white transition-transform ${checked ? 'translate-x-5' : 'translate-x-0'}`} />
