@@ -19,20 +19,33 @@ export function DashboardNavigation({ role }: { role: Role }) {
     return () => window.removeEventListener(CARD_VIEW_EVENT, sync)
   }, [role])
 
-  return cardView ? <CardNavigation role={role} /> : <Sidebar role={role} />
+  if (!cardView) return <Sidebar role={role} />
+  return <CardViewNavigation role={role} />
 }
 
-function CardNavigation({ role }: { role: Role }) {
+function CardViewNavigation({ role }: { role: Role }) {
   const pathname = usePathname()
+  const dashboardHref = `/dashboard/${role}`
+
+  if (pathname !== dashboardHref) {
+    return (
+      <div className="w-full border-b border-[#111111]/15 bg-[#111111] px-5 py-4 text-[#f6f6f3] sm:px-10 lg:basis-full">
+        <Link href={dashboardHref} className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 transition-colors hover:text-white">
+          <span aria-hidden="true">&larr;</span>
+          Back to dashboard
+        </Link>
+      </div>
+    )
+  }
+
   const navigation = role === 'hr' ? hrNavigation : role === 'system-admin' ? systemAdminNavigation : employeeNavigation
-  const items = navigation.flatMap((group) => group.items)
+  const items = navigation.flatMap((group) => group.items).filter(({ href }) => href !== dashboardHref)
 
   return (
     <nav className="w-full border-b border-[#111111]/15 bg-[#111111] px-5 py-5 text-[#f6f6f3] sm:px-10 lg:basis-full" aria-label={`${role} card navigation`}>
       <div className="mx-auto flex max-w-5xl flex-wrap gap-2">
         {items.map(({ label, href, icon: Icon, badge }) => {
-          const isActive = href !== '#' && pathname === href
-          return <Link key={label} href={href} aria-current={isActive ? 'page' : undefined} className={`group flex min-h-24 min-w-32 flex-1 basis-32 flex-col items-center justify-center gap-2 border border-white/15 px-3 py-3 text-center transition-colors hover:border-white/40 hover:bg-white/10 ${isActive ? 'border-[#3159ff] bg-[#3159ff]' : 'bg-white/[0.04]'}`}>
+          return <Link key={label} href={href} className="group flex min-h-24 min-w-32 flex-1 basis-32 flex-col items-center justify-center gap-2 border border-white/15 bg-white/[0.04] px-3 py-3 text-center transition-colors hover:border-white/40 hover:bg-white/10">
             <Icon aria-hidden="true" className="size-6 text-[#7c9aff] group-hover:text-white" />
             <span className="text-xs font-semibold leading-tight">{label}</span>
             {badge && <span className="font-mono text-[10px] text-white/60">{badge}</span>}
