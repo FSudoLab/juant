@@ -111,13 +111,13 @@ function CardViewHome({ role, dashboardHref }: { role: Role; dashboardHref: stri
           <h1 className="mt-3 text-4xl font-semibold tracking-[-0.06em] sm:text-6xl">What would you like to do?</h1>
           <p className="mt-3 max-w-lg text-sm leading-relaxed text-[#111111]/55">Choose an area to continue.</p>
         </section>
-        <div className="mx-auto grid min-h-0 w-full max-w-[1095px] grid-cols-2 content-start items-start gap-2 overflow-hidden auto-rows-max sm:grid-cols-4 sm:gap-3 xl:grid-cols-14 xl:[&>*]:col-span-2 xl:[&>*:nth-child(8)]:col-start-2">
-        <button type="button" onClick={openDashboard} className="group flex aspect-square w-full min-w-0 flex-col items-center justify-center gap-1 overflow-hidden border border-[#111111]/15 bg-white/70 px-1.5 py-1.5 text-center transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] sm:gap-1.5 sm:px-2 sm:py-2">
+        <div className="mx-auto flex w-full max-w-[1095px] flex-wrap content-start justify-center gap-2 sm:gap-3">
+        <button type="button" onClick={openDashboard} className="group flex aspect-square w-[calc((100%-1rem)/3)] min-w-0 flex-col sm:w-36 items-center justify-center gap-1 overflow-hidden border border-[#111111]/15 bg-white/70 px-1.5 py-1.5 text-center transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] sm:gap-1.5 sm:px-2 sm:py-2">
           <LayoutDashboard aria-hidden="true" className="size-5 shrink-0 text-[#7c9aff] group-hover:text-white sm:size-6" />
           <span className="text-[11px] font-semibold leading-tight group-hover:text-white sm:text-xs">Dashboard</span>
         </button>
         {items.filter(({ href }) => href !== dashboardHref && href !== `${dashboardHref}/ask-juan`).map(({ label, href, icon: Icon, badge }) => {
-          return <Link key={label} href={href} className="group flex aspect-square w-full min-w-0 flex-col items-center justify-center gap-1 overflow-hidden border border-[#111111]/15 bg-white/70 px-1.5 py-1.5 text-center transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] sm:gap-1.5 sm:px-2 sm:py-2">
+          return <Link key={label} href={href} className="group flex aspect-square w-[calc((100%-1rem)/3)] min-w-0 flex-col items-center justify-center gap-1 overflow-hidden border border-[#111111]/15 bg-white/70 px-1.5 py-1.5 text-center transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] sm:w-36 sm:gap-1.5 sm:px-2 sm:py-2">
             <Icon aria-hidden="true" className="size-5 shrink-0 text-[#7c9aff] group-hover:text-white sm:size-6" />
             <span className="text-[11px] font-semibold leading-tight group-hover:text-white sm:text-xs">{label}</span>
             {badge && <span className="font-mono text-[9px] text-[#111111]/45 group-hover:text-white/70 sm:text-[10px]">{badge}</span>}
