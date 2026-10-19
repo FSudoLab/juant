@@ -99,9 +99,9 @@ function CardViewNavigation({ role }: { role: Role }) {
           <h1 className="mt-3 text-4xl font-semibold tracking-[-0.06em] sm:text-6xl">What would you like to do?</h1>
           <p className="mt-3 max-w-lg text-sm leading-relaxed text-[#111111]/55">Choose an area to continue.</p>
         </section>
-        <div className="grid min-h-0 flex-1 grid-cols-2 grid-rows-6 content-center gap-2 overflow-hidden sm:grid-cols-4 sm:grid-rows-3 sm:gap-3">
+        <div className="grid min-h-0 grid-cols-2 content-center items-start gap-2 overflow-hidden auto-rows-max sm:grid-cols-4 sm:gap-3">
         {items.map(({ label, href, icon: Icon, badge }) => {
-          return <Link key={label} href={href} className="group flex min-h-0 w-full flex-col items-center justify-center gap-1.5 overflow-hidden border border-[#111111]/15 bg-white/70 px-2 py-2 text-center transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] sm:gap-2 sm:px-3 sm:py-3">
+          return <Link key={label} href={href} className="group flex aspect-square w-full min-w-0 flex-col items-center justify-center gap-1.5 overflow-hidden border border-[#111111]/15 bg-white/70 px-2 py-2 text-center transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] sm:gap-2 sm:px-3 sm:py-3">
             <Icon aria-hidden="true" className="size-5 shrink-0 text-[#7c9aff] group-hover:text-white sm:size-6" />
             <span className="text-[11px] font-semibold leading-tight group-hover:text-white sm:text-xs">{label}</span>
             {badge && <span className="font-mono text-[9px] text-[#111111]/45 group-hover:text-white/70 sm:text-[10px]">{badge}</span>}
