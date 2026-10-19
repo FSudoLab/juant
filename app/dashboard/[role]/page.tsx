@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { ArrowUpRight, CalendarDays, CheckCircle2, Clock3, Users } from 'lucide-react'
 import { DashboardInsightsChart } from '@/components/employee/dashboard-insights-chart'
+import { CardViewDashboard } from '@/components/dashboard/card-view-dashboard'
 import { resolveRole } from '@/lib/roles'
 
 const dashboardData = {
@@ -38,7 +39,8 @@ export default async function DashboardPage({ params }: { params: Promise<{ role
   const data = dashboardData[role]
 
   return (
-    <>
+    <CardViewDashboard>
+      <>
       <section>
         <p className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-[#3159ff]">Dashboard / {role}</p>
         <h1 className="mt-5 max-w-3xl text-6xl font-semibold leading-[0.9] tracking-[-0.08em] sm:text-8xl">{data.title}</h1>
@@ -68,6 +70,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ role
           </article>
         ))}
       </section>
-    </>
+      </>
+    </CardViewDashboard>
   )
 }
