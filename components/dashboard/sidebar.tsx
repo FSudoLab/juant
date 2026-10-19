@@ -45,19 +45,19 @@ function CardViewNavigation({ role }: { role: Role }) {
   const items = navigation.flatMap((group) => group.items).filter(({ href }) => href !== dashboardHref)
 
   return (
-    <nav className="w-full bg-[#111111] px-5 py-6 text-[#f6f6f3] sm:px-10 sm:py-8 lg:basis-full" aria-label={`${role} card navigation`}>
+    <nav className="w-full bg-[#f6f6f3] px-5 py-6 text-[#111111] sm:px-10 sm:py-8 lg:basis-full" aria-label={`${role} card navigation`}>
       <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col justify-center gap-6">
         <header>
           <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[#7c9aff]">JuanT / Employee Portal</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-[-0.06em] sm:text-6xl">What would you like to do?</h1>
-          <p className="mt-3 max-w-lg text-sm leading-relaxed text-white/55">Choose an area to continue.</p>
+          <p className="mt-3 max-w-lg text-sm leading-relaxed text-[#111111]/55">Choose an area to continue.</p>
         </header>
         <div className="flex flex-wrap justify-center gap-3">
         {items.map(({ label, href, icon: Icon, badge }) => {
-          return <Link key={label} href={href} className="group flex min-h-24 w-full flex-col items-center justify-center gap-2 border border-white/15 bg-white/[0.04] px-3 py-3 text-center transition-colors hover:border-[#7c9aff] hover:bg-[#3159ff] sm:min-h-28 sm:w-[calc(33.333%-0.5rem)] lg:w-[calc(25%-0.75rem)]">
+          return <Link key={label} href={href} className="group flex min-h-24 w-full flex-col items-center justify-center gap-2 border border-[#111111]/15 bg-white/55 px-3 py-3 text-center transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] sm:min-h-28 sm:w-[calc(33.333%-0.5rem)] lg:w-[calc(25%-0.75rem)]">
             <Icon aria-hidden="true" className="size-6 text-[#7c9aff] group-hover:text-white" />
-            <span className="text-xs font-semibold leading-tight">{label}</span>
-            {badge && <span className="font-mono text-[10px] text-white/60">{badge}</span>}
+            <span className="text-xs font-semibold leading-tight group-hover:text-white">{label}</span>
+            {badge && <span className="font-mono text-[10px] text-[#111111]/45 group-hover:text-white/70">{badge}</span>}
           </Link>
         })}
         </div>
