@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Bot, ChevronDown, LayoutDashboard, LogOut, Menu, Settings, UserRound, X } from 'lucide-react'
 import { useConfirm } from '@/components/dashboard/confirm-dialog'
@@ -26,9 +26,10 @@ export function DashboardNavigation({ role }: { role: Role }) {
 
 function CardViewNavigation({ role }: { role: Role }) {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const dashboardHref = `/dashboard/${role}`
 
-  if (pathname !== dashboardHref) {
+  if (pathname !== dashboardHref || searchParams.get('view') === 'overview') {
     return (
       <div className="sticky top-0 z-30 w-full border-b border-[#111111]/10 bg-[#f6f6f3] px-5 py-5 text-[#111111] sm:px-10 lg:basis-full">
         <div className="mx-auto flex max-w-5xl items-center justify-between">
@@ -42,6 +43,10 @@ function CardViewNavigation({ role }: { role: Role }) {
     )
   }
 
+  return <CardViewHome role={role} dashboardHref={dashboardHref} />
+}
+
+function CardViewHome({ role, dashboardHref }: { role: Role; dashboardHref: string }) {
   const navigation = role === 'hr' ? hrNavigation : role === 'system-admin' ? systemAdminNavigation : employeeNavigation
   const items = navigation.flatMap((group) => group.items).filter(({ href }) => href !== dashboardHref)
   const confirm = useConfirm()
@@ -56,7 +61,7 @@ function CardViewNavigation({ role }: { role: Role }) {
   }
 
   function openDashboard() {
-    router.push(dashboardHref)
+    router.push(`${dashboardHref}?view=overview`)
   }
 
   return (
