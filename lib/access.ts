@@ -8,12 +8,19 @@ export const ACCESS_EVENT = 'juant-access-updated'
 export const CARD_VIEW_STORAGE_KEY = 'juant-card-view'
 export const CARD_VIEW_EVENT = 'juant-card-view-updated'
 
-export function readCardViewPreference() {
-  return window.localStorage.getItem(CARD_VIEW_STORAGE_KEY) === 'true'
+export const CARD_VIEW_ROLES: Role[] = ['employee', 'hr']
+
+function cardViewStorageKey(role: Role) {
+  return role === 'employee' ? CARD_VIEW_STORAGE_KEY : `${CARD_VIEW_STORAGE_KEY}-${role}`
 }
 
-export function writeCardViewPreference(enabled: boolean) {
-  window.localStorage.setItem(CARD_VIEW_STORAGE_KEY, String(enabled))
+export function readCardViewPreference(role: Role = 'employee') {
+  if (!CARD_VIEW_ROLES.includes(role)) return false
+  return window.localStorage.getItem(cardViewStorageKey(role)) === 'true'
+}
+
+export function writeCardViewPreference(enabled: boolean, role: Role = 'employee') {
+  window.localStorage.setItem(cardViewStorageKey(role), String(enabled))
   window.dispatchEvent(new Event(CARD_VIEW_EVENT))
 }
 

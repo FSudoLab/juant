@@ -39,7 +39,7 @@ export default async function DashboardPage({ params }: { params: Promise<{ role
   const data = dashboardData[role]
 
   return (
-    <CardViewDashboard>
+    <CardViewDashboard role={role}>
       <>
       <section>
         <p className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-[#3159ff]">Dashboard / {role}</p>

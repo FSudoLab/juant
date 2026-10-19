@@ -1,5 +1,8 @@
 import { EmployeeAvatar, PageIntro, Panel } from '@/components/dashboard/primitives'
-import { requireEmployee } from '@/lib/roles'
+import { notFound } from 'next/navigation'
+import { requireAnyRole } from '@/lib/roles'
+import { DEMO_HR_ACCOUNT } from '@/lib/systems'
+import { teamRoster } from '@/lib/team-roster'
 
 const sections = [
   {
@@ -43,18 +46,64 @@ const sections = [
   },
 ]
 
+function hrSections() {
+  const hr = teamRoster.find(({ id }) => id === DEMO_HR_ACCOUNT)
+  return {
+    hr,
+    sections: [
+      {
+        title: 'Account information',
+        fields: [
+          ['Full name', hr?.name ?? 'HR Administrator'],
+          ['Work email', hr?.email ?? '—'],
+          ['Employee no.', hr?.empNo ?? '—'],
+          ['Status', hr?.status ?? 'Active'],
+        ],
+      },
+      {
+        title: 'Role & department',
+        fields: [
+          ['Position', hr?.position ?? 'HR Administrator'],
+          ['Department', hr?.department ?? 'People & Culture'],
+          ['Workspace role', hr?.role ?? 'HR'],
+          ['Access level', 'Full HR workspace'],
+        ],
+      },
+    ],
+  }
+}
+
 export default async function ProfilePage({ params }: { params: Promise<{ role: string }> }) {
-  await requireEmployee(params)
+  const role = await requireAnyRole(params)
+  if (role === 'system-admin') notFound()
+
+  const isHr = role === 'hr'
+  const hrProfile = isHr ? hrSections() : null
+  const visibleSections = hrProfile?.sections ?? sections
+  const initials = hrProfile?.hr?.name.split(' ').map((part) => part[0]).join('').slice(0, 2) ?? 'HR'
 
   return (
     <>
-      <PageIntro
-        eyebrow="My Employment / My Profile"
-        title="Alex Cruz"
-        description="Product Designer · Product & Design. Need to update something? File a profile change request with HR."
-        action={<EmployeeAvatar className="size-20 text-2xl" />}
-      />
-      {sections.map((section) => (
+      {hrProfile ? (
+        <PageIntro
+          eyebrow="Account / My Profile"
+          title={hrProfile.hr?.name ?? 'HR Administrator'}
+          description={`${hrProfile.hr?.position ?? 'HR Administrator'} · ${hrProfile.hr?.department ?? 'People & Culture'}. Your HR workspace account details.`}
+          action={
+            <span aria-hidden="true" className="flex size-20 items-center justify-center bg-[#3159ff] font-mono text-2xl font-bold text-white">
+              {initials}
+            </span>
+          }
+        />
+      ) : (
+        <PageIntro
+          eyebrow="My Employment / My Profile"
+          title="Alex Cruz"
+          description="Product Designer · Product & Design. Need to update something? File a profile change request with HR."
+          action={<EmployeeAvatar className="size-20 text-2xl" />}
+        />
+      )}
+      {visibleSections.map((section) => (
         <Panel key={section.title} title={section.title}>
           <dl className="grid sm:grid-cols-2">
             {section.fields.map(([label, value]) => (

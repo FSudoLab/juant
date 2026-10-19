@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { Bot, ChevronDown, LayoutDashboard, LogOut, Menu, Settings, UserRound, X } from 'lucide-react'
 import { useConfirm } from '@/components/dashboard/confirm-dialog'
@@ -9,12 +9,13 @@ import { AskJuanChat } from '@/components/employee/ask-juan-chat'
 import { ACCESS_EVENT, CARD_VIEW_EVENT, demoAccountByRole, navKey, powerAccessId, powerNavigationFor, readAccess, readCardViewPreference, readPowerUsers } from '@/lib/access'
 import { DEMO_HR_ACCOUNT, SYSTEMS_EVENT, defaultSystemConfig, isSectionEnabled, systemConfigFor, type SystemConfig } from '@/lib/systems'
 import { employeeNavigation, hrNavigation, systemAdminNavigation, type NavGroup, type Role } from '@/lib/navigation'
+import { teamRoster } from '@/lib/team-roster'
 
 export function DashboardNavigation({ role }: { role: Role }) {
   const [cardView, setCardView] = useState(false)
 
   useEffect(() => {
-    const sync = () => setCardView(role === 'employee' && readCardViewPreference())
+    const sync = () => setCardView(readCardViewPreference(role))
     sync()
     window.addEventListener(CARD_VIEW_EVENT, sync)
     return () => window.removeEventListener(CARD_VIEW_EVENT, sync)
@@ -24,31 +25,42 @@ export function DashboardNavigation({ role }: { role: Role }) {
   return <CardViewNavigation role={role} />
 }
 
+function portalLabel(role: Role) {
+  return role === 'hr' ? 'HR Portal' : role === 'system-admin' ? 'Admin Portal' : 'Employee Portal'
+}
+
 function CardViewNavigation({ role }: { role: Role }) {
   const pathname = usePathname()
+  const searchParams = useSearchParams()
   const dashboardHref = `/dashboard/${role}`
 
-  if (pathname !== dashboardHref) {
+  if (pathname !== dashboardHref || searchParams.get('view') === 'overview') {
     return (
-      <div className="sticky top-0 z-30 w-full border-b border-[#111111]/10 bg-[#f6f6f3] px-5 py-5 text-[#111111] sm:px-10 lg:basis-full">
+      <div data-card-header className="sticky top-0 z-30 w-full border-b border-[#111111]/10 bg-[#f6f6f3] px-5 py-5 text-[#111111] sm:px-10 lg:basis-full">
         <div className="mx-auto flex max-w-5xl items-center justify-between">
           <Link href={dashboardHref} className="group inline-flex items-center gap-2 text-sm font-semibold text-[#111111]/65 transition-colors hover:text-[#3159ff]">
             <span aria-hidden="true" className="text-base leading-none transition-transform group-hover:-translate-x-1">&larr;</span>
             <span>Back to dashboard</span>
           </Link>
-          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[#111111]/35">Employee portal</span>
+          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[#111111]/35">{portalLabel(role)}</span>
         </div>
       </div>
     )
   }
 
+  return <CardViewHome role={role} dashboardHref={dashboardHref} />
+}
+
+function CardViewHome({ role, dashboardHref }: { role: Role; dashboardHref: string }) {
   const navigation = role === 'hr' ? hrNavigation : role === 'system-admin' ? systemAdminNavigation : employeeNavigation
   const items = navigation.flatMap((group) => group.items).filter(({ href }) => href !== dashboardHref)
   const confirm = useConfirm()
   const router = useRouter()
   const [profileOpen, setProfileOpen] = useState(false)
   const [askJuanOpen, setAskJuanOpen] = useState(false)
-  const firstName = role === 'employee' ? 'Alex' : role === 'hr' ? 'HR' : 'Admin'
+  const hrName = teamRoster.find(({ id }) => id === DEMO_HR_ACCOUNT)?.name ?? 'HR'
+  const firstName = role === 'employee' ? 'Alex' : role === 'hr' ? hrName : 'Admin'
+  const settingsHref = role === 'hr' ? `${dashboardHref}/hr-settings` : `${dashboardHref}/settings`
 
   async function handleCardLogout() {
     const ok = await confirm({ title: 'Would you really like to logout?', description: 'You will need to sign in again to return to your workspace.', confirmLabel: 'Yes, logout', tone: 'danger' })
@@ -56,7 +68,7 @@ function CardViewNavigation({ role }: { role: Role }) {
   }
 
   function openDashboard() {
-    router.push(dashboardHref)
+    router.push(`${dashboardHref}?view=overview`)
   }
 
   return (
@@ -68,7 +80,7 @@ function CardViewNavigation({ role }: { role: Role }) {
               <span aria-hidden="true" className="flex size-9 items-center justify-center bg-[#3159ff] font-mono text-sm font-bold text-white">JT</span>
               <span>
                 <strong className="block text-lg tracking-[-0.04em]">JuanT</strong>
-                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#111111]/45">Employee Portal</span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#111111]/45">{portalLabel(role)}</span>
               </span>
             </Link>
           </div>
@@ -89,7 +101,7 @@ function CardViewNavigation({ role }: { role: Role }) {
                   <UserRound aria-hidden="true" className="size-4" />
                   Profile
                 </Link>
-                <Link href={`${dashboardHref}/settings`} role="menuitem" onClick={() => setProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-[#111111]/75 transition-colors hover:bg-[#3159ff] hover:text-white">
+                <Link href={settingsHref} role="menuitem" onClick={() => setProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-[#111111]/75 transition-colors hover:bg-[#3159ff] hover:text-white">
                   <Settings aria-hidden="true" className="size-4" />
                   Settings
                 </Link>
@@ -102,17 +114,17 @@ function CardViewNavigation({ role }: { role: Role }) {
           </div>
         </header>
         <section>
-          <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[#7c9aff]">JuanT / Employee Portal</p>
+          <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[#7c9aff]">JuanT / {portalLabel(role)}</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-[-0.06em] sm:text-6xl">What would you like to do?</h1>
           <p className="mt-3 max-w-lg text-sm leading-relaxed text-[#111111]/55">Choose an area to continue.</p>
         </section>
-        <div className="mx-auto grid min-h-0 w-full max-w-[1095px] grid-cols-2 content-start items-start gap-2 overflow-hidden auto-rows-max sm:grid-cols-4 sm:gap-3 xl:grid-cols-14 xl:[&>*]:col-span-2 xl:[&>*:nth-child(8)]:col-start-2">
-        <button type="button" onClick={openDashboard} className="group flex aspect-square w-full min-w-0 flex-col items-center justify-center gap-1 overflow-hidden border border-[#111111]/15 bg-white/70 px-1.5 py-1.5 text-center transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] sm:gap-1.5 sm:px-2 sm:py-2">
+        <div className="mx-auto flex w-full max-w-[1095px] flex-wrap content-start justify-center gap-2 sm:gap-3">
+        <button type="button" onClick={openDashboard} className="group flex aspect-square w-[calc((100%-1rem)/3)] min-w-0 flex-col sm:w-36 items-center justify-center gap-1 overflow-hidden border border-[#111111]/15 bg-white/70 px-1.5 py-1.5 text-center transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] sm:gap-1.5 sm:px-2 sm:py-2">
           <LayoutDashboard aria-hidden="true" className="size-5 shrink-0 text-[#7c9aff] group-hover:text-white sm:size-6" />
           <span className="text-[11px] font-semibold leading-tight group-hover:text-white sm:text-xs">Dashboard</span>
         </button>
         {items.filter(({ href }) => href !== dashboardHref && href !== `${dashboardHref}/ask-juan`).map(({ label, href, icon: Icon, badge }) => {
-          return <Link key={label} href={href} className="group flex aspect-square w-full min-w-0 flex-col items-center justify-center gap-1 overflow-hidden border border-[#111111]/15 bg-white/70 px-1.5 py-1.5 text-center transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] sm:gap-1.5 sm:px-2 sm:py-2">
+          return <Link key={label} href={href} className="group flex aspect-square w-[calc((100%-1rem)/3)] min-w-0 flex-col items-center justify-center gap-1 overflow-hidden border border-[#111111]/15 bg-white/70 px-1.5 py-1.5 text-center transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] sm:w-36 sm:gap-1.5 sm:px-2 sm:py-2">
             <Icon aria-hidden="true" className="size-5 shrink-0 text-[#7c9aff] group-hover:text-white sm:size-6" />
             <span className="text-[11px] font-semibold leading-tight group-hover:text-white sm:text-xs">{label}</span>
             {badge && <span className="font-mono text-[9px] text-[#111111]/45 group-hover:text-white/70 sm:text-[10px]">{badge}</span>}
