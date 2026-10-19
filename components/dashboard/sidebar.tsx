@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { LogOut, Menu, X } from 'lucide-react'
+import { LogOut, Menu, UserRound, X } from 'lucide-react'
 import { useConfirm } from '@/components/dashboard/confirm-dialog'
 import { ACCESS_EVENT, CARD_VIEW_EVENT, demoAccountByRole, navKey, powerAccessId, powerNavigationFor, readAccess, readCardViewPreference, readPowerUsers } from '@/lib/access'
 import { DEMO_HR_ACCOUNT, SYSTEMS_EVENT, defaultSystemConfig, isSectionEnabled, systemConfigFor, type SystemConfig } from '@/lib/systems'
@@ -43,15 +43,41 @@ function CardViewNavigation({ role }: { role: Role }) {
 
   const navigation = role === 'hr' ? hrNavigation : role === 'system-admin' ? systemAdminNavigation : employeeNavigation
   const items = navigation.flatMap((group) => group.items).filter(({ href }) => href !== dashboardHref)
+  const confirm = useConfirm()
+  const router = useRouter()
+
+  async function handleCardLogout() {
+    const ok = await confirm({ title: 'Would you really like to logout?', description: 'You will need to sign in again to return to your workspace.', confirmLabel: 'Yes, logout', tone: 'danger' })
+    if (ok) router.replace('/signin')
+  }
 
   return (
-    <nav className="w-full bg-[#f6f6f3] px-5 py-6 text-[#111111] sm:px-10 sm:py-8 lg:basis-full" aria-label={`${role} card navigation`}>
-      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col justify-center gap-6">
-        <header>
+    <nav className="w-full bg-[#f6f6f3] px-5 py-5 text-[#111111] sm:px-10 sm:py-7 lg:basis-full" aria-label={`${role} card navigation`}>
+      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col gap-8">
+        <header className="flex items-center justify-between border-b border-[#111111]/15 pb-5">
+          <Link href="/" className="flex items-center gap-3">
+            <span aria-hidden="true" className="flex size-9 items-center justify-center bg-[#3159ff] font-mono text-sm font-bold text-white">JT</span>
+            <span>
+              <strong className="block text-lg tracking-[-0.04em]">JuanT</strong>
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#111111]/45">Employee Portal</span>
+            </span>
+          </Link>
+          <div className="flex items-center gap-4">
+            <Link href={`${dashboardHref}/profile`} className="inline-flex items-center gap-2 text-sm font-semibold text-[#111111]/65 transition-colors hover:text-[#3159ff]">
+              <UserRound aria-hidden="true" className="size-4" />
+              <span className="hidden sm:inline">Profile</span>
+            </Link>
+            <button type="button" onClick={handleCardLogout} className="inline-flex items-center gap-2 text-sm font-semibold text-[#111111]/65 transition-colors hover:text-[#3159ff]">
+              <LogOut aria-hidden="true" className="size-4" />
+              <span className="hidden sm:inline">Logout</span>
+            </button>
+          </div>
+        </header>
+        <section>
           <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[#7c9aff]">JuanT / Employee Portal</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-[-0.06em] sm:text-6xl">What would you like to do?</h1>
           <p className="mt-3 max-w-lg text-sm leading-relaxed text-[#111111]/55">Choose an area to continue.</p>
-        </header>
+        </section>
         <div className="flex flex-wrap justify-center gap-3">
         {items.map(({ label, href, icon: Icon, badge }) => {
           return <Link key={label} href={href} className="group flex min-h-24 w-full flex-col items-center justify-center gap-2 border border-[#111111]/15 bg-white/55 px-3 py-3 text-center transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] sm:min-h-28 sm:w-[calc(33.333%-0.5rem)] lg:w-[calc(25%-0.75rem)]">
