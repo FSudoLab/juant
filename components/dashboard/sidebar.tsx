@@ -29,12 +29,13 @@ function CardViewNavigation({ role }: { role: Role }) {
 
   if (pathname !== dashboardHref) {
     return (
-      <div className="w-full border-b border-[#111111]/15 bg-[#111111] px-5 py-4 text-[#f6f6f3] sm:px-10 lg:basis-full">
-        <div className="mx-auto max-w-5xl">
-          <Link href={dashboardHref} className="group inline-flex items-center gap-3 border border-white/15 bg-white/[0.04] px-4 py-2.5 text-sm font-semibold text-white/80 transition-colors hover:border-[#7c9aff] hover:bg-[#3159ff] hover:text-white">
-            <span aria-hidden="true" className="text-lg leading-none transition-transform group-hover:-translate-x-0.5">&larr;</span>
+      <div className="w-full border-b border-[#111111]/10 bg-[#f6f6f3] px-5 py-5 text-[#111111] sm:px-10 lg:basis-full">
+        <div className="mx-auto flex max-w-5xl items-center justify-between">
+          <Link href={dashboardHref} className="group inline-flex items-center gap-2 text-sm font-semibold text-[#111111]/65 transition-colors hover:text-[#3159ff]">
+            <span aria-hidden="true" className="text-base leading-none transition-transform group-hover:-translate-x-1">&larr;</span>
             <span>Back to dashboard</span>
           </Link>
+          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[#111111]/35">Employee portal</span>
         </div>
       </div>
     )
@@ -44,8 +45,8 @@ function CardViewNavigation({ role }: { role: Role }) {
   const items = navigation.flatMap((group) => group.items).filter(({ href }) => href !== dashboardHref)
 
   return (
-    <nav className="w-full bg-[#111111] px-5 py-8 text-[#f6f6f3] sm:px-10 sm:py-12 lg:basis-full" aria-label={`${role} card navigation`}>
-      <div className="mx-auto flex min-h-[calc(100vh-6rem)] max-w-6xl flex-col justify-center gap-8">
+    <nav className="w-full bg-[#111111] px-5 py-6 text-[#f6f6f3] sm:px-10 sm:py-8 lg:basis-full" aria-label={`${role} card navigation`}>
+      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col justify-center gap-6">
         <header>
           <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[#7c9aff]">JuanT / Employee Portal</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-[-0.06em] sm:text-6xl">What would you like to do?</h1>
@@ -53,7 +54,7 @@ function CardViewNavigation({ role }: { role: Role }) {
         </header>
         <div className="flex flex-wrap justify-center gap-3">
         {items.map(({ label, href, icon: Icon, badge }) => {
-          return <Link key={label} href={href} className="group flex min-h-32 w-full flex-col items-center justify-center gap-3 border border-white/15 bg-white/[0.04] px-3 py-4 text-center transition-colors hover:border-[#7c9aff] hover:bg-[#3159ff] sm:min-h-36 sm:w-[calc(33.333%-0.5rem)] lg:w-[calc(25%-0.75rem)]">
+          return <Link key={label} href={href} className="group flex min-h-24 w-full flex-col items-center justify-center gap-2 border border-white/15 bg-white/[0.04] px-3 py-3 text-center transition-colors hover:border-[#7c9aff] hover:bg-[#3159ff] sm:min-h-28 sm:w-[calc(33.333%-0.5rem)] lg:w-[calc(25%-0.75rem)]">
             <Icon aria-hidden="true" className="size-6 text-[#7c9aff] group-hover:text-white" />
             <span className="text-xs font-semibold leading-tight">{label}</span>
             {badge && <span className="font-mono text-[10px] text-white/60">{badge}</span>}

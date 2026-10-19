@@ -12,8 +12,8 @@ export default async function DashboardLayout({ children, params }: { children: 
     <main className="min-h-screen bg-[#f6f6f3] text-[#111111]">
       <div className="flex min-h-screen flex-col flex-wrap lg:flex-row">
         <DashboardNavigation role={role} />
-        <div className="min-w-0 flex-1 px-5 py-6 sm:px-10 sm:py-10">
-          <div className="mx-auto flex max-w-5xl flex-col gap-12">
+        <div className="min-w-0 flex-1 px-5 py-5 sm:px-10 sm:py-7">
+          <div className="mx-auto flex max-w-5xl flex-col gap-7">
             {children}
           </div>
         </div>
