@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { LogOut, Menu, X } from 'lucide-react'
+import { ChevronDown, LogOut, Menu, UserRound, X } from 'lucide-react'
 import { useConfirm } from '@/components/dashboard/confirm-dialog'
 import { ACCESS_EVENT, CARD_VIEW_EVENT, demoAccountByRole, navKey, powerAccessId, powerNavigationFor, readAccess, readCardViewPreference, readPowerUsers } from '@/lib/access'
 import { DEMO_HR_ACCOUNT, SYSTEMS_EVENT, defaultSystemConfig, isSectionEnabled, systemConfigFor, type SystemConfig } from '@/lib/systems'
@@ -43,21 +43,68 @@ function CardViewNavigation({ role }: { role: Role }) {
 
   const navigation = role === 'hr' ? hrNavigation : role === 'system-admin' ? systemAdminNavigation : employeeNavigation
   const items = navigation.flatMap((group) => group.items).filter(({ href }) => href !== dashboardHref)
+  const confirm = useConfirm()
+  const router = useRouter()
+  const [profileOpen, setProfileOpen] = useState(false)
+  const firstName = role === 'employee' ? 'Alex' : role === 'hr' ? 'HR' : 'Admin'
+
+  async function handleCardLogout() {
+    const ok = await confirm({ title: 'Would you really like to logout?', description: 'You will need to sign in again to return to your workspace.', confirmLabel: 'Yes, logout', tone: 'danger' })
+    if (ok) router.replace('/signin')
+  }
 
   return (
-    <nav className="w-full bg-[#f6f6f3] px-5 py-6 text-[#111111] sm:px-10 sm:py-8 lg:basis-full" aria-label={`${role} card navigation`}>
-      <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col justify-center gap-6">
-        <header>
+    <nav className="h-screen w-full overflow-hidden bg-[#f6f6f3] px-5 py-5 text-[#111111] sm:px-10 sm:py-7 lg:basis-full" aria-label={`${role} card navigation`}>
+      <div className="mx-auto flex h-full max-w-6xl flex-col gap-6">
+        <header className="flex items-center justify-between border-b border-[#111111]/15 pb-5">
+          <Link href="/" className="flex items-center gap-3">
+            <span aria-hidden="true" className="flex size-9 items-center justify-center bg-[#3159ff] font-mono text-sm font-bold text-white">JT</span>
+            <span>
+              <strong className="block text-lg tracking-[-0.04em]">JuanT</strong>
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#111111]/45">Employee Portal</span>
+            </span>
+          </Link>
+          <div className="relative">
+            <button
+              type="button"
+              aria-expanded={profileOpen}
+              aria-haspopup="menu"
+              onClick={() => setProfileOpen((open) => !open)}
+              className="inline-flex items-center gap-2 border-2 border-[#3159ff]/35 bg-white px-4 py-2.5 text-sm font-semibold text-[#3159ff] shadow-sm transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] hover:text-white"
+            >
+              <UserRound aria-hidden="true" className="size-4" />
+              <span>{firstName}</span>
+              <ChevronDown aria-hidden="true" className={`size-4 transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {profileOpen && (
+              <div role="menu" aria-label="Profile menu" className="absolute right-0 top-[calc(100%+0.5rem)] z-20 min-w-40 border border-[#111111]/15 bg-white p-1.5 shadow-lg">
+                <Link href={`${dashboardHref}/profile`} role="menuitem" onClick={() => setProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-[#111111]/75 transition-colors hover:bg-[#3159ff] hover:text-white">
+                  <UserRound aria-hidden="true" className="size-4" />
+                  Profile
+                </Link>
+                <Link href={`${dashboardHref}/settings`} role="menuitem" onClick={() => setProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-[#111111]/75 transition-colors hover:bg-[#3159ff] hover:text-white">
+                  <UserRound aria-hidden="true" className="size-4" />
+                  Settings
+                </Link>
+                <button type="button" role="menuitem" onClick={handleCardLogout} className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm font-medium text-[#111111]/75 transition-colors hover:bg-[#3159ff] hover:text-white">
+                  <LogOut aria-hidden="true" className="size-4" />
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
+        </header>
+        <section>
           <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[#7c9aff]">JuanT / Employee Portal</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-[-0.06em] sm:text-6xl">What would you like to do?</h1>
           <p className="mt-3 max-w-lg text-sm leading-relaxed text-[#111111]/55">Choose an area to continue.</p>
-        </header>
-        <div className="flex flex-wrap justify-center gap-3">
+        </section>
+        <div className="mx-auto grid min-h-0 w-full max-w-md grid-cols-2 content-start items-start gap-2 overflow-hidden auto-rows-max sm:grid-cols-4 sm:gap-3">
         {items.map(({ label, href, icon: Icon, badge }) => {
-          return <Link key={label} href={href} className="group flex min-h-24 w-full flex-col items-center justify-center gap-2 border border-[#111111]/15 bg-white/55 px-3 py-3 text-center transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] sm:min-h-28 sm:w-[calc(33.333%-0.5rem)] lg:w-[calc(25%-0.75rem)]">
-            <Icon aria-hidden="true" className="size-6 text-[#7c9aff] group-hover:text-white" />
-            <span className="text-xs font-semibold leading-tight group-hover:text-white">{label}</span>
-            {badge && <span className="font-mono text-[10px] text-[#111111]/45 group-hover:text-white/70">{badge}</span>}
+          return <Link key={label} href={href} className="group flex aspect-square w-full min-w-0 flex-col items-center justify-center gap-1 overflow-hidden border border-[#111111]/15 bg-white/70 px-1.5 py-1.5 text-center transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] sm:gap-1.5 sm:px-2 sm:py-2">
+            <Icon aria-hidden="true" className="size-5 shrink-0 text-[#7c9aff] group-hover:text-white sm:size-6" />
+            <span className="text-[11px] font-semibold leading-tight group-hover:text-white sm:text-xs">{label}</span>
+            {badge && <span className="font-mono text-[9px] text-[#111111]/45 group-hover:text-white/70 sm:text-[10px]">{badge}</span>}
           </Link>
         })}
         </div>
@@ -107,26 +154,28 @@ export function Sidebar({ role }: { role: Role }) {
   if (isSampleAccount) return null
 
   return (
-    <aside className="sticky top-0 z-30 flex max-h-screen w-full shrink-0 flex-col border-b border-[#111111]/15 bg-[#111111] text-[#f6f6f3] lg:h-screen lg:w-72 lg:border-b-0 lg:border-r">
-      <div className="flex min-h-0 flex-1 flex-col p-5 sm:p-7">
-        <Link href="/" className="mb-8 flex items-center gap-3 border-b border-white/15 pb-6">
-          <span className="flex size-9 items-center justify-center bg-[#3159ff] font-mono text-sm font-bold text-white">JT</span>
-          <span>
-            <strong className="block text-lg tracking-[-0.04em]">JuanT</strong>
-            <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/50">{workspaceLabel}</span>
-          </span>
-        </Link>
-        <button
-          type="button"
-          aria-expanded={mobileOpen}
-          aria-controls="dashboard-sidebar-navigation"
-          onClick={() => setMobileOpen((open) => !open)}
-          className="mb-5 inline-flex items-center justify-between border border-white/15 px-3 py-2.5 text-sm font-semibold text-white/75 transition-colors hover:border-white/35 hover:text-white lg:hidden"
-        >
-          <span>{mobileOpen ? 'Close menu' : 'Open menu'}</span>
-          {mobileOpen ? <X aria-hidden="true" className="size-4" /> : <Menu aria-hidden="true" className="size-4" />}
-        </button>
-        <nav id="dashboard-sidebar-navigation" className={`${mobileOpen ? 'flex' : 'hidden'} scrollbar-hidden min-w-0 flex-1 flex-wrap gap-x-8 gap-y-6 overflow-y-auto lg:flex lg:overflow-y-auto`} aria-label={`${role} navigation`}>
+    <>
+      <button
+        type="button"
+        aria-expanded={mobileOpen}
+        aria-controls="dashboard-sidebar-navigation"
+        aria-label={mobileOpen ? 'Close navigation menu' : 'Open navigation menu'}
+        onClick={() => setMobileOpen((open) => !open)}
+        className="fixed right-5 top-5 z-50 inline-flex size-11 items-center justify-center border border-[#111111]/15 bg-[#111111] text-[#f6f6f3] shadow-lg transition-colors hover:bg-[#3159ff] lg:hidden"
+      >
+        {mobileOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+      </button>
+      {mobileOpen && <button type="button" aria-label="Close navigation menu" onClick={() => setMobileOpen(false)} className="fixed inset-0 z-40 bg-[#111111]/35 lg:hidden" />}
+      <aside className={`fixed inset-y-0 right-0 z-40 flex w-[min(21rem,calc(100vw-1.5rem))] flex-col bg-[#111111] text-[#f6f6f3] shadow-2xl transition-transform duration-300 ease-out lg:sticky lg:top-0 lg:z-30 lg:h-screen lg:w-72 lg:shrink-0 lg:translate-x-0 lg:shadow-none ${mobileOpen ? 'translate-x-0' : 'translate-x-full'} lg:border-r lg:border-[#111111]/15`}>
+        <div className="flex min-h-0 flex-1 flex-col p-5 sm:p-7">
+          <Link href="/" className="mb-8 flex items-center gap-3 border-b border-white/15 pb-6">
+            <span className="flex size-9 items-center justify-center bg-[#3159ff] font-mono text-sm font-bold text-white">JT</span>
+            <span>
+              <strong className="block text-lg tracking-[-0.04em]">JuanT</strong>
+              <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/50">{workspaceLabel}</span>
+            </span>
+          </Link>
+        <nav id="dashboard-sidebar-navigation" className="scrollbar-hidden min-w-0 flex-1 flex-wrap gap-x-8 gap-y-6 overflow-y-auto lg:flex lg:overflow-y-auto" aria-label={`${role} navigation`}>
           {navigation.map((group) => {
             const isPowerGroup = group.heading.startsWith('Power · ')
             const visibleItems = group.items.filter(({ href }) => access[navKey(href)] !== false && isSectionEnabled(isPowerGroup ? 'hr' : role, navKey(href), systems))
@@ -167,5 +216,6 @@ export function Sidebar({ role }: { role: Role }) {
         </div>
       </div>
     </aside>
+    </>
   )
 }
