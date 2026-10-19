@@ -6,11 +6,14 @@ export function PageIntro({ eyebrow, title, description, action }: { eyebrow: st
       <div>
         <p className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-[#3159ff]">{eyebrow}</p>
         <h1 className="mt-5 text-balance text-5xl font-semibold leading-[0.95] tracking-[-0.06em] sm:text-6xl">{title}</h1>
-        <p className="mt-5 max-w-xl text-pretty text-base leading-relaxed text-[#111111]/60">{description}</p>
       </div>
       {action}
     </section>
   )
+}
+
+export function EmployeeAvatar({ className = 'size-9 text-sm' }: { className?: string }) {
+  return <span aria-label="Alex Cruz" className={`inline-flex shrink-0 items-center justify-center bg-[#3159ff] font-semibold text-white ${className}`}>AC</span>
 }
 
 export function StatGrid({ stats, label }: { stats: { label: string; value: string; hint?: string }[]; label: string }) {

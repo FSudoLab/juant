@@ -3,8 +3,9 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { ChevronDown, LogOut, Menu, UserRound, X } from 'lucide-react'
+import { Bot, ChevronDown, LayoutDashboard, LogOut, Menu, Settings, UserRound, X } from 'lucide-react'
 import { useConfirm } from '@/components/dashboard/confirm-dialog'
+import { AskJuanChat } from '@/components/employee/ask-juan-chat'
 import { ACCESS_EVENT, CARD_VIEW_EVENT, demoAccountByRole, navKey, powerAccessId, powerNavigationFor, readAccess, readCardViewPreference, readPowerUsers } from '@/lib/access'
 import { DEMO_HR_ACCOUNT, SYSTEMS_EVENT, defaultSystemConfig, isSectionEnabled, systemConfigFor, type SystemConfig } from '@/lib/systems'
 import { employeeNavigation, hrNavigation, systemAdminNavigation, type NavGroup, type Role } from '@/lib/navigation'
@@ -29,7 +30,7 @@ function CardViewNavigation({ role }: { role: Role }) {
 
   if (pathname !== dashboardHref) {
     return (
-      <div className="w-full border-b border-[#111111]/10 bg-[#f6f6f3] px-5 py-5 text-[#111111] sm:px-10 lg:basis-full">
+      <div className="sticky top-0 z-30 w-full border-b border-[#111111]/10 bg-[#f6f6f3] px-5 py-5 text-[#111111] sm:px-10 lg:basis-full">
         <div className="mx-auto flex max-w-5xl items-center justify-between">
           <Link href={dashboardHref} className="group inline-flex items-center gap-2 text-sm font-semibold text-[#111111]/65 transition-colors hover:text-[#3159ff]">
             <span aria-hidden="true" className="text-base leading-none transition-transform group-hover:-translate-x-1">&larr;</span>
@@ -46,6 +47,7 @@ function CardViewNavigation({ role }: { role: Role }) {
   const confirm = useConfirm()
   const router = useRouter()
   const [profileOpen, setProfileOpen] = useState(false)
+  const [askJuanOpen, setAskJuanOpen] = useState(false)
   const firstName = role === 'employee' ? 'Alex' : role === 'hr' ? 'HR' : 'Admin'
 
   async function handleCardLogout() {
@@ -53,17 +55,23 @@ function CardViewNavigation({ role }: { role: Role }) {
     if (ok) router.replace('/signin')
   }
 
+  function openDashboard() {
+    router.push(dashboardHref)
+  }
+
   return (
-    <nav className="h-screen w-full overflow-hidden bg-[#f6f6f3] px-5 py-5 text-[#111111] sm:px-10 sm:py-7 lg:basis-full" aria-label={`${role} card navigation`}>
-      <div className="mx-auto flex h-full max-w-6xl flex-col gap-6">
+    <nav className="fixed inset-0 z-10 h-dvh max-h-dvh w-full overflow-hidden overscroll-none bg-[#f6f6f3] px-5 py-5 text-[#111111] max-lg:overflow-y-auto sm:px-10 sm:py-7 lg:basis-full" aria-label={`${role} card navigation`}>
+      <div className="mx-auto flex h-full min-h-0 max-w-6xl flex-col gap-6 overflow-hidden max-lg:h-auto max-lg:min-h-full max-lg:overflow-visible">
         <header className="flex items-center justify-between border-b border-[#111111]/15 pb-5">
-          <Link href="/" className="flex items-center gap-3">
-            <span aria-hidden="true" className="flex size-9 items-center justify-center bg-[#3159ff] font-mono text-sm font-bold text-white">JT</span>
-            <span>
-              <strong className="block text-lg tracking-[-0.04em]">JuanT</strong>
-              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#111111]/45">Employee Portal</span>
-            </span>
-          </Link>
+          <div className="flex items-center gap-5">
+            <Link href="/" className="flex items-center gap-3">
+              <span aria-hidden="true" className="flex size-9 items-center justify-center bg-[#3159ff] font-mono text-sm font-bold text-white">JT</span>
+              <span>
+                <strong className="block text-lg tracking-[-0.04em]">JuanT</strong>
+                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#111111]/45">Employee Portal</span>
+              </span>
+            </Link>
+          </div>
           <div className="relative">
             <button
               type="button"
@@ -72,7 +80,6 @@ function CardViewNavigation({ role }: { role: Role }) {
               onClick={() => setProfileOpen((open) => !open)}
               className="inline-flex items-center gap-2 border-2 border-[#3159ff]/35 bg-white px-4 py-2.5 text-sm font-semibold text-[#3159ff] shadow-sm transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] hover:text-white"
             >
-              <UserRound aria-hidden="true" className="size-4" />
               <span>{firstName}</span>
               <ChevronDown aria-hidden="true" className={`size-4 transition-transform ${profileOpen ? 'rotate-180' : ''}`} />
             </button>
@@ -83,7 +90,7 @@ function CardViewNavigation({ role }: { role: Role }) {
                   Profile
                 </Link>
                 <Link href={`${dashboardHref}/settings`} role="menuitem" onClick={() => setProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-[#111111]/75 transition-colors hover:bg-[#3159ff] hover:text-white">
-                  <UserRound aria-hidden="true" className="size-4" />
+                  <Settings aria-hidden="true" className="size-4" />
                   Settings
                 </Link>
                 <button type="button" role="menuitem" onClick={handleCardLogout} className="flex w-full items-center gap-2 px-3 py-2.5 text-left text-sm font-medium text-[#111111]/75 transition-colors hover:bg-[#3159ff] hover:text-white">
@@ -99,8 +106,12 @@ function CardViewNavigation({ role }: { role: Role }) {
           <h1 className="mt-3 text-4xl font-semibold tracking-[-0.06em] sm:text-6xl">What would you like to do?</h1>
           <p className="mt-3 max-w-lg text-sm leading-relaxed text-[#111111]/55">Choose an area to continue.</p>
         </section>
-        <div className="mx-auto grid min-h-0 w-full max-w-md grid-cols-2 content-start items-start gap-2 overflow-hidden auto-rows-max sm:grid-cols-4 sm:gap-3">
-        {items.map(({ label, href, icon: Icon, badge }) => {
+        <div className="mx-auto grid min-h-0 w-full max-w-[1095px] grid-cols-2 content-start items-start gap-2 overflow-hidden auto-rows-max sm:grid-cols-4 sm:gap-3 xl:grid-cols-14 xl:[&>*]:col-span-2 xl:[&>*:nth-child(8)]:col-start-2">
+        <button type="button" onClick={openDashboard} className="group flex aspect-square w-full min-w-0 flex-col items-center justify-center gap-1 overflow-hidden border border-[#111111]/15 bg-white/70 px-1.5 py-1.5 text-center transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] sm:gap-1.5 sm:px-2 sm:py-2">
+          <LayoutDashboard aria-hidden="true" className="size-5 shrink-0 text-[#7c9aff] group-hover:text-white sm:size-6" />
+          <span className="text-[11px] font-semibold leading-tight group-hover:text-white sm:text-xs">Dashboard</span>
+        </button>
+        {items.filter(({ href }) => href !== dashboardHref && href !== `${dashboardHref}/ask-juan`).map(({ label, href, icon: Icon, badge }) => {
           return <Link key={label} href={href} className="group flex aspect-square w-full min-w-0 flex-col items-center justify-center gap-1 overflow-hidden border border-[#111111]/15 bg-white/70 px-1.5 py-1.5 text-center transition-colors hover:border-[#3159ff] hover:bg-[#3159ff] sm:gap-1.5 sm:px-2 sm:py-2">
             <Icon aria-hidden="true" className="size-5 shrink-0 text-[#7c9aff] group-hover:text-white sm:size-6" />
             <span className="text-[11px] font-semibold leading-tight group-hover:text-white sm:text-xs">{label}</span>
@@ -108,6 +119,21 @@ function CardViewNavigation({ role }: { role: Role }) {
           </Link>
         })}
         </div>
+        {askJuanOpen && (
+          <div id="ask-juan-popover" className="fixed bottom-20 right-5 z-40 w-[calc(100vw-2.5rem)] max-w-[28rem] bg-[#f6f6f3] shadow-[0_14px_40px_rgba(17,17,17,0.2)] sm:bottom-24 sm:right-7">
+            <div className="flex items-center justify-between border border-b-0 border-[#111111]/15 bg-[#3159ff] px-4 py-3 text-white">
+              <div className="flex items-center gap-2 text-sm font-bold"><Bot aria-hidden="true" className="size-4" /> Ask Juan AI</div>
+              <button type="button" onClick={() => setAskJuanOpen(false)} className="flex size-7 items-center justify-center hover:bg-white/15" aria-label="Close Ask Juan AI">
+                <X aria-hidden="true" className="size-4" />
+              </button>
+            </div>
+            <AskJuanChat />
+          </div>
+        )}
+        <button type="button" onClick={() => setAskJuanOpen((open) => !open)} className="fixed bottom-5 right-5 z-40 inline-flex items-center gap-2 border-2 border-[#3159ff] bg-[#3159ff] px-4 py-3 text-sm font-bold text-white shadow-[0_10px_25px_rgba(49,89,255,0.25)] transition-colors hover:bg-[#2447d6] sm:bottom-7 sm:right-7" aria-expanded={askJuanOpen} aria-controls="ask-juan-popover">
+          <Bot aria-hidden="true" className="size-5" />
+          <span>Ask Juan AI</span>
+        </button>
       </div>
     </nav>
   )

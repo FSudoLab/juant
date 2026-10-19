@@ -1,4 +1,4 @@
-import { PageIntro, Panel } from '@/components/dashboard/primitives'
+import { EmployeeAvatar, PageIntro, Panel } from '@/components/dashboard/primitives'
 import { requireEmployee } from '@/lib/roles'
 
 const sections = [
@@ -52,7 +52,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ role: 
         eyebrow="My Employment / My Profile"
         title="Alex Cruz"
         description="Product Designer · Product & Design. Need to update something? File a profile change request with HR."
-        action={<span className="flex size-20 items-center justify-center bg-[#3159ff] text-2xl font-semibold text-white">AC</span>}
+        action={<EmployeeAvatar className="size-20 text-2xl" />}
       />
       {sections.map((section) => (
         <Panel key={section.title} title={section.title}>
