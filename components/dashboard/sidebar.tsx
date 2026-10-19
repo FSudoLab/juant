@@ -9,6 +9,7 @@ import { AskJuanChat } from '@/components/employee/ask-juan-chat'
 import { ACCESS_EVENT, CARD_VIEW_EVENT, demoAccountByRole, navKey, powerAccessId, powerNavigationFor, readAccess, readCardViewPreference, readPowerUsers } from '@/lib/access'
 import { DEMO_HR_ACCOUNT, SYSTEMS_EVENT, defaultSystemConfig, isSectionEnabled, systemConfigFor, type SystemConfig } from '@/lib/systems'
 import { employeeNavigation, hrNavigation, systemAdminNavigation, type NavGroup, type Role } from '@/lib/navigation'
+import { teamRoster } from '@/lib/team-roster'
 
 export function DashboardNavigation({ role }: { role: Role }) {
   const [cardView, setCardView] = useState(false)
@@ -57,7 +58,9 @@ function CardViewHome({ role, dashboardHref }: { role: Role; dashboardHref: stri
   const router = useRouter()
   const [profileOpen, setProfileOpen] = useState(false)
   const [askJuanOpen, setAskJuanOpen] = useState(false)
-  const firstName = role === 'employee' ? 'Alex' : role === 'hr' ? 'HR' : 'Admin'
+  const hrName = teamRoster.find(({ id }) => id === DEMO_HR_ACCOUNT)?.name ?? 'HR'
+  const firstName = role === 'employee' ? 'Alex' : role === 'hr' ? hrName : 'Admin'
+  const settingsHref = role === 'hr' ? `${dashboardHref}/hr-settings` : `${dashboardHref}/settings`
 
   async function handleCardLogout() {
     const ok = await confirm({ title: 'Would you really like to logout?', description: 'You will need to sign in again to return to your workspace.', confirmLabel: 'Yes, logout', tone: 'danger' })
@@ -98,7 +101,7 @@ function CardViewHome({ role, dashboardHref }: { role: Role; dashboardHref: stri
                   <UserRound aria-hidden="true" className="size-4" />
                   Profile
                 </Link>
-                <Link href={`${dashboardHref}/settings`} role="menuitem" onClick={() => setProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-[#111111]/75 transition-colors hover:bg-[#3159ff] hover:text-white">
+                <Link href={settingsHref} role="menuitem" onClick={() => setProfileOpen(false)} className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-[#111111]/75 transition-colors hover:bg-[#3159ff] hover:text-white">
                   <Settings aria-hidden="true" className="size-4" />
                   Settings
                 </Link>
