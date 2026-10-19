@@ -14,7 +14,7 @@ export function DashboardNavigation({ role }: { role: Role }) {
   const [cardView, setCardView] = useState(false)
 
   useEffect(() => {
-    const sync = () => setCardView(role === 'employee' && readCardViewPreference())
+    const sync = () => setCardView(readCardViewPreference(role))
     sync()
     window.addEventListener(CARD_VIEW_EVENT, sync)
     return () => window.removeEventListener(CARD_VIEW_EVENT, sync)
@@ -22,6 +22,10 @@ export function DashboardNavigation({ role }: { role: Role }) {
 
   if (!cardView) return <Sidebar role={role} />
   return <CardViewNavigation role={role} />
+}
+
+function portalLabel(role: Role) {
+  return role === 'hr' ? 'HR Portal' : role === 'system-admin' ? 'Admin Portal' : 'Employee Portal'
 }
 
 function CardViewNavigation({ role }: { role: Role }) {
@@ -37,7 +41,7 @@ function CardViewNavigation({ role }: { role: Role }) {
             <span aria-hidden="true" className="text-base leading-none transition-transform group-hover:-translate-x-1">&larr;</span>
             <span>Back to dashboard</span>
           </Link>
-          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[#111111]/35">Employee portal</span>
+          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.18em] text-[#111111]/35">{portalLabel(role)}</span>
         </div>
       </div>
     )
@@ -73,7 +77,7 @@ function CardViewHome({ role, dashboardHref }: { role: Role; dashboardHref: stri
               <span aria-hidden="true" className="flex size-9 items-center justify-center bg-[#3159ff] font-mono text-sm font-bold text-white">JT</span>
               <span>
                 <strong className="block text-lg tracking-[-0.04em]">JuanT</strong>
-                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#111111]/45">Employee Portal</span>
+                <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[#111111]/45">{portalLabel(role)}</span>
               </span>
             </Link>
           </div>
@@ -107,7 +111,7 @@ function CardViewHome({ role, dashboardHref }: { role: Role; dashboardHref: stri
           </div>
         </header>
         <section>
-          <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[#7c9aff]">JuanT / Employee Portal</p>
+          <p className="font-mono text-xs font-bold uppercase tracking-[0.18em] text-[#7c9aff]">JuanT / {portalLabel(role)}</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-[-0.06em] sm:text-6xl">What would you like to do?</h1>
           <p className="mt-3 max-w-lg text-sm leading-relaxed text-[#111111]/55">Choose an area to continue.</p>
         </section>

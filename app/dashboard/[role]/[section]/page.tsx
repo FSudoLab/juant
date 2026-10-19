@@ -6,6 +6,7 @@ import { EmployeeFilesView } from '@/components/hr/employee-files-view'
 import { EvalSurveyEditor } from '@/components/hr/eval-survey-editor'
 import { EvaluationsView } from '@/components/hr/evaluations-view'
 import { FaqEditor } from '@/components/hr/faq-editor'
+import { HrAppearanceSettings } from '@/components/hr/hr-appearance-settings'
 import { SettingsTabs } from '@/components/hr/settings-tabs'
 import { HrModuleChart } from '@/components/hr/hr-module-chart'
 import { HrModuleView } from '@/components/hr/hr-module-view'
@@ -67,6 +68,7 @@ export default async function HrSectionPage({ params }: { params: Params }) {
             { id: 'policies', label: 'Policies', content: policies ? <HrModuleView module={policies} /> : null },
             { id: 'team-rules', label: 'Team rules', content: <ManagerSettingsForm /> },
             { id: 'faqs', label: 'Employee FAQs', content: <FaqEditor /> },
+            { id: 'appearance', label: 'Appearance', content: <HrAppearanceSettings /> },
           ]}
         />
       </>
